@@ -1,0 +1,8 @@
+{
+    "ArmFlapping": 0,
+    "HeadBanging": 1,
+    "Rocking": 2,
+    "HandMovement": 3,
+    "Spinning": 4,
+    "Normal": 5
+}

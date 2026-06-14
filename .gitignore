@@ -1,0 +1,26 @@
+# Ambiente virtual Python
+.venv/
+
+# Arquivos compilados Python
+__pycache__/
+*.pyc
+
+# Modelos treinados
+models/*.pt
+models/*.pth
+
+# Vídeos
+videos/
+
+# Resultados
+results/
+
+# Dataset gerado
+data/datasets/
+data/results/keyframes/
+
+# CSVs gerados
+*.csv
+
+# Configurações do VS Code
+.vscode/
