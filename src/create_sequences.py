@@ -24,6 +24,7 @@ LABELS = {
 
 X = []
 y = []
+groups = []  # video_id de origem de cada sequência (para split por vídeo)
 
 for csv_file in POSES_DIR.glob("*.csv"):
 
@@ -66,6 +67,8 @@ for csv_file in POSES_DIR.glob("*.csv"):
     )
     continue
 
+  video_id = csv_file.stem
+
   for start in range(
     len(features) - SEQUENCE_LENGTH + 1
   ):
@@ -76,12 +79,15 @@ for csv_file in POSES_DIR.glob("*.csv"):
 
     X.append(sequence)
     y.append(label)
+    groups.append(video_id)
 
 X = np.array(X, dtype=np.float32)
 y = np.array(y, dtype=np.int64)
+groups = np.array(groups)
 
 np.save(OUTPUT_DIR / "X.npy", X)
 np.save(OUTPUT_DIR / "y.npy", y)
+np.save(OUTPUT_DIR / "groups.npy", groups)
 
 with open(
   OUTPUT_DIR / "labels.json",
@@ -97,3 +103,5 @@ with open(
 print("\nDataset created successfully")
 print(f"X shape: {X.shape}")
 print(f"y shape: {y.shape}")
+print(f"groups shape: {groups.shape}")
+print(f"Unique videos: {len(np.unique(groups))}")

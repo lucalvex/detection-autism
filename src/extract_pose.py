@@ -1,94 +1,117 @@
-# gera CVS com o keypoints
-
+# gera um CSV de keypoints por vídeo
 import cv2
 import pandas as pd
+from pathlib import Path
 from ultralytics import YOLO
 import numpy as np
 
-VIDEO_PATH = "data/videos/v_HeadBanging_18.mp4"
-OUTPUT_CSV = "data/poses/HeadBanging.csv"
+VIDEOS_DIR = Path("data/videos")
+OUTPUT_DIR = Path("data/poses")
+
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 model = YOLO("models/yolo11n-pose.pt")
 
-cap = cv2.VideoCapture(VIDEO_PATH)
 
-data = []
-frame_id = 0
-previous_kp = None
+def extract_video(video_path: Path, output_csv: Path):
 
-while cap.isOpened():
-    ret, frame = cap.read()
+    cap = cv2.VideoCapture(str(video_path))
 
-    if not ret:
-      break
+    data = []
+    frame_id = 0
+    previous_kp = None
 
-    results = model(frame, verbose=False)
+    while cap.isOpened():
+        ret, frame = cap.read()
 
-    for result in results:
+        if not ret:
+            break
 
-      if result.keypoints is None:
-        continue
+        results = model(frame, verbose=False)
 
-      people = result.keypoints.xy.cpu().numpy()
+        for result in results:
 
-      if len(people) == 0:
-        continue
+            if result.keypoints is None:
+                continue
 
-      kp = people[0]
-      
-      # Centro do quadril
-      hip_x = (kp[11][0] + kp[12][0]) / 2
-      hip_y = (kp[11][1] + kp[12][1]) / 2
-      
-      left_shoulder = kp[5]
-      right_shoulder = kp[6]
+            people = result.keypoints.xy.cpu().numpy()
 
-      body_size = np.sqrt(
-        (right_shoulder[0] - left_shoulder[0]) ** 2 +
-        (right_shoulder[1] - left_shoulder[1]) ** 2
-      )
-      
-      current_kp = []
+            if len(people) == 0:
+                continue
 
-      if body_size < 1:
-        body_size = 1
+            kp = people[0]
 
-      row = {
-        "frame": frame_id
-      }
+            # Centro do quadril
+            hip_x = (kp[11][0] + kp[12][0]) / 2
+            hip_y = (kp[11][1] + kp[12][1]) / 2
 
-      for i, (x, y) in enumerate(kp):
+            left_shoulder = kp[5]
+            right_shoulder = kp[6]
 
-        x = (x - hip_x) / body_size
-        y = (y - hip_y) / body_size
+            body_size = np.sqrt(
+                (right_shoulder[0] - left_shoulder[0]) ** 2 +
+                (right_shoulder[1] - left_shoulder[1]) ** 2
+            )
 
-        current_kp.append((x, y))
+            current_kp = []
 
-        if previous_kp is None:
-          dx = 0.0
-          dy = 0.0
+            if body_size < 1:
+                body_size = 1
 
-        else:
-          dx = x - previous_kp[i][0]
-          dy = y - previous_kp[i][1]
+            row = {
+                "frame": frame_id
+            }
 
-        row[f"x{i}"] = float(x)
-        row[f"y{i}"] = float(y)
+            for i, (x, y) in enumerate(kp):
 
-        row[f"dx{i}"] = float(dx)
-        row[f"dy{i}"] = float(dy)
+                x = (x - hip_x) / body_size
+                y = (y - hip_y) / body_size
 
-      data.append(row)
-      
-      previous_kp = current_kp
+                current_kp.append((x, y))
 
-    frame_id += 1
+                if previous_kp is None:
+                    dx = 0.0
+                    dy = 0.0
 
-cap.release()
+                else:
+                    dx = x - previous_kp[i][0]
+                    dy = y - previous_kp[i][1]
 
-pd.DataFrame(data).to_csv(
-  OUTPUT_CSV,
-  index=False
-)
+                row[f"x{i}"] = float(x)
+                row[f"y{i}"] = float(y)
 
-print(f"Saved {len(data)} frames")
+                row[f"dx{i}"] = float(dx)
+                row[f"dy{i}"] = float(dy)
+
+            data.append(row)
+
+            previous_kp = current_kp
+
+        frame_id += 1
+
+    cap.release()
+
+    pd.DataFrame(data).to_csv(
+        output_csv,
+        index=False
+    )
+
+    print(f"Saved {len(data)} frames to {output_csv.name}")
+
+
+if __name__ == "__main__":
+
+    video_files = sorted(VIDEOS_DIR.glob("*.mp4"))
+
+    if not video_files:
+        print(f"No videos found in {VIDEOS_DIR}")
+
+    for video_path in video_files:
+
+        # video_id (stem do arquivo) identifica o vídeo de origem
+        # e é usado depois para o split treino/teste por vídeo
+        output_csv = OUTPUT_DIR / f"{video_path.stem}.csv"
+
+        print(f"Processing {video_path.name}")
+
+        extract_video(video_path, output_csv)

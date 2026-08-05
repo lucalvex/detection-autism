@@ -1,5 +1,7 @@
 # classificação em tempo real
 
+# saber qual é o tamanho de entrada para o classificador?
+# qual o tempo de treinamento? usar GPU
 import json
 from collections import deque
 
