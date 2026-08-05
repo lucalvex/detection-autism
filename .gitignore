@@ -1,3 +1,6 @@
+# Permissão do Claude
+.claude/
+
 # Ambiente virtual Python
 .venv/
 
@@ -16,7 +19,7 @@ videos/
 results/
 
 # Dataset gerado
-data/datasets/
+data/datasets/ 
 data/results/keyframes/
 
 # CSVs gerados
