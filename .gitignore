@@ -19,8 +19,8 @@ videos/
 results/
 
 # Dataset gerado
-data/datasets/ 
-data/results/keyframes/
+datasets/ 
+keyframes/
 
 # CSVs gerados
 *.csv
