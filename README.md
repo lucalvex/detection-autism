@@ -128,7 +128,7 @@ python src/utils/predict_video.py        # classifica o comportamento em um víd
 python src/utils/episode_analysis.py     # agrupa as predições em episódios (frequência/duração) -- veja passo 4 acima
 python src/utils/realtime_pose.py        # mostra os keypoints/esqueleto da YOLO desenhados ao vivo em um vídeo (sem classificação)
 python src/utils/save_annotated_video.py # salva um vídeo com os keypoints/esqueleto desenhados em cada frame
-python src/utils/save_keyframes.py       # salva PNGs de frames específicos do vídeo, já anotados com os keypoints
+python src/utils/save_keyframes.py       # salva PNGs de frames das 3 classes (ArmFlapping/HeadBanging/Spinning) com só o esqueleto, sem a pessoa do vídeo
 python src/utils/save_pose_image.py      # salva um PNG de uma imagem única, anotada com os keypoints
 python src/utils/keypoints.py            # imprime no console os keypoints brutos de um vídeo (script de teste rápido)
 ```
