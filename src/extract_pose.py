@@ -1,9 +1,24 @@
-# gera um CSV de keypoints por vídeo
+# ============================================================
+# ARQUIVO: extract_pose.py
+#
+# O QUE FAZ: primeira etapa do pipeline. Para cada vídeo em
+# data/videos/, roda a YOLO11n-Pose frame a frame, extrai os 17
+# keypoints COCO da primeira pessoa detectada, normaliza essas
+# coordenadas (centraliza no quadril + escala pela distância entre os
+# ombros, para independer de posição/distância da câmera) e calcula o
+# deslocamento de cada ponto em relação ao frame anterior (features de
+# movimento). Salva 1 CSV por vídeo em data/poses/, nomeado pelo
+# video_id (nome do arquivo de vídeo sem extensão) — esse video_id é
+# usado depois por create_sequences.py e train_classifier.py para
+# nunca misturar frames do mesmo vídeo entre treino e teste.
+# ============================================================
+
 import cv2
 import pandas as pd
 from pathlib import Path
 from ultralytics import YOLO
-import numpy as np
+
+from pose_features import normalize_frame_keypoints
 
 VIDEOS_DIR = Path("data/videos")
 OUTPUT_DIR = Path("data/poses")
@@ -19,7 +34,7 @@ def extract_video(video_path: Path, output_csv: Path):
 
     data = []
     frame_id = 0
-    previous_kp = None
+    previous_kp = None  # keypoints do frame anterior, para calcular dx/dy; resetado a cada vídeo
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -27,6 +42,7 @@ def extract_video(video_path: Path, output_csv: Path):
         if not ret:
             break
 
+        # roda a detecção de pose neste frame
         results = model(frame, verbose=False)
 
         for result in results:
@@ -34,58 +50,31 @@ def extract_video(video_path: Path, output_csv: Path):
             if result.keypoints is None:
                 continue
 
+            # coordenadas (x, y) em pixels, uma linha por pessoa detectada
             people = result.keypoints.xy.cpu().numpy()
 
             if len(people) == 0:
                 continue
 
+            # assume 1 pessoa por vídeo: usa só a primeira detectada
             kp = people[0]
 
-            # Centro do quadril
-            hip_x = (kp[11][0] + kp[12][0]) / 2
-            hip_y = (kp[11][1] + kp[12][1]) / 2
-
-            left_shoulder = kp[5]
-            right_shoulder = kp[6]
-
-            body_size = np.sqrt(
-                (right_shoulder[0] - left_shoulder[0]) ** 2 +
-                (right_shoulder[1] - left_shoulder[1]) ** 2
-            )
-
-            current_kp = []
-
-            if body_size < 1:
-                body_size = 1
+            # normalização (centro do quadril + escala pelos ombros) e
+            # features de movimento (dx/dy) -- função compartilhada com
+            # predict_video.py e episode_analysis.py
+            features, previous_kp = normalize_frame_keypoints(kp, previous_kp)
 
             row = {
                 "frame": frame_id
             }
 
-            for i, (x, y) in enumerate(kp):
-
-                x = (x - hip_x) / body_size
-                y = (y - hip_y) / body_size
-
-                current_kp.append((x, y))
-
-                if previous_kp is None:
-                    dx = 0.0
-                    dy = 0.0
-
-                else:
-                    dx = x - previous_kp[i][0]
-                    dy = y - previous_kp[i][1]
-
-                row[f"x{i}"] = float(x)
-                row[f"y{i}"] = float(y)
-
-                row[f"dx{i}"] = float(dx)
-                row[f"dy{i}"] = float(dy)
+            for i, (x, y, dx, dy) in enumerate(features):
+                row[f"x{i}"] = x
+                row[f"y{i}"] = y
+                row[f"dx{i}"] = dx
+                row[f"dy{i}"] = dy
 
             data.append(row)
-
-            previous_kp = current_kp
 
         frame_id += 1
 
