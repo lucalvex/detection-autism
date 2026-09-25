@@ -18,6 +18,22 @@ pip install ultralytics opencv-python pandas numpy torch scikit-learn matplotlib
 Coloque o modelo de pose em `models/yolo11n-pose.pt` e os vídeos em
 `data/videos/`.
 
+## Hook de pre-commit (bloqueia vídeos/CSVs/arrays grandes)
+
+O repositório versiona um hook de pre-commit em `.githooks/pre-commit`
+que bloqueia o commit se algum arquivo de vídeo (`.mp4`/`.avi`/`.mov`/
+`.mkv`), CSV, array de dados (`.npy`/`.npz`) ou qualquer arquivo acima
+de 5MB estiver sendo adicionado — esses arquivos são grandes e
+regeneráveis pelo pipeline, e não devem ir para o GitHub. Git não ativa
+hooks versionados sozinho; rode isto uma vez depois de clonar:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Para pular a checagem em um commit específico (uso consciente):
+`git commit --no-verify`.
+
 ## Rodar tudo de uma vez
 
 ```bash

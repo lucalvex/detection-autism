@@ -13,17 +13,26 @@ models/*.pt
 models/*.pth
 models/oof*/*.pt
 
-# Vídeos
-videos/
+# Vídeos, em qualquer pasta (inclui data/results/annotated_video.mp4,
+# data/videos/*.mp4, videos/*.mp4)
+*.mp4
+*.avi
+*.mov
+*.mkv
 
 # Resultados
 results/
 
 # Dataset gerado
-datasets/ 
+datasets/
+datasets_annotated/
 keyframes/
 
-# CSVs gerados
+# Arrays de dataset (X.npy/y.npy/groups.npy/*.npz), qualquer pasta futura
+*.npy
+*.npz
+
+# CSVs gerados (inclui data/poses/*.csv), qualquer pasta
 *.csv
 
 # Configurações do VS Code
