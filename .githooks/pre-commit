@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# ============================================================
+# Hook de pre-commit: bloqueia vídeos, CSVs, arrays de dados
+# (.npy/.npz) e qualquer arquivo acima de 5MB.
+#
+# Motivo: esses arquivos são grandes e derivados (regeneráveis a
+# partir do pipeline), e já entraram no histórico do repositório por
+# engano antes -- este hook existe para não deixar isso acontecer de
+# novo. Não impede o TRABALHO local (os arquivos continuam no disco,
+# usados normalmente pelo treino/avaliação); só impede que entrem no
+# commit.
+#
+# Ativação (não roda sozinho -- precisa disso 1x por clone):
+#   git config core.hooksPath .githooks
+#
+# Para pular em um commit específico (uso consciente, ex. o próprio
+# .gitignore/README): git commit --no-verify
+# ============================================================
+
+set -euo pipefail
+
+MAX_BYTES=$((5 * 1024 * 1024))
+BLOCKED_EXT_REGEX='\.(mp4|avi|mov|mkv|npy|npz|csv)$'
+
+violations=()
+
+# --diff-filter=ACMR: checa arquivos Adicionados/Copiados/Modificados/
+# Renomeados. Exclui D (Deleted) de propósito -- um commit que só
+# remove um arquivo do rastreamento (ex. `git rm --cached`) deve
+# passar sempre, mesmo que o arquivo removido fosse um vídeo/CSV/etc.
+# Inclui R para pegar o caso de alguém renomear um vídeo/arquivo
+# grande para escapar da checagem por extensão.
+while IFS= read -r -d '' file; do
+
+  size=$(git cat-file -s ":$file" 2>/dev/null || echo 0)
+
+  if echo "$file" | grep -Eiq "$BLOCKED_EXT_REGEX"; then
+    violations+=("$file -- extensão bloqueada (vídeo/CSV/array de dados)")
+  elif [ "$size" -gt "$MAX_BYTES" ]; then
+    violations+=("$file -- $((size / 1024 / 1024))MB (limite: 5MB)")
+  fi
+
+done < <(git diff --cached --name-only --diff-filter=ACMR -z)
+
+if [ "${#violations[@]}" -gt 0 ]; then
+  echo "COMMIT BLOQUEADO pelo hook .githooks/pre-commit:" >&2
+  echo "" >&2
+  printf '  - %s\n' "${violations[@]}" >&2
+  echo "" >&2
+  echo "Vídeos, CSVs e arrays de dados (.npy/.npz) não devem ser versionados," >&2
+  echo "e nenhum arquivo deve passar de 5MB. Se isso for realmente" >&2
+  echo "intencional, use 'git commit --no-verify' para pular esta checagem." >&2
+  exit 1
+fi
+
+exit 0
