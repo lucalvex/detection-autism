@@ -186,12 +186,18 @@ while cap.isOpened():
     # extract_pose.py e predict_video.py
     features, previous_kp = normalize_frame_keypoints(kp, previous_kp)
 
-    buffer.append(flatten_features(features))
+    # guarda o frame_id REAL junto com o vetor de features -- se um
+    # ou mais quadros anteriores foram pulados por falta de detecção
+    # (ver "continue" acima), o buffer segue tendo só as detecções
+    # bem-sucedidas, mas agora sabemos de qual quadro real cada uma
+    # veio, em vez de assumir que são os últimos SEQUENCE_LENGTH
+    # quadros consecutivos (bug corrigido -- ver commit).
+    buffer.append((frame_id, flatten_features(features)))
 
     if len(buffer) == SEQUENCE_LENGTH:
 
       sequence = torch.tensor(
-        np.array(buffer, dtype=np.float32),
+        np.array([f for _, f in buffer], dtype=np.float32),
         dtype=torch.float32
       ).unsqueeze(0).to(device)
 
@@ -200,10 +206,14 @@ while cap.isOpened():
         output = classifier(sequence)
         probabilities = torch.softmax(output, dim=1).cpu().numpy()[0].tolist()
 
-      # a janela cobre [quadro_inicio, quadro_fim) -- mesma convenção de
-      # create_sequences.py (end = start + SEQUENCE_LENGTH, slice exclusivo)
-      quadro_fim = frame_id + 1
-      quadro_inicio = quadro_fim - SEQUENCE_LENGTH
+      # quadro_inicio/quadro_fim vêm do frame_id real da detecção mais
+      # antiga e mais recente do buffer -- não de frame_id - SEQUENCE_LENGTH,
+      # que assumiria (errado, se houve gap de detecção nos últimos 30
+      # quadros) que as 30 detecções são consecutivas no vídeo. Mesma
+      # correção já aplicada em evaluate_temporal.py (usa a coluna
+      # "frame" do CSV em vez de posição de linha), agora também aqui.
+      quadro_inicio = buffer[0][0]
+      quadro_fim = buffer[-1][0] + 1
 
       windows.append({
         "quadro_inicio": quadro_inicio,
