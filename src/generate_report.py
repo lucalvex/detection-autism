@@ -284,12 +284,14 @@ def build_episode_summary_page(pdf):
 
   ax.text(0.5, 0.95, "4. Frequência/Duração de Episódios", ha="center", va="top", fontsize=16, fontweight="bold")
 
+  provisorio_txt = " (PROVISÓRIOS)" if ep.get("valores_provisorios") else ""
+
   ax.text(
     0.5, 0.88,
     f"Vídeo: {ep['video_path']}\n"
     f"Duração: {ep['video_duration_sec']:.1f}s   |   "
-    f"Janela de suavização: {ep['smoothing_window']} frames   |   "
-    f"Duração mínima do episódio: {ep['min_episode_duration_sec']}s",
+    f"Limiar de pontuação: {ep['score_threshold']}   |   "
+    f"Duração mínima do trecho: {ep['min_episode_duration_sec']}s{provisorio_txt}",
     ha="center", va="top", fontsize=9
   )
 

@@ -4,38 +4,42 @@
 # O QUE FAZ: roda o mesmo pipeline de inferência de predict_video.py
 # (pose + LSTM, janela deslizante de 30 frames) sobre um vídeo
 # inteiro, mas em vez de exibir a predição ao vivo numa janela,
-# guarda 1 predição de classe por frame e faz uma análise de
-# EPISÓDIOS sobre essa sequência de predições:
+# guarda a pontuação softmax de TODAS as classes em cada janela e
+# constrói "trechos" (segmentos de tempo) usando a mesma regra do
+# design da interface (HANDOFF.md / episodes() de revisao.dc.html),
+# implementada em src/timeline.py:
 #
-# 1) Suavização temporal: a predição da LSTM frame a frame costuma
-#    "piscar" entre classes por ruído momentâneo do classificador
-#    (ex.: 1-2 frames isolados previstos como Normal no meio de um
-#    episódio de ArmFlapping). Um filtro de moda (classe mais
-#    frequente numa janela de tempo) suaviza essas oscilações antes
-#    de segmentar os episódios.
-# 2) Segmentação: agrupa frames consecutivos com a mesma classe
-#    (após suavização) em um único episódio, com frame/tempo de
-#    início e fim.
-# 3) Filtro de duração mínima: descarta episódios mais curtos que
-#    MIN_EPISODE_DURATION_SEC (ainda tratados como ruído residual).
-# 4) Frequência e duração: conta quantos episódios de cada classe
-#    ocorreram no vídeo (frequência) e calcula duração total, média,
-#    mínima e máxima por classe.
+#   Um trecho de uma classe é uma sequência de janelas consecutivas
+#   com pontuação >= limiar naquela classe. Vai do quadro_inicio da
+#   primeira janela ao quadro_fim da última, e só entra na lista se
+#   durar pelo menos MIN_DURATION_SEC. O pico é a maior pontuação
+#   entre as janelas do trecho.
+#
+# Frequência e duração: conta quantos trechos de cada classe
+# ocorreram no vídeo (frequência) e calcula duração total, média,
+# mínima e máxima por classe.
 #
 # Saída em data/results/:
-#   - episodes.csv         -> 1 linha por episódio detectado
+#   - episodes.csv         -> 1 linha por trecho detectado
 #   - episode_summary.txt  -> frequência e duração agregadas por classe
 #
-# LIMITAÇÃO: como a predição em cada frame depende de uma janela de
-# 30 frames anteriores, há uma latência inerente de até ~30 frames
-# entre o início real de um comportamento e o momento em que a LSTM
-# passa a prevê-lo — os tempos de início/fim dos episódios refletem
-# isso.
+# LIMITAÇÃO: como a predição em cada janela depende de 30 frames, há
+# uma latência inerente entre o início real de um comportamento e o
+# momento em que a LSTM passa a prevê-lo -- mas como o trecho é
+# medido do quadro_inicio da 1ª janela ativa (não do frame em que a
+# predição "aconteceu"), essa latência já fica parcialmente
+# compensada na própria definição do trecho.
+#
+# SCORE_THRESHOLD e MIN_DURATION_SEC abaixo são PROVISÓRIOS (0.5 e
+# 0.5s) -- os valores finais serão escolhidos por uma varredura
+# limiar x duração mínima contra F1 por evento nas predições
+# out-of-fold (ver train_oof.py / evaluate_temporal.py), não por
+# este arquivo.
 # ============================================================
 
 import json
 import sys
-from collections import Counter, deque
+from collections import deque
 from pathlib import Path
 
 import cv2
@@ -45,10 +49,11 @@ import torch
 import torch.nn as nn
 from ultralytics import YOLO
 
-# permite importar pose_features.py de src/ mesmo rodando este script
-# de dentro de src/utils/ (python src/utils/episode_analysis.py)
+# permite importar pose_features.py/timeline.py de src/ mesmo rodando
+# este script de dentro de src/utils/ (python src/utils/episode_analysis.py)
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from pose_features import flatten_features, normalize_frame_keypoints
+from timeline import build_segments
 
 # ==========================
 # CONFIG
@@ -62,9 +67,10 @@ RESULTS_DIR = Path("data/results")
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-SEQUENCE_LENGTH = 30          # precisa bater com o SEQUENCE_LENGTH usado em create_sequences.py
-SMOOTHING_WINDOW = 15         # tamanho (em frames) da janela do filtro de moda -- ~0.5s a 30fps
-MIN_EPISODE_DURATION_SEC = 0.5  # episódios mais curtos que isso são descartados como ruído
+SEQUENCE_LENGTH = 30       # precisa bater com o SEQUENCE_LENGTH usado em create_sequences.py
+SCORE_THRESHOLD = 0.5      # provisório -- ver aviso no cabeçalho
+MIN_DURATION_SEC = 0.5     # provisório -- ver aviso no cabeçalho (é um no-op em fps <= 60,
+                           # já que a menor janela possível mede SEQUENCE_LENGTH/fps segundos)
 
 # ==========================
 # DEVICE
@@ -150,9 +156,7 @@ fps = cap.get(cv2.CAP_PROP_FPS) or 30.0  # fallback caso o vídeo não informe f
 buffer = deque(maxlen=SEQUENCE_LENGTH)
 previous_kp = None
 
-raw_frame_ids = []
-raw_predictions = []
-raw_confidences = []
+windows = []  # 1 dict por janela: {"quadro_inicio", "quadro_fim", "pontuacoes"}
 
 frame_id = 0
 
@@ -194,97 +198,62 @@ while cap.isOpened():
       with torch.no_grad():
 
         output = classifier(sequence)
-        probabilities = torch.softmax(output, dim=1)
+        probabilities = torch.softmax(output, dim=1).cpu().numpy()[0].tolist()
 
-        confidence = torch.max(probabilities).item()
-        prediction = torch.argmax(probabilities, dim=1).item()
+      # a janela cobre [quadro_inicio, quadro_fim) -- mesma convenção de
+      # create_sequences.py (end = start + SEQUENCE_LENGTH, slice exclusivo)
+      quadro_fim = frame_id + 1
+      quadro_inicio = quadro_fim - SEQUENCE_LENGTH
 
-      # a predição corresponde ao frame atual (última posição da janela)
-      raw_frame_ids.append(frame_id)
-      raw_predictions.append(prediction)
-      raw_confidences.append(confidence)
+      windows.append({
+        "quadro_inicio": quadro_inicio,
+        "quadro_fim": quadro_fim,
+        "pontuacoes": probabilities,
+      })
 
   frame_id += 1
 
 cap.release()
 
-print(f"Processed {frame_id} frames, {len(raw_predictions)} predictions collected")
+print(f"Processed {frame_id} frames, {len(windows)} windows collected")
 
-if not raw_predictions:
+if not windows:
   raise RuntimeError(
-    "No predictions collected -- vídeo muito curto (menor que "
+    "No windows collected -- vídeo muito curto (menor que "
     f"SEQUENCE_LENGTH={SEQUENCE_LENGTH} frames) ou nenhuma pessoa detectada."
   )
 
 # ==========================
-# 2. SUAVIZAÇÃO TEMPORAL (filtro de moda)
+# 2. SEGMENTAÇÃO EM TRECHOS (regra única -- ver src/timeline.py)
 # ==========================
 
-def smooth_predictions(predictions, window):
-  """Substitui cada predição pela classe mais frequente numa janela
-  centrada ao seu redor, reduzindo oscilações de 1-2 frames causadas
-  por ruído momentâneo do classificador."""
+segments = build_segments(
+  windows,
+  class_names,
+  threshold=SCORE_THRESHOLD,
+  min_duration_sec=MIN_DURATION_SEC,
+  fps=fps
+)
 
-  n = len(predictions)
-  half = window // 2
-  smoothed = []
-
-  for i in range(n):
-    lo = max(0, i - half)
-    hi = min(n, i + half + 1)
-    most_common = Counter(predictions[lo:hi]).most_common(1)[0][0]
-    smoothed.append(most_common)
-
-  return smoothed
-
-
-smoothed_predictions = smooth_predictions(raw_predictions, SMOOTHING_WINDOW)
-
-# ==========================
-# 3. SEGMENTAÇÃO EM EPISÓDIOS
-# ==========================
-# Agrupa frames consecutivos (na sequência já suavizada) com a mesma
-# classe prevista em um único episódio.
-
-episodes = []
-start_idx = 0
-
-for i in range(1, len(smoothed_predictions) + 1):
-
-  is_last = i == len(smoothed_predictions)
-
-  if is_last or smoothed_predictions[i] != smoothed_predictions[start_idx]:
-
-    start_frame = raw_frame_ids[start_idx]
-    end_frame = raw_frame_ids[i - 1]
-
-    episodes.append({
-      "class_id": smoothed_predictions[start_idx],
-      "start_frame": start_frame,
-      "end_frame": end_frame,
-      "start_time_sec": start_frame / fps,
-      "end_time_sec": (end_frame + 1) / fps,
-      "duration_sec": (end_frame + 1 - start_frame) / fps,
-    })
-
-    start_idx = i
-
-# descarta episódios mais curtos que o limiar mínimo (tratados como ruído residual)
-episodes = [e for e in episodes if e["duration_sec"] >= MIN_EPISODE_DURATION_SEC]
-
-if not episodes:
+if not segments:
   raise RuntimeError(
-    "Nenhum episódio sobrou após o filtro de duração mínima "
-    f"({MIN_EPISODE_DURATION_SEC}s) -- tente reduzir MIN_EPISODE_DURATION_SEC."
+    f"Nenhum trecho encontrado com limiar={SCORE_THRESHOLD} e "
+    f"duração mínima={MIN_DURATION_SEC}s -- tente reduzir SCORE_THRESHOLD."
   )
 
-episodes_df = pd.DataFrame(episodes)
-episodes_df["class_name"] = episodes_df["class_id"].map(id_to_label)
+episodes_df = pd.DataFrame(segments)
 episodes_df.insert(0, "episode_id", range(1, len(episodes_df) + 1))
 
+episodes_df = episodes_df.rename(columns={
+  "classe": "class_name",
+  "inicio_s": "start_time_sec",
+  "fim_s": "end_time_sec",
+  "duracao_s": "duration_sec",
+})
+
 episodes_df = episodes_df[[
-  "episode_id", "class_name", "start_frame", "end_frame",
-  "start_time_sec", "end_time_sec", "duration_sec"
+  "episode_id", "class_name", "quadro_inicio", "quadro_fim",
+  "start_time_sec", "end_time_sec", "duration_sec", "pico"
 ]]
 
 episodes_df.to_csv(RESULTS_DIR / "episodes.csv", index=False)
@@ -311,7 +280,7 @@ summary["episodes_per_min"] = summary["episodes"] / video_duration_min
 summary_text_lines = [
   f"Episode analysis -- {VIDEO_PATH}",
   f"Video duration: {frame_id / fps:.1f}s ({video_duration_min:.2f} min)",
-  f"Smoothing window: {SMOOTHING_WINDOW} frames | Min episode duration: {MIN_EPISODE_DURATION_SEC}s",
+  f"Score threshold: {SCORE_THRESHOLD} | Min segment duration: {MIN_DURATION_SEC}s (PROVISORIO)",
   "",
   summary.round(3).to_string(),
 ]
@@ -332,8 +301,9 @@ episode_summary = {
   "video_path": VIDEO_PATH,
   "video_duration_sec": frame_id / fps,
   "fps": fps,
-  "smoothing_window": SMOOTHING_WINDOW,
-  "min_episode_duration_sec": MIN_EPISODE_DURATION_SEC,
+  "score_threshold": SCORE_THRESHOLD,
+  "min_episode_duration_sec": MIN_DURATION_SEC,
+  "valores_provisorios": True,
   "per_class": {
     class_name: {
       "episodes": int(row["episodes"]),
