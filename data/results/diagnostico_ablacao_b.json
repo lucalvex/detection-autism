@@ -1,0 +1,136 @@
+{
+  "checkpoints_verificados": {
+    "rodada_a": {
+      "oof_dir": "models/oof_seeded_annotated",
+      "num_classes_esperado": 4,
+      "folds": {
+        "1": "models\\oof_seeded_annotated\\fold_1.pt",
+        "2": "models\\oof_seeded_annotated\\fold_2.pt",
+        "3": "models\\oof_seeded_annotated\\fold_3.pt",
+        "4": "models\\oof_seeded_annotated\\fold_4.pt",
+        "5": "models\\oof_seeded_annotated\\fold_5.pt"
+      }
+    },
+    "base_re_seedado": {
+      "oof_dir": "models/oof_seeded_base",
+      "num_classes_esperado": 6,
+      "folds": {
+        "1": "models\\oof_seeded_base\\fold_1.pt",
+        "2": "models\\oof_seeded_base\\fold_2.pt",
+        "3": "models\\oof_seeded_base\\fold_3.pt",
+        "4": "models\\oof_seeded_base\\fold_4.pt",
+        "5": "models\\oof_seeded_base\\fold_5.pt"
+      }
+    }
+  },
+  "matriz_confusao_ablacao_b": {
+    "rodada_a_forcada_3_classes": {
+      "labels": [
+        "ArmFlapping",
+        "HeadBanging",
+        "Spinning"
+      ],
+      "matriz": [
+        [
+          9036,
+          3647,
+          1600
+        ],
+        [
+          4499,
+          2300,
+          2342
+        ],
+        [
+          4958,
+          1933,
+          9910
+        ]
+      ],
+      "macro_f1_pooled": 0.4894086508872782
+    },
+    "base_re_seedado_natural": {
+      "labels": [
+        "ArmFlapping",
+        "HeadBanging",
+        "Spinning"
+      ],
+      "matriz": [
+        [
+          9475,
+          1839,
+          2969
+        ],
+        [
+          3830,
+          1585,
+          3726
+        ],
+        [
+          1870,
+          1756,
+          13175
+        ]
+      ],
+      "macro_f1_pooled": 0.5277311504864063
+    },
+    "n_quadros_em_comum": 40225,
+    "fracao_concordancia_a_vs_b": 0.5541578620261032
+  },
+  "distribuicao_classes_preditas_quadros_anotados": {
+    "sem_ablacao": {
+      "rodada_a": {
+        "ArmFlapping": 0.4604847731510255,
+        "HeadBanging": 0.1883903045369795,
+        "Spinning": 0.35112492231199505
+      },
+      "base_re_seedado": {
+        "ArmFlapping": 0.37620882535736483,
+        "HeadBanging": 0.17287756370416407,
+        "Spinning": 0.4509136109384711
+      }
+    },
+    "ablacao_a_shuffle": {
+      "rodada_a": {
+        "ArmFlapping": 0.48959602237414546,
+        "HeadBanging": 0.19132380360472342,
+        "Spinning": 0.31908017402113115
+      },
+      "base_re_seedado": {
+        "ArmFlapping": 0.39187072715972654,
+        "HeadBanging": 0.18911124922311995,
+        "Spinning": 0.4190180236171535
+      }
+    },
+    "ablacao_b_zero_dxdy": {
+      "rodada_a": {
+        "ArmFlapping": 0.45973896830329397,
+        "HeadBanging": 0.1958980733374767,
+        "Spinning": 0.3443629583592293
+      },
+      "base_re_seedado": {
+        "ArmFlapping": 0.3772529521441889,
+        "HeadBanging": 0.12877563704164077,
+        "Spinning": 0.4939714108141703
+      }
+    }
+  },
+  "quebra_por_fold_verificada": {
+    "rodada_a_forcada_3_classes": {
+      "1": 0.27458961244444663,
+      "2": 0.5276605199566583,
+      "3": 0.5670399292398164,
+      "4": 0.5042969737848534,
+      "5": 0.5443761752211959
+    },
+    "base_re_seedado_natural": {
+      "1": 0.5142616647594593,
+      "2": 0.4094285485932095,
+      "3": 0.4910621643790281,
+      "4": 0.560588652089804,
+      "5": 0.44286447317845995
+    },
+    "media_entre_folds_a": 0.48359264212939407,
+    "media_entre_folds_b": 0.48364110059999216
+  }
+}
