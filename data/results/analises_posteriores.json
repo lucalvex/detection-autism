@@ -28,7 +28,7 @@
     },
     "diferenca_media": 0.024638698913115986,
     "comparacao_por_fold": {
-      "descricao": "Comparacao particao a particao (5 folds), mesma convencao de media-entre-folds usada na comparacao principal.",
+      "descricao": "Comparacao particao a particao (5 folds). Convencao de agregacao: estas analises usam a media entre particoes; a comparacao principal (criterio_comparacao.md) usa o agregado sobre os 56 videos.",
       "tabela": [
         {
           "fold": 1,
@@ -1258,7 +1258,7 @@
     "f1_estereotipia_media_entre_folds": 0.3796725508469814,
     "f1_estereotipia_desvio_entre_folds": 0.06580440522826962,
     "acuracia_balanceada_e_referencia": {
-      "descricao": "Acuracia balanceada = media entre a revocacao de Estereotipia e a revocacao de Background. Reportada como media entre os 5 folds (mesma convencao da comparacao principal) e pooled sobre os 56 videos. Classificador trivial = sempre prediz Estereotipia; seu F1 so depende da prevalencia real (recall=1, precisao=prevalencia) -- piso de referencia.",
+      "descricao": "Acuracia balanceada = media entre a revocacao de Estereotipia e a revocacao de Background. Reportada como media entre os 5 folds e tambem pooled sobre os 56 videos. Convencao de agregacao: estas analises usam a media entre particoes; a comparacao principal (criterio_comparacao.md) usa o agregado sobre os 56 videos. Classificador trivial = sempre prediz Estereotipia; seu F1 so depende da prevalencia real (recall=1, precisao=prevalencia) -- piso de referencia.",
       "rodada_a": {
         "acuracia_balanceada_media_entre_folds": 0.578732682144141,
         "acuracia_balanceada_desvio_entre_folds": 0.03395832622476653,
@@ -1295,7 +1295,7 @@
     }
   },
   "analise_4_ablacoes_de_inferencia": {
-    "descricao": "Duas ablacoes de inferencia (sem treinar nada), aplicadas aos checkpoints out-of-fold ja existentes, embaralhando/zerando as features de cada janela ANTES de passar pela LSTM ja treinada. Testa se o modelo depende da ORDEM temporal (a) e do MOVIMENTO dx/dy (b), ou se aprendeu principalmente a postura estatica (x/y). Todas as metricas usam a mesma convencao de media-entre-folds da comparacao principal.",
+    "descricao": "Duas ablacoes de inferencia (sem treinar nada), aplicadas aos checkpoints out-of-fold ja existentes, embaralhando/zerando as features de cada janela ANTES de passar pela LSTM ja treinada. Testa se o modelo depende da ORDEM temporal (a) e do MOVIMENTO dx/dy (b), ou se aprendeu principalmente a postura estatica (x/y). Convencao de agregacao: estas analises usam a media entre particoes; a comparacao principal (criterio_comparacao.md) usa o agregado sobre os 56 videos.",
     "semente_fixa": 42,
     "ablacoes": {
       "shuffle": {
