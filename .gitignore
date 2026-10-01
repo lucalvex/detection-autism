@@ -23,6 +23,11 @@ models/oof*/*.pt
 # Resultados
 results/
 
+# Saída do exportador da demo (sessao.json/pontos.json por vídeo --
+# dados de sessão, nunca vão para o git; ver tcc-demo-handoff/HANDOFF.md)
+saidas/
+*_pontos.json
+
 # Dataset gerado
 datasets/
 datasets_annotated/
@@ -34,6 +39,16 @@ keyframes/
 
 # CSVs gerados (inclui data/poses/*.csv), qualquer pasta
 *.csv
+
+# Imagens: bloqueadas em qualquer pasta, exceto figuras/ na raiz, que é
+# só para figuras do texto e nunca deve ter quadros de vídeo nem
+# imagens de crianças
+*.png
+*.jpg
+*.jpeg
+!/figuras/**/*.png
+!/figuras/**/*.jpg
+!/figuras/**/*.jpeg
 
 # Configurações do VS Code
 .vscode/

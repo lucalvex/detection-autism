@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # ============================================================
 # Hook de pre-commit: bloqueia vídeos, CSVs, arrays de dados
-# (.npy/.npz) e qualquer arquivo acima de 5MB.
+# (.npy/.npz), arquivos *_pontos.json (keypoints em pixels brutos da
+# demo -- dado de sessão, não código nem resultado agregado), imagens
+# (.png/.jpg/.jpeg) fora de figuras/ e qualquer arquivo acima de 5MB.
 #
 # Motivo: esses arquivos são grandes e derivados (regeneráveis a
 # partir do pipeline), e já entraram no histórico do repositório por
@@ -21,6 +23,10 @@ set -euo pipefail
 
 MAX_BYTES=$((5 * 1024 * 1024))
 BLOCKED_EXT_REGEX='\.(mp4|avi|mov|mkv|npy|npz|csv)$'
+BLOCKED_SUFFIX_REGEX='_pontos\.json$'
+# imagens só em figuras/ (figuras do texto; nunca quadros de vídeo)
+BLOCKED_IMAGE_REGEX='\.(png|jpe?g)$'
+ALLOWED_IMAGE_PREFIX='figuras/'
 
 violations=()
 
@@ -36,6 +42,10 @@ while IFS= read -r -d '' file; do
 
   if echo "$file" | grep -Eiq "$BLOCKED_EXT_REGEX"; then
     violations+=("$file -- extensão bloqueada (vídeo/CSV/array de dados)")
+  elif echo "$file" | grep -Eiq "$BLOCKED_SUFFIX_REGEX"; then
+    violations+=("$file -- dado de sessão da demo (*_pontos.json), não deve ser versionado")
+  elif echo "$file" | grep -Eiq "$BLOCKED_IMAGE_REGEX" && [[ "$file" != "$ALLOWED_IMAGE_PREFIX"* ]]; then
+    violations+=("$file -- imagem fora de figuras/ (pode ser quadro de vídeo)")
   elif [ "$size" -gt "$MAX_BYTES" ]; then
     violations+=("$file -- $((size / 1024 / 1024))MB (limite: 5MB)")
   fi
@@ -47,9 +57,9 @@ if [ "${#violations[@]}" -gt 0 ]; then
   echo "" >&2
   printf '  - %s\n' "${violations[@]}" >&2
   echo "" >&2
-  echo "Vídeos, CSVs e arrays de dados (.npy/.npz) não devem ser versionados," >&2
-  echo "e nenhum arquivo deve passar de 5MB. Se isso for realmente" >&2
-  echo "intencional, use 'git commit --no-verify' para pular esta checagem." >&2
+  echo "Vídeos, CSVs, arrays de dados (.npy/.npz), *_pontos.json e imagens fora" >&2
+  echo "de figuras/ não devem ser versionados, e nenhum arquivo deve passar de 5MB. Se isso for" >&2
+  echo "realmente intencional, use 'git commit --no-verify' para pular esta checagem." >&2
   exit 1
 fi
 
