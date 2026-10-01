@@ -133,6 +133,34 @@ aparece no PDF avisando qual comando rodar, em vez de quebrar o relatório.
 - Rodar só o `generate_report.py` de novo é sempre seguro — ele só lê os
   arquivos já gerados, não recalcula nada.
 
+## Interface de demonstração (`demo/`)
+
+Duas telas, Apresentação e Revisão, a partir do design em
+`tcc-demo-handoff/`. Usam o modelo da Rodada A
+(`models/oof_seeded_annotated/`), com cada vídeo do SSBD avaliado pelo
+checkpoint da partição em que ele é teste. Nenhum número da tela é
+escrito à mão: tudo vem dos arquivos gerados abaixo.
+
+```bash
+python src/selecionar_videos_mediana.py   # vídeos de desempenho mediano (um por classe)
+python src/comparar_modelos.py            # veredito pelo critério de data/results/criterio_comparacao.md
+python src/resumo_dados.py                # contagens do SSBD e das partições
+python src/exportar_sessao.py v_ArmFlapping_12 --saida saidas   # repita para cada vídeo escolhido
+python src/exportar_pontos.py v_ArmFlapping_12 --saida saidas   # roda o YOLO só para os pixels brutos
+python demo/servir.py                     # http://127.0.0.1:8765
+```
+
+O servidor só atende em `127.0.0.1` e só entrega a interface, os
+`saidas/*_sessao.json`/`*_pontos.json` e os JSON de resultado usados;
+vídeos e CSVs de pose respondem 404. Na revisão, o vídeo é aberto com o
+seletor de arquivo e fica só na memória do navegador: não é copiado,
+embutido nem enviado. `saidas/` e `*_pontos.json` estão no `.gitignore`
+e o hook de pre-commit bloqueia `*_pontos.json`.
+
+A regra de segmentação em JavaScript (`demo/js/timeline.js`) tem que dar
+o mesmo resultado que `src/timeline.py`. `python
+tests/test_timeline_js.py` compara as duas (requer Node.js).
+
 ## Ferramentas auxiliares (`src/utils/`)
 
 Scripts que **não** fazem parte do pipeline principal de treino — servem
@@ -145,6 +173,8 @@ python src/utils/episode_analysis.py     # agrupa as predições em episódios (
 python src/utils/realtime_pose.py        # mostra os keypoints/esqueleto da YOLO desenhados ao vivo em um vídeo (sem classificação)
 python src/utils/save_annotated_video.py # salva um vídeo com os keypoints/esqueleto desenhados em cada frame
 python src/utils/save_keyframes.py       # salva PNGs de frames das 3 classes (ArmFlapping/HeadBanging/Spinning) com só o esqueleto, sem a pessoa do vídeo
-python src/utils/save_pose_image.py      # salva um PNG de uma imagem única, anotada com os keypoints
+python src/utils/save_pose_image.py      # salva um PNG de uma imagem única, anotada com os keypoints (é um quadro real do vídeo: nunca vai para o git)
 python src/utils/keypoints.py            # imprime no console os keypoints brutos de um vídeo (script de teste rápido)
 ```
+
+`figuras/` é só para figuras do texto e nunca deve conter quadros de vídeo ou imagens de crianças; o `.gitignore` e o hook bloqueiam `.png`, `.jpg` e `.jpeg` em qualquer outra pasta.
