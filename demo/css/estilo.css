@@ -1,0 +1,122 @@
+:root {
+  --fundo: #E7EBEA;
+  --superficie: #F6F8F7;
+  --texto: #1E2B2F;
+  --texto-2: #4A585C;
+  --linhas: #C3CBC8;
+  --linhas-claras: #D5DCDA;
+  --nav: #D6DDDB;
+  --video: #CDD5D2;
+  --sem-deteccao: #9AA5A2;
+  --aviso: #F3E6CC;
+  --aviso-borda: #C99A3E;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font-family: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+}
+
+a { color: var(--texto); }
+a:hover { color: #1F4F8F; }
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, label:focus-within {
+  outline: 3px solid #1F4F8F;
+  outline-offset: 2px;
+}
+
+button:disabled { opacity: 0.4; cursor: default; }
+
+.num { font-variant-numeric: tabular-nums; }
+
+.pagina {
+  width: 1440px;
+  min-height: 960px;
+  margin: 0 auto;
+  padding: 28px 40px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  min-height: 56px;
+  gap: 24px;
+}
+
+.modo {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--nav);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.modo a, .modo span {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 6px;
+  font-size: 15px;
+  text-decoration: none;
+  color: var(--texto);
+}
+
+.modo [aria-current="page"] { font-weight: 700; background: var(--superficie); }
+
+.aviso-particao {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  background: var(--aviso);
+  border-left: 4px solid var(--aviso-borda);
+  border-radius: 4px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.aviso-particao strong { white-space: nowrap; }
+
+.botao {
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.botao-primario { border: 1px solid var(--texto); background: var(--texto); color: var(--superficie); }
+.botao-secundario { border: 1px solid #8C9895; background: transparent; color: var(--texto); }
+.botao-link { border: 0; background: none; color: #1F4F8F; text-decoration: underline; padding: 0 10px; }
+
+.quadradinho {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.secundario { color: var(--texto-2); }
+
+.erro {
+  margin: 20px 0;
+  padding: 16px 20px;
+  background: var(--superficie);
+  border-left: 4px solid #B3412E;
+  font-size: 16px;
+  line-height: 1.5;
+}

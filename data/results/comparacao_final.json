@@ -1,0 +1,98 @@
+{
+  "criterio": "data/results/criterio_comparacao.md",
+  "modelos": {
+    "rodada_a": "data\\results\\comparacao_rodada_a\\metricas.json",
+    "base_re_seedado": "data\\results\\comparacao_base_reseeded\\metricas.json"
+  },
+  "metricas_principais": [
+    {
+      "metrica": "macro F1 por quadro, restrito aos quadros anotados",
+      "pooled_56_videos": {
+        "rodada_a": 0.32229508981685867,
+        "base_re_seedado": 0.5624293822720602
+      },
+      "rodada_a_melhora_agregado": false,
+      "por_fold": [
+        {
+          "fold": 1,
+          "rodada_a": 0.1765243363021141,
+          "base_re_seedado": 0.5008564664705666,
+          "rodada_a_maior": false
+        },
+        {
+          "fold": 2,
+          "rodada_a": 0.3281672663077814,
+          "base_re_seedado": 0.4554417023995896,
+          "rodada_a_maior": false
+        },
+        {
+          "fold": 3,
+          "rodada_a": 0.4711602418940602,
+          "base_re_seedado": 0.5051698893191571,
+          "rodada_a_maior": false
+        },
+        {
+          "fold": 4,
+          "rodada_a": 0.3981662129996681,
+          "base_re_seedado": 0.5961429355035984,
+          "rodada_a_maior": false
+        },
+        {
+          "fold": 5,
+          "rodada_a": 0.30710760191977426,
+          "base_re_seedado": 0.5823284042695035,
+          "rodada_a_maior": false
+        }
+      ],
+      "n_folds_rodada_a_maior": 0,
+      "n_folds": 5,
+      "rodada_a_melhora_em_folds_suficientes": false
+    },
+    {
+      "metrica": "F1 por evento, IoU 0,3, regra principal",
+      "pooled_56_videos": {
+        "rodada_a": 0.014212694150496358,
+        "base_re_seedado": 0.019903195820040295
+      },
+      "rodada_a_melhora_agregado": false,
+      "por_fold": [
+        {
+          "fold": 1,
+          "rodada_a": 0.0033003300330033,
+          "base_re_seedado": 0.010895892320040927,
+          "rodada_a_maior": false
+        },
+        {
+          "fold": 2,
+          "rodada_a": 0.0225580584862022,
+          "base_re_seedado": 0.01769159902883029,
+          "rodada_a_maior": true
+        },
+        {
+          "fold": 3,
+          "rodada_a": 0.01226111956705564,
+          "base_re_seedado": 0.0345301757066463,
+          "rodada_a_maior": false
+        },
+        {
+          "fold": 4,
+          "rodada_a": 0.01801065279326149,
+          "base_re_seedado": 0.016225081299028967,
+          "rodada_a_maior": true
+        },
+        {
+          "fold": 5,
+          "rodada_a": 0.014281879194630873,
+          "base_re_seedado": 0.024724883668603707,
+          "rodada_a_maior": false
+        }
+      ],
+      "n_folds_rodada_a_maior": 2,
+      "n_folds": 5,
+      "rodada_a_melhora_em_folds_suficientes": false
+    }
+  ],
+  "condicao_1_melhora_as_duas_metricas_agregadas": false,
+  "condicao_2_melhora_em_pelo_menos_4_de_5_folds": false,
+  "veredito": "sem diferença distinguível"
+}

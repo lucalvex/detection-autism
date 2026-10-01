@@ -1,0 +1,154 @@
+.cabecalho-centro { align-items: center; }
+.autoria { font-size: 15px; }
+
+.abertura { margin-top: 26px; display: flex; flex-direction: column; gap: 10px; }
+.abertura h1 { margin: 0; font-size: 54px; line-height: 1.05; font-weight: 700; letter-spacing: -0.015em; }
+.abertura p { margin: 0; font-size: 19px; line-height: 1.45; max-width: 780px; }
+
+.medianos { margin-top: 24px; padding: 16px 20px; background: var(--superficie); border-radius: 6px; }
+.medianos-topo { display: flex; gap: 20px; align-items: baseline; flex-wrap: wrap; }
+.medianos-topo h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.medianos-topo p { margin: 0; font-size: 14px; line-height: 1.4; flex: 1; min-width: 600px; }
+
+.medianos-lista { margin-top: 12px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+
+.mediano {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-height: 56px;
+  padding: 8px 14px;
+  border: 1px solid #8C9895;
+  border-radius: 6px;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mediano[aria-pressed="true"] { border: 2px solid var(--texto); background: #E1E7E5; padding: 7px 13px; }
+.mediano .textos { display: flex; flex-direction: column; gap: 2px; }
+.mediano .nome { font-size: 15px; font-weight: 700; }
+.mediano .detalhe { font-size: 13px; color: var(--texto-2); font-variant-numeric: tabular-nums; }
+
+.medianos .aviso-particao { margin-top: 12px; }
+
+.etapas {
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.etapas li { display: flex; }
+
+.etapa-btn {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  text-align: left;
+  min-height: 92px;
+  padding: 12px 0 0;
+  background: none;
+  border: 0;
+  border-top: 3px solid var(--linhas);
+  color: var(--texto-2);
+  font: inherit;
+  cursor: pointer;
+}
+
+.etapa-btn[aria-current="step"] { border-top-color: var(--texto); color: var(--texto); }
+.etapa-btn .n { font-size: 14px; font-variant-numeric: tabular-nums; }
+.etapa-btn .t { font-size: 19px; font-weight: 500; }
+.etapa-btn[aria-current="step"] .t { font-weight: 700; }
+.etapa-btn .c { font-size: 14px; line-height: 1.35; }
+
+.etapa-corpo { margin-top: 24px; display: flex; gap: 48px; min-height: 360px; }
+
+.etapa-texto { flex-grow: 1; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.etapa-texto h2 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.01em; }
+.etapa-texto p { margin: 0; font-size: 18px; line-height: 1.55; max-width: 620px; }
+.etapa-texto dl { margin: 4px 0 0; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+.etapa-texto dl div { display: flex; gap: 8px; }
+.etapa-texto dt { color: var(--texto-2); flex-shrink: 0; }
+.etapa-texto dd { margin: 0; font-weight: 700; }
+.etapa-nav { margin-top: auto; display: flex; gap: 12px; }
+.botao-grande { height: 48px; padding: 0 20px; font-size: 16px; }
+
+.etapa-visual {
+  position: relative;
+  width: 640px;
+  height: 360px;
+  flex-shrink: 0;
+  background: var(--superficie);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.etapa-visual .legenda {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 12px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--texto-2);
+}
+
+.quadros { position: absolute; left: 24px; top: 40px; display: flex; gap: 12px; }
+.quadro { display: flex; flex-direction: column; gap: 6px; }
+.quadro .caixa { width: 104px; height: 104px; background: var(--video); border-radius: 3px; position: relative; }
+.quadro .caixa span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--texto-2); text-align: center; padding: 6px; }
+.quadro .tc { font-size: 13px; color: var(--texto-2); font-variant-numeric: tabular-nums; }
+
+.barras { position: absolute; left: 32px; right: 32px; top: 28px; display: flex; flex-direction: column; gap: 16px; }
+.barras .cab { font-size: 14px; color: var(--texto-2); }
+.barra .linha1 { display: flex; justify-content: space-between; font-size: 16px; }
+.barra .linha1 span:first-child { font-weight: 700; }
+.barra .trilho { height: 14px; background: #E1E6E4; border-radius: 3px; margin-top: 6px; }
+.barra .valor { height: 14px; border-radius: 3px; }
+
+.lstm { position: absolute; left: 28px; right: 28px; top: 70px; display: flex; flex-direction: column; gap: 28px; }
+.lstm .cadeia { display: flex; align-items: flex-start; gap: 6px; }
+.lstm .celula { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.lstm .caixa { width: 58px; height: 48px; border: 2px solid var(--texto); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.lstm .caixa.tracejada { border-style: dashed; }
+.lstm .x { font-size: 14px; color: var(--texto-2); }
+.lstm .saidas { display: flex; flex-direction: column; gap: 6px; }
+.lstm .saida { display: flex; gap: 8px; align-items: center; height: 26px; padding: 0 10px; background: var(--fundo); border-radius: 4px; font-size: 13px; }
+.lstm p { margin: 0; font-size: 15px; line-height: 1.5; max-width: 560px; }
+
+.mini { position: absolute; left: 32px; right: 32px; top: 18px; display: flex; flex-direction: column; gap: 6px; }
+.mini .rot { font-size: 13px; font-weight: 700; display: flex; gap: 8px; align-items: center; }
+.mini svg { display: block; }
+
+.rodape {
+  margin-top: 26px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--linhas);
+}
+
+.rodape h3, .posteriores h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; }
+.rodape p { margin: 0; font-size: 15px; line-height: 1.5; color: #33413F; }
+.rodape .veredito { font-weight: 700; color: var(--texto); }
+
+.posteriores {
+  margin-top: 22px;
+  padding: 16px 20px;
+  background: var(--superficie);
+  border-radius: 6px;
+  border-left: 4px solid #8C9895;
+}
+
+.posteriores > p { margin: 0 0 8px; font-size: 14px; line-height: 1.45; }
+.posteriores ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.posteriores li { font-size: 15px; line-height: 1.5; color: #33413F; }
