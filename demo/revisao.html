@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Revisão de sessão</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&amp;display=swap">
+<link rel="stylesheet" href="css/estilo.css">
+<link rel="stylesheet" href="css/revisao.css">
+</head>
+<body>
+<div class="pagina">
+
+<header class="cabecalho">
+  <div class="titulo">
+    <span id="sessao-info" class="secundario">Carregando sessão…</span>
+    <h1>Revisão de sessão</h1>
+  </div>
+  <nav class="modo" aria-label="Modo">
+    <a id="link-apresentacao" href="apresentacao.html">Apresentação</a>
+    <span aria-current="page">Revisão</span>
+  </nav>
+</header>
+
+<p class="triagem">Ferramenta de triagem e acompanhamento. Os trechos são sugestões para revisão profissional e não constituem diagnóstico. Na avaliação deste trabalho, o modelo detecta a presença de estereotipia pouco acima do acaso.</p>
+
+<p class="aviso-particao" id="aviso-particao" hidden></p>
+
+<div class="barra-sessao">
+  <label class="campo">
+    Sessão
+    <select id="sel-sessao"></select>
+  </label>
+  <button type="button" class="botao botao-secundario" id="btn-video">Abrir o arquivo de vídeo</button>
+  <input type="file" id="arq-video" accept="video/*" hidden>
+  <span id="status-video" class="secundario"></span>
+  <button type="button" class="botao botao-secundario" id="btn-exportar">Exportar revisões</button>
+</div>
+
+<div id="conteudo">
+
+<div class="principal">
+  <div class="coluna-video">
+    <div class="caixa-video" id="caixa-video">
+      <video id="video" playsinline preload="metadata"></video>
+      <span id="placeholder-video" class="placeholder-video">O vídeo não é enviado nem copiado: escolha o arquivo no seu computador para vê-lo aqui. Os pontos do corpo aparecem mesmo sem o vídeo.</span>
+      <svg id="esqueleto" width="720" height="405" aria-hidden="true"><g id="esqueleto-g"></g></svg>
+      <span id="sem-pessoa" class="sem-pessoa" hidden>Sem pessoa detectada neste quadro</span>
+      <div id="chip" class="chip" hidden>
+        <span class="quadradinho" id="chip-cor"></span>
+        <span>Trecho sugerido: <strong id="chip-nome"></strong>, pontuação <span id="chip-p" class="num"></span></span>
+      </div>
+    </div>
+    <div class="controles">
+      <button type="button" id="btn-play" class="btn-play" aria-label="Reproduzir">
+        <svg width="18" height="18" aria-hidden="true"><path id="icone-play" d="M5 2.5L15.5 9L5 15.5z" fill="currentColor"></path></svg>
+      </button>
+      <span class="tempo num"><strong id="tc">--:--</strong> / <span id="tc-total">--:--</span></span>
+      <label class="check">
+        <input type="checkbox" id="chk-esqueleto" checked>
+        Mostrar pontos do corpo
+      </label>
+    </div>
+  </div>
+
+  <section class="painel-trechos" aria-labelledby="h-trechos">
+    <div class="painel-topo">
+      <h2 id="h-trechos">Trechos para revisão</h2>
+      <span class="secundario num" id="n-revisados"></span>
+    </div>
+    <div class="lista-trechos" id="lista-trechos"></div>
+    <p class="painel-rodape secundario">Trechos da mesma classe podem se sobrepor: pela regra de segmentação, cada trecho vai até o fim da última janela acima do limiar, e uma única janela abaixo dele já separa dois trechos.</p>
+    <p class="painel-rodape secundario">Selecione um trecho para ir até ele no vídeo. As decisões ficam salvas neste navegador, junto com o limiar em que foram tomadas.</p>
+  </section>
+</div>
+
+<section class="linha-tempo" aria-labelledby="h-linha">
+  <div class="linha-topo">
+    <div class="linha-titulo">
+      <h2 id="h-linha">Linha do tempo por classe</h2>
+      <span class="secundario" id="legenda-linha"></span>
+    </div>
+    <label class="campo-limiar">
+      Limiar de detecção
+      <input type="range" id="limiar">
+      <span id="limiar-txt" class="num"></span>
+    </label>
+  </div>
+  <div class="trilhas" id="trilhas"></div>
+  <div class="linha-escala">
+    <div class="rotulo-vazio"></div>
+    <div class="escala" id="escala"></div>
+  </div>
+  <div class="linha-escala">
+    <label for="scrub" class="rotulo-scrub secundario">Posição no vídeo</label>
+    <input id="scrub" type="range" min="0" step="any">
+  </div>
+  <div class="cabeca" id="cabeca"></div>
+</section>
+
+</div>
+</div>
+<script type="module" src="js/revisao.js"></script>
+</body>
+</html>

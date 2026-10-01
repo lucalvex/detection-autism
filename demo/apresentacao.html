@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Apresentação do pipeline</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&amp;display=swap">
+<link rel="stylesheet" href="css/estilo.css">
+<link rel="stylesheet" href="css/apresentacao.css">
+</head>
+<body>
+<div class="pagina">
+
+<header class="cabecalho cabecalho-centro">
+  <span class="secundario autoria">Trabalho de Conclusão de Curso, UEM. Lucas Alves de Lima, com orientação de Marcelo de Gomensoro Malheiros</span>
+  <nav class="modo" aria-label="Modo">
+    <span aria-current="page">Apresentação</span>
+    <a id="link-revisao" href="revisao.html">Revisão</a>
+  </nav>
+</header>
+
+<div class="abertura">
+  <h1>Da gravação ao trecho sugerido</h1>
+  <p class="secundario">Detecção automática de estereotipias motoras associadas ao TEA a partir de vídeo, com estimativa de pose e uma rede LSTM.</p>
+</div>
+
+<div id="conteudo">
+
+<section class="medianos" aria-labelledby="h-medianos">
+  <div class="medianos-topo">
+    <h2 id="h-medianos">Vídeos de desempenho mediano</h2>
+    <p class="secundario" id="regra-medianos"></p>
+  </div>
+  <div class="medianos-lista" id="medianos-lista" role="group" aria-labelledby="h-medianos"></div>
+  <p class="aviso-particao" id="aviso-particao" hidden></p>
+</section>
+
+<ol class="etapas" id="etapas"></ol>
+
+<div class="etapa-corpo">
+  <div class="etapa-texto">
+    <h2 id="etapa-titulo"></h2>
+    <p id="etapa-descricao"></p>
+    <dl id="etapa-params"></dl>
+    <div class="etapa-nav">
+      <button type="button" class="botao botao-secundario botao-grande" id="btn-anterior">Etapa anterior</button>
+      <button type="button" class="botao botao-primario botao-grande" id="btn-proxima">Próxima etapa</button>
+    </div>
+  </div>
+  <div class="etapa-visual" id="etapa-visual"></div>
+</div>
+
+<div class="rodape" id="rodape"></div>
+
+<section class="posteriores" aria-labelledby="h-posteriores">
+  <h3 id="h-posteriores">Achados posteriores</h3>
+  <p class="secundario" id="posteriores-aviso"></p>
+  <ul id="posteriores-lista"></ul>
+</section>
+
+</div>
+</div>
+<script type="module" src="js/apresentacao.js"></script>
+</body>
+</html>

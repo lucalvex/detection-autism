@@ -1,0 +1,16 @@
+{
+  "n_anotacoes_xml": 75,
+  "n_comportamentos_anotados": 133,
+  "comportamentos_por_categoria": {
+    "armflapping": 61,
+    "headbanging": 34,
+    "spinning": 38
+  },
+  "n_videos_usados": 56,
+  "n_particoes": 5,
+  "divisao": "por vídeo (StratifiedGroupKFold, random_state=42); cada vídeo é teste em exatamente uma partição",
+  "fontes": {
+    "anotacoes": "..\\download-yt\\xmls",
+    "particoes": "models\\oof\\fold_assignments.json"
+  }
+}
