@@ -1,65 +1,61 @@
-% Gerado por src/gerar_tabelas.py a partir de data/results/*.json -- não edite à mão.
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
 % Requer \usepackage{booktabs}.
-% A matriz de confusão agregada da validação cruzada do modelo base não foi gravada em nenhum
-% arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png), por isso
-% não aparece na tabela de validação cruzada.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Métricas por janela na validação cruzada do modelo base (rótulo por vídeo)}
+\caption{Métricas por janela na validação cruzada do modelo base (treino original)}
 \label{tab:cv-base}
 \begin{tabular}{lrrrr}
 \toprule
 Classe & Precisão & Revocação & F1 & Suporte \\
 \midrule
-ArmFlapping & 0,661 $\pm$ 0,030 & 0,596 $\pm$ 0,123 & 0,621 $\pm$ 0,079 & 51.765 \\
-HeadBanging & 0,264 $\pm$ 0,099 & 0,254 $\pm$ 0,137 & 0,238 $\pm$ 0,095 & 24.846 \\
-Rocking & 0,000 $\pm$ 0,000 & 0,000 $\pm$ 0,000 & 0,000 $\pm$ 0,000 & 0 \\
-HandMovement & 0,000 $\pm$ 0,000 & 0,000 $\pm$ 0,000 & 0,000 $\pm$ 0,000 & 0 \\
-Spinning & 0,520 $\pm$ 0,050 & 0,608 $\pm$ 0,063 & 0,556 $\pm$ 0,024 & 35.436 \\
-Normal & 0,000 $\pm$ 0,000 & 0,000 $\pm$ 0,000 & 0,000 $\pm$ 0,000 & 0 \\
+\textit{arm flapping} & 0,661 $\pm$ 0,030 & 0,596 $\pm$ 0,123 & 0,621 $\pm$ 0,079 & 51.765 \\
+\textit{head banging} & 0,264 $\pm$ 0,099 & 0,254 $\pm$ 0,137 & 0,238 $\pm$ 0,095 & 24.846 \\
+\textit{spinning} & 0,520 $\pm$ 0,050 & 0,608 $\pm$ 0,063 & 0,556 $\pm$ 0,024 & 35.436 \\
 \midrule
-Média macro & 0,241 $\pm$ 0,016 & 0,243 $\pm$ 0,016 & 0,236 $\pm$ 0,015 & 112.047 \\
+Média macro (3 estereotipias) & 0,482 $\pm$ 0,033 & 0,486 $\pm$ 0,032 & 0,472 $\pm$ 0,030 & 112.047 \\
 Média ponderada & 0,532 $\pm$ 0,027 & 0,520 $\pm$ 0,041 & 0,515 $\pm$ 0,034 & 112.047 \\
 \midrule
 Acurácia (\%) & \multicolumn{3}{c}{52,03 $\pm$ 4,08} &  \\
 \bottomrule
 \end{tabular}
-\legend{Média $\pm$ desvio-padrão entre as 5 partições da validação cruzada por vídeo; suporte = total de janelas de teste somado nas partições. Rocking, HandMovement, Normal não têm nenhuma janela no conjunto e entram na média macro com valor nulo. Fonte: o autor.}
+\legend{Modelo base (treino original). Média $\pm$ desvio-padrão entre as 5 partições da validação cruzada por vídeo; suporte = total de janelas de teste somado nas partições. A média macro é calculada partição a partição sobre as estereotipias, a partir dos valores por partição gravados em classification\_report\_per\_fold.txt; as 3 classes sem nenhuma janela no conjunto ficam de fora, e a média ponderada não muda, porque o peso delas é zero. Fonte: Elaborado pelo autor.}
 \end{table}
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Métricas por quadro do modelo base (rótulo por vídeo)}
+\caption{Métricas por quadro do modelo base (treino original)}
 \label{tab:quadro-base}
 \begin{tabular}{lrrrrr}
 \toprule
 Classe & Precisão & Revocação & F1 & F1 ao acaso & Quadros \\
 \midrule
 \multicolumn{6}{l}{Todos os quadros (4 classes)} \\
-ArmFlapping & 0,210 & 0,650 & 0,317 & 0,169 & 14.283 \\
-HeadBanging & 0,102 & 0,277 & 0,149 & 0,123 & 9.141 \\
-Spinning & 0,291 & 0,746 & 0,419 & 0,187 & 16.801 \\
-Fundo & 0,000 & 0,000 & 0,000 & 0,360 & 71.822 \\
+\textit{arm flapping} & 0,210 & 0,650 & 0,317 & 0,169 & 14.283 \\
+\textit{head banging} & 0,102 & 0,277 & 0,149 & 0,123 & 9.141 \\
+\textit{spinning} & 0,291 & 0,746 & 0,419 & 0,187 & 16.801 \\
+fundo & 0,000 & 0,000 & 0,000 & 0,360 & 71.822 \\
 Média macro (3 estereotipias) & 0,201 & 0,558 & 0,295 & 0,160 & 40.225 \\
 Média macro (4 classes, com fundo) & 0,151 & 0,418 & 0,221 & 0,210 & 112.047 \\
 \midrule
 \multicolumn{6}{l}{Só quadros anotados (3 classes)} \\
-ArmFlapping & 0,621 & 0,650 & 0,635 & 0,344 & 14.283 \\
-HeadBanging & 0,353 & 0,277 & 0,310 & 0,270 & 9.141 \\
-Spinning & 0,693 & 0,746 & 0,718 & 0,371 & 16.801 \\
+\textit{arm flapping} & 0,621 & 0,650 & 0,635 & 0,344 & 14.283 \\
+\textit{head banging} & 0,353 & 0,277 & 0,310 & 0,270 & 9.141 \\
+\textit{spinning} & 0,693 & 0,746 & 0,718 & 0,371 & 16.801 \\
 Média macro & 0,555 & 0,558 & 0,555 & 0,328 & 40.225 \\
 \bottomrule
 \end{tabular}
-\legend{Valores agregados sobre os 56 vídeos (predições fora da partição). F1 ao acaso: classificador que sorteia uniformemente entre as $k$ classes do bloco, $F_1 = 2p(1/k)/(p+1/k)$, com $p$ a proporção real da classe. Nos quadros anotados, uma predição de fundo conta como erro da classe anotada. Fonte: o autor.}
+\legend{Modelo base (treino original), com predições fora da partição; valores agregados sobre os 56 vídeos. F1 ao acaso: classificador que sorteia uniformemente entre as $k$ classes do bloco, $F_1 = 2p(1/k)/(p+1/k)$, com $p$ a proporção real da classe. No modelo base, fundo é a predição de qualquer uma das classes sem nenhum exemplo de treino. Nos quadros anotados, uma predição de fundo conta como erro da classe anotada. Fonte: Elaborado pelo autor.}
 \end{table}
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Métricas por evento do modelo base na regra principal}
+\caption{Métricas por evento do modelo base (treino original) na regra principal}
 \label{tab:evento-base}
 \begin{tabular}{rrrrr}
 \toprule
@@ -70,38 +66,38 @@ IoU & F1 macro & Pares casados & Erro de início (s) & Erro de fim (s) \\
 0,5 & 0,013 & 32 & 3,14 & 4,64 \\
 \bottomrule
 \end{tabular}
-\legend{Valores agregados sobre os 56 vídeos (predições fora da partição); regra principal: limiar 0,50, duração mínima de uma janela, o piso natural da regra. Erros de início e de fim: média em segundos, só sobre os pares casados. Fonte: o autor.}
+\legend{Modelo base (treino original), com predições fora da partição; valores agregados sobre os 56 vídeos; regra principal: limiar 0,50, duração mínima de uma janela, o piso natural da regra. Erros de início e de fim: média em segundos, só sobre os pares casados. Fonte: Elaborado pelo autor.}
 \end{table}
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Métricas por evento do modelo base na regra principal, por classe}
+\caption{Métricas por evento do modelo base (treino original) na regra principal, por classe}
 \label{tab:evento-base-classe}
 \begin{tabular}{rlrrrrrr}
 \toprule
 IoU & Classe & VP & FP & FN & Precisão & Revocação & F1 \\
 \midrule
-0,1 & ArmFlapping & 46 & 1.692 & 3 & 0,026 & 0,939 & 0,051 \\
-0,1 & HeadBanging & 18 & 1.571 & 7 & 0,011 & 0,720 & 0,022 \\
-0,1 & Spinning & 22 & 1.587 & 5 & 0,014 & 0,815 & 0,027 \\
+0,1 & \textit{arm flapping} & 46 & 1.692 & 3 & 0,026 & 0,939 & 0,051 \\
+0,1 & \textit{head banging} & 18 & 1.571 & 7 & 0,011 & 0,720 & 0,022 \\
+0,1 & \textit{spinning} & 22 & 1.587 & 5 & 0,014 & 0,815 & 0,027 \\
 \midrule
-0,3 & ArmFlapping & 33 & 1.705 & 16 & 0,019 & 0,673 & 0,037 \\
-0,3 & HeadBanging & 7 & 1.582 & 18 & 0,004 & 0,280 & 0,009 \\
-0,3 & Spinning & 16 & 1.593 & 11 & 0,010 & 0,593 & 0,020 \\
+0,3 & \textit{arm flapping} & 33 & 1.705 & 16 & 0,019 & 0,673 & 0,037 \\
+0,3 & \textit{head banging} & 7 & 1.582 & 18 & 0,004 & 0,280 & 0,009 \\
+0,3 & \textit{spinning} & 16 & 1.593 & 11 & 0,010 & 0,593 & 0,020 \\
 \midrule
-0,5 & ArmFlapping & 16 & 1.722 & 33 & 0,009 & 0,327 & 0,018 \\
-0,5 & HeadBanging & 5 & 1.584 & 20 & 0,003 & 0,200 & 0,006 \\
-0,5 & Spinning & 11 & 1.598 & 16 & 0,007 & 0,407 & 0,013 \\
+0,5 & \textit{arm flapping} & 16 & 1.722 & 33 & 0,009 & 0,327 & 0,018 \\
+0,5 & \textit{head banging} & 5 & 1.584 & 20 & 0,003 & 0,200 & 0,006 \\
+0,5 & \textit{spinning} & 11 & 1.598 & 16 & 0,007 & 0,407 & 0,013 \\
 \bottomrule
 \end{tabular}
-\legend{Valores agregados sobre os 56 vídeos (predições fora da partição); regra principal: limiar 0,50, duração mínima de uma janela, o piso natural da regra. Erros de início e de fim: média em segundos, só sobre os pares casados. Fonte: o autor.}
+\legend{Modelo base (treino original), com predições fora da partição; valores agregados sobre os 56 vídeos; regra principal: limiar 0,50, duração mínima de uma janela, o piso natural da regra. VP: trechos casados com um intervalo anotado da mesma classe; FP: trechos sem par; FN: intervalos anotados sem par. Fonte: Elaborado pelo autor.}
 \end{table}
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Comparação registrada entre o base re-seedado e o modelo com rótulos por intervalo}
+\caption{Comparação registrada entre o modelo base treinado novamente com sementes fixas e o modelo com rótulos por intervalo}
 \label{tab:comparacao}
 \begin{tabular}{lrrrr}
 \toprule
@@ -123,7 +119,7 @@ Partições com Intervalos maior & \multicolumn{2}{c}{0 de 5} & \multicolumn{2}{
 \multicolumn{5}{l}{Veredito: sem diferença distinguível} \\
 \bottomrule
 \end{tabular}
-\legend{Linha ``Agregado'': valores agregados sobre os 56 vídeos; demais linhas: valor de cada partição. Métrica 1: macro F1 por quadro, restrito aos quadros anotados. Métrica 2: F1 por evento, IoU 0,3, regra principal. Base: base re-seedado, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. Critério registrado antes da avaliação (criterio\_comparacao.md): os rótulos por intervalo só seriam considerados melhores se as duas condições acima fossem atendidas. Fonte: o autor.}
+\legend{Linha ``Agregado'': valores agregados sobre os 56 vídeos; demais linhas: valor de cada partição. Métrica 1: macro F1 por quadro, restrito aos quadros anotados. Métrica 2: F1 por evento, IoU 0,3, regra principal. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. Critério registrado antes da avaliação (criterio\_comparacao.md): os rótulos por intervalo só seriam considerados melhores se as duas condições acima fossem atendidas. Fonte: Elaborado pelo autor.}
 \end{table}
 
 \begin{table}[htbp]
@@ -137,30 +133,76 @@ Partições com Intervalos maior & \multicolumn{2}{c}{0 de 5} & \multicolumn{2}{
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
 Classe & Precisão & Revocação & F1 & Precisão & Revocação & F1 & Quadros \\
 \midrule
-ArmFlapping & 0,213 & 0,674 & 0,324 & 0,246 & 0,106 & 0,148 & 14.283 \\
-HeadBanging & 0,099 & 0,276 & 0,146 & 0,230 & 0,124 & 0,161 & 9.141 \\
-Spinning & 0,303 & 0,747 & 0,431 & 0,556 & 0,427 & 0,483 & 16.801 \\
-Fundo & 1,000 & 0,000 & 0,000 & 0,682 & 0,836 & 0,751 & 71.822 \\
+\textit{arm flapping} & 0,213 & 0,674 & 0,324 & 0,246 & 0,106 & 0,148 & 14.283 \\
+\textit{head banging} & 0,099 & 0,276 & 0,146 & 0,230 & 0,124 & 0,161 & 9.141 \\
+\textit{spinning} & 0,303 & 0,747 & 0,431 & 0,556 & 0,427 & 0,483 & 16.801 \\
+fundo & 1,000 & 0,000 & 0,000 & 0,682 & 0,836 & 0,751 & 71.822 \\
 \bottomrule
 \end{tabular}
-\legend{Valores agregados sobre os 56 vídeos (predições fora da partição), todos os quadros com predição. Base: base re-seedado, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. No Base, ``fundo'' é a predição de qualquer uma das classes sem nenhum exemplo de treino, rara: daí a precisão alta com revocação quase nula; no Intervalos, é uma saída treinada. Fonte: o autor.}
+\legend{Predições fora da partição; valores agregados sobre os 56 vídeos, todos os quadros com predição. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. No Base, fundo é a predição de qualquer uma das classes sem nenhum exemplo de treino, rara: daí a precisão alta com revocação quase nula; no Intervalos, é uma saída treinada. Fonte: Elaborado pelo autor.}
 \end{table}
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Distribuição do F1 por quadro por vídeo, em cada classe}
-\label{tab:f1-por-video}
-\begin{tabular}{lrrrrrl}
+\caption{Matriz de confusão por quadro nos quadros anotados}
+\label{tab:confusao-anotados}
+\begin{tabular}{lrrrrr}
 \toprule
-Classe & Vídeos & Mínimo & Mediana & Máximo & F1 zero & Vídeo mediano (F1) \\
+ & \multicolumn{4}{c}{Classe prevista} &  \\
+\cmidrule(lr){2-5}
+Classe anotada & \textit{arm flapping} & \textit{head banging} & \textit{spinning} & fundo & Total \\
 \midrule
-ArmFlapping & 20 & 0,000 & 0,215 & 0,593 & 4 & v\_ArmFlapping\_12 (0,195) \\
-HeadBanging & 17 & 0,000 & 0,000 & 0,646 & 9 & v\_HeadBanging\_24 (0,000) \\
-Spinning & 19 & 0,000 & 0,614 & 0,947 & 2 & v\_Spinning\_22 (0,614) \\
+\multicolumn{6}{l}{Modelo base (treino original)} \\
+\textit{arm flapping} & 9.281 & 2.499 & 2.503 & 0 & 14.283 \\
+\textit{head banging} & 3.553 & 2.533 & 3.055 & 0 & 9.141 \\
+\textit{spinning} & 2.123 & 2.145 & 12.533 & 0 & 16.801 \\
+\midrule
+\multicolumn{6}{l}{Modelo com rótulos por intervalo} \\
+\textit{arm flapping} & 1.509 & 549 & 230 & 11.995 & 14.283 \\
+\textit{head banging} & 526 & 1.132 & 427 & 7.056 & 9.141 \\
+\textit{spinning} & 252 & 375 & 7.175 & 8.999 & 16.801 \\
 \bottomrule
 \end{tabular}
-\legend{Valores por vídeo, não agregados: F1 por quadro de cada vídeo nos quadros anotados, com o modelo de rótulos por intervalo fora da partição e predição natural (fundo conta como erro); macro F1 sobre as classes presentes no gabarito do vídeo. ``F1 zero'': número de vídeos com F1 nulo. Mediana estatística; o vídeo de desempenho mediano é o da posição (n-1)//2 na ordem crescente, com desempate pela ordem alfabética do video\_id. Fonte: o autor.}
+\legend{Predições fora da partição; contagens de quadros agregadas sobre os 56 vídeos, só nos quadros anotados no XML (linhas: classe anotada; colunas: classe prevista). No modelo base, fundo é a predição de qualquer uma das classes sem nenhum exemplo de treino; ele não previu fundo em nenhum quadro anotado. No modelo com rótulos por intervalo, fundo é uma saída treinada. Fonte: Elaborado pelo autor.}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Distribuição da maior pontuação por janela nos dois modelos}
+\label{tab:pontuacao-maxima}
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+Modelo & Saídas & Janelas & Média & Mínimo & P10 & P25 & Mediana & P75 & P90 & Máximo & $\geq$ 0,50 \\
+\midrule
+Base & 6 & 112.047 & 0,976 & 0,266 & 0,956 & 0,999 & 1,000 & 1,000 & 1,000 & 1,000 & 0,998 \\
+Intervalos & 4 & 112.047 & 0,964 & 0,340 & 0,885 & 0,992 & 1,000 & 1,000 & 1,000 & 1,000 & 0,997 \\
+\bottomrule
+\end{tabular}
+\legend{Maior pontuação de cada janela: máximo da softmax sobre todas as saídas do modelo, com predições fora da partição, em todas as janelas dos 56 vídeos (valores agregados sobre as janelas). P$n$: percentil $n$. Última coluna: fração das janelas com maior pontuação igual ou acima do limiar padrão. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. Fonte: Elaborado pelo autor.}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Distribuição do F1 por quadro por vídeo, em cada classe, nos dois modelos}
+\label{tab:f1-por-video}
+\begin{tabular}{llrrrrrl}
+\toprule
+Classe & Modelo & Vídeos & Mínimo & Mediana & Máximo & F1 zero & Vídeo mediano (F1) \\
+\midrule
+\textit{arm flapping} & Base & 20 & 0,000 & 0,673 & 1,000 & 2 & v\_ArmFlapping\_02 (0,642) \\
+\textit{arm flapping} & Intervalos & 20 & 0,000 & 0,215 & 0,593 & 4 & v\_ArmFlapping\_12 (0,195) \\
+\midrule
+\textit{head banging} & Base & 17 & 0,000 & 0,472 & 1,000 & 2 & v\_HeadBanging\_21 (0,472) \\
+\textit{head banging} & Intervalos & 17 & 0,000 & 0,000 & 0,646 & 9 & v\_HeadBanging\_24 (0,000) \\
+\midrule
+\textit{spinning} & Base & 19 & 0,219 & 0,873 & 1,000 & 0 & v\_Spinning\_10 (0,873) \\
+\textit{spinning} & Intervalos & 19 & 0,000 & 0,614 & 0,947 & 2 & v\_Spinning\_22 (0,614) \\
+\bottomrule
+\end{tabular}
+\legend{Valores por vídeo, não agregados: F1 por quadro de cada vídeo nos quadros anotados, com predições fora da partição e predição natural (fundo conta como erro); macro F1 sobre as classes presentes no gabarito do vídeo. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. ``F1 zero'': número de vídeos com F1 nulo. Mediana estatística; o vídeo mediano é o da posição (n-1)//2 na ordem crescente, com desempate pela ordem alfabética do video\_id; os vídeos de desempenho mediano usados na interface são os do modelo com rótulos por intervalo. Fonte: Elaborado pelo autor.}
 \end{table}
 
 \begin{table}[htbp]
@@ -182,13 +224,13 @@ Ablação, ordem dos quadros embaralhada: acurácia balanceada binária & 0,579 
 Ablação, dx e dy zerados: macro F1 por quadro (anotados)$^{a}$ & 0,553 $\rightarrow$ 0,484 & 0,528 $\rightarrow$ 0,484 & Média entre partições \\
 Ablação, dx e dy zerados: acurácia balanceada binária & 0,579 $\rightarrow$ 0,521 & --- & Média entre partições \\
 \midrule
-Fração prevista como a classe do vídeo, dentro dos episódios: ArmFlapping & 0,111 & 0,569 & Média entre os vídeos da classe \\
-Fração prevista como a classe do vídeo, dentro dos episódios: HeadBanging & 0,079 & 0,371 & Média entre os vídeos da classe \\
-Fração prevista como a classe do vídeo, dentro dos episódios: Spinning & 0,457 & 0,761 & Média entre os vídeos da classe \\
-Fração prevista como a classe do vídeo, fora dos episódios: ArmFlapping & 0,071 & 0,538 & Média entre os vídeos da classe \\
-Fração prevista como a classe do vídeo, fora dos episódios: HeadBanging & 0,100 & 0,353 & Média entre os vídeos da classe \\
-Fração prevista como a classe do vídeo, fora dos episódios: Spinning & 0,249 & 0,643 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, dentro dos episódios: \textit{arm flapping} & 0,111 & 0,569 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, dentro dos episódios: \textit{head banging} & 0,079 & 0,371 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, dentro dos episódios: \textit{spinning} & 0,457 & 0,761 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, fora dos episódios: \textit{arm flapping} & 0,071 & 0,538 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, fora dos episódios: \textit{head banging} & 0,100 & 0,353 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, fora dos episódios: \textit{spinning} & 0,249 & 0,643 & Média entre os vídeos da classe \\
 \bottomrule
 \end{tabular}
-\legend{Análises definidas depois de conhecer o resultado da comparação registrada; não fazem parte do critério e não mudam o veredito. A agregação de cada linha está na última coluna. Base: base re-seedado, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. $^{a}$No Intervalos, argmax só entre as saídas das estereotipias, ignorando a de fundo; no Base, predição natural. Nas ablações, valores sem $\rightarrow$ com a ablação. Fonte: o autor.}
+\legend{Análises definidas depois de conhecer o resultado da comparação registrada; não fazem parte do critério e não mudam o veredito. A agregação de cada linha está na última coluna. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. $^{a}$No Intervalos, argmax só entre as saídas das estereotipias, ignorando a de fundo; no Base, predição natural. Nas ablações, valores sem $\rightarrow$ com a ablação. Fonte: Elaborado pelo autor.}
 \end{table}

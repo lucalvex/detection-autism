@@ -1,0 +1,1177 @@
+{
+  "descricao": "Distribuição da maior pontuação por janela (máximo da softmax sobre todas as saídas) e F1 por quadro de cada vídeo nos quadros anotados (predição natural; macro F1 sobre as classes presentes no gabarito do vídeo), com os checkpoints fora da partição de cada modelo. Nenhum treino.",
+  "modelos": {
+    "base_sementes_fixas": {
+      "descricao": "modelo base treinado novamente com sementes fixas (rótulo por vídeo)",
+      "checkpoints": "models/oof_seeded_base",
+      "n_saidas": 6,
+      "pontuacao_maxima_por_janela": {
+        "n_janelas": 112047,
+        "n_videos": 56,
+        "media": 0.9761365915915775,
+        "percentis": {
+          "0": 0.2659715712070465,
+          "10": 0.9557555913925171,
+          "25": 0.9994680285453796,
+          "50": 0.9999983310699463,
+          "75": 1.0,
+          "90": 1.0,
+          "100": 1.0
+        },
+        "limiar_padrao": 0.5,
+        "fracao_janelas_acima_do_limiar": 0.9975724472765893
+      },
+      "f1_por_video": [
+        {
+          "video_id": "v_ArmFlapping_01",
+          "classe_do_video": "ArmFlapping",
+          "particao": 4,
+          "f1_quadro_anotados": 0.25761772853185594,
+          "n_quadros_anotados_com_predicao": 268,
+          "classes_no_gabarito": [
+            "ArmFlapping",
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_02",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 0.6423357664233577,
+          "n_quadros_anotados_com_predicao": 372,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_03",
+          "classe_do_video": "ArmFlapping",
+          "particao": 5,
+          "f1_quadro_anotados": 0.9496402877697842,
+          "n_quadros_anotados_com_predicao": 73,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_04",
+          "classe_do_video": "ArmFlapping",
+          "particao": 4,
+          "f1_quadro_anotados": 0.9388783868935098,
+          "n_quadros_anotados_com_predicao": 842,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_05",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 0.6297872340425532,
+          "n_quadros_anotados_com_predicao": 161,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_08",
+          "classe_do_video": "ArmFlapping",
+          "particao": 5,
+          "f1_quadro_anotados": 0.593681917211329,
+          "n_quadros_anotados_com_predicao": 1291,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_09",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 1.0,
+          "n_quadros_anotados_com_predicao": 2045,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_10",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 0.9461219656601539,
+          "n_quadros_anotados_com_predicao": 890,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_12",
+          "classe_do_video": "ArmFlapping",
+          "particao": 1,
+          "f1_quadro_anotados": 0.9933213878481837,
+          "n_quadros_anotados_com_predicao": 3090,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_13",
+          "classe_do_video": "ArmFlapping",
+          "particao": 4,
+          "f1_quadro_anotados": 0.704,
+          "n_quadros_anotados_com_predicao": 405,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_14",
+          "classe_do_video": "ArmFlapping",
+          "particao": 4,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 61,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_15",
+          "classe_do_video": "ArmFlapping",
+          "particao": 5,
+          "f1_quadro_anotados": 1.0,
+          "n_quadros_anotados_com_predicao": 332,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_16",
+          "classe_do_video": "ArmFlapping",
+          "particao": 1,
+          "f1_quadro_anotados": 0.5253940455341506,
+          "n_quadros_anotados_com_predicao": 421,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_18",
+          "classe_do_video": "ArmFlapping",
+          "particao": 5,
+          "f1_quadro_anotados": 0.7295597484276729,
+          "n_quadros_anotados_com_predicao": 404,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_19",
+          "classe_do_video": "ArmFlapping",
+          "particao": 2,
+          "f1_quadro_anotados": 0.17655906513941919,
+          "n_quadros_anotados_com_predicao": 2484,
+          "classes_no_gabarito": [
+            "ArmFlapping",
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_20",
+          "classe_do_video": "ArmFlapping",
+          "particao": 1,
+          "f1_quadro_anotados": 0.7589743589743589,
+          "n_quadros_anotados_com_predicao": 121,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_21",
+          "classe_do_video": "ArmFlapping",
+          "particao": 1,
+          "f1_quadro_anotados": 0.5271739130434783,
+          "n_quadros_anotados_com_predicao": 271,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_22",
+          "classe_do_video": "ArmFlapping",
+          "particao": 2,
+          "f1_quadro_anotados": 0.7953667953667953,
+          "n_quadros_anotados_com_predicao": 936,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_24",
+          "classe_do_video": "ArmFlapping",
+          "particao": 2,
+          "f1_quadro_anotados": 0.06666666666666667,
+          "n_quadros_anotados_com_predicao": 174,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_25",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 115,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_01",
+          "classe_do_video": "HeadBanging",
+          "particao": 4,
+          "f1_quadro_anotados": 1.0,
+          "n_quadros_anotados_com_predicao": 11,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_02",
+          "classe_do_video": "HeadBanging",
+          "particao": 5,
+          "f1_quadro_anotados": 0.7296137339055794,
+          "n_quadros_anotados_com_predicao": 296,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_03",
+          "classe_do_video": "HeadBanging",
+          "particao": 2,
+          "f1_quadro_anotados": 0.76,
+          "n_quadros_anotados_com_predicao": 62,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_05",
+          "classe_do_video": "HeadBanging",
+          "particao": 2,
+          "f1_quadro_anotados": 0.7242424242424242,
+          "n_quadros_anotados_com_predicao": 421,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_06",
+          "classe_do_video": "HeadBanging",
+          "particao": 1,
+          "f1_quadro_anotados": 0.2052980132450331,
+          "n_quadros_anotados_com_predicao": 271,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_07",
+          "classe_do_video": "HeadBanging",
+          "particao": 5,
+          "f1_quadro_anotados": 0.9248554913294798,
+          "n_quadros_anotados_com_predicao": 93,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_10",
+          "classe_do_video": "HeadBanging",
+          "particao": 4,
+          "f1_quadro_anotados": 0.4260869565217391,
+          "n_quadros_anotados_com_predicao": 181,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_13",
+          "classe_do_video": "HeadBanging",
+          "particao": 4,
+          "f1_quadro_anotados": 0.7477203647416414,
+          "n_quadros_anotados_com_predicao": 412,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_15",
+          "classe_do_video": "HeadBanging",
+          "particao": 2,
+          "f1_quadro_anotados": 0.5782828282828283,
+          "n_quadros_anotados_com_predicao": 563,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_16",
+          "classe_do_video": "HeadBanging",
+          "particao": 1,
+          "f1_quadro_anotados": 0.5296167247386759,
+          "n_quadros_anotados_com_predicao": 211,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_17",
+          "classe_do_video": "HeadBanging",
+          "particao": 2,
+          "f1_quadro_anotados": 0.4620573355817875,
+          "n_quadros_anotados_com_predicao": 1368,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_18",
+          "classe_do_video": "HeadBanging",
+          "particao": 1,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 272,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_19",
+          "classe_do_video": "HeadBanging",
+          "particao": 3,
+          "f1_quadro_anotados": 0.16672990577373048,
+          "n_quadros_anotados_com_predicao": 1488,
+          "classes_no_gabarito": [
+            "ArmFlapping",
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_20",
+          "classe_do_video": "HeadBanging",
+          "particao": 1,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 813,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_21",
+          "classe_do_video": "HeadBanging",
+          "particao": 4,
+          "f1_quadro_anotados": 0.4715513712648383,
+          "n_quadros_anotados_com_predicao": 1867,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_22",
+          "classe_do_video": "HeadBanging",
+          "particao": 5,
+          "f1_quadro_anotados": 0.3344947735191638,
+          "n_quadros_anotados_com_predicao": 239,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_24",
+          "classe_do_video": "HeadBanging",
+          "particao": 5,
+          "f1_quadro_anotados": 0.21428571428571427,
+          "n_quadros_anotados_com_predicao": 100,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_01",
+          "classe_do_video": "Spinning",
+          "particao": 5,
+          "f1_quadro_anotados": 0.6793557833089312,
+          "n_quadros_anotados_com_predicao": 451,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_02",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 0.8102766798418972,
+          "n_quadros_anotados_com_predicao": 301,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_04",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.9828178694158075,
+          "n_quadros_anotados_com_predicao": 1628,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_05",
+          "classe_do_video": "Spinning",
+          "particao": 4,
+          "f1_quadro_anotados": 0.7553191489361702,
+          "n_quadros_anotados_com_predicao": 117,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_07",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 1.0,
+          "n_quadros_anotados_com_predicao": 240,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_08",
+          "classe_do_video": "Spinning",
+          "particao": 5,
+          "f1_quadro_anotados": 0.962605548854041,
+          "n_quadros_anotados_com_predicao": 430,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_09",
+          "classe_do_video": "Spinning",
+          "particao": 4,
+          "f1_quadro_anotados": 0.21875,
+          "n_quadros_anotados_com_predicao": 399,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_10",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 0.8730277986476334,
+          "n_quadros_anotados_com_predicao": 750,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_11",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.8033707865168539,
+          "n_quadros_anotados_com_predicao": 213,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_12",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 0.9139072847682119,
+          "n_quadros_anotados_com_predicao": 82,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_14",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.8594594594594595,
+          "n_quadros_anotados_com_predicao": 211,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_15",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.8708333333333333,
+          "n_quadros_anotados_com_predicao": 271,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_16",
+          "classe_do_video": "Spinning",
+          "particao": 5,
+          "f1_quadro_anotados": 0.933786078098472,
+          "n_quadros_anotados_com_predicao": 314,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_18",
+          "classe_do_video": "Spinning",
+          "particao": 1,
+          "f1_quadro_anotados": 0.7738506510762689,
+          "n_quadros_anotados_com_predicao": 6921,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_19",
+          "classe_do_video": "Spinning",
+          "particao": 4,
+          "f1_quadro_anotados": 0.9878934624697336,
+          "n_quadros_anotados_com_predicao": 209,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_21",
+          "classe_do_video": "Spinning",
+          "particao": 5,
+          "f1_quadro_anotados": 0.9446564885496184,
+          "n_quadros_anotados_com_predicao": 553,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_22",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 0.8815409309791332,
+          "n_quadros_anotados_com_predicao": 1742,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_23",
+          "classe_do_video": "Spinning",
+          "particao": 4,
+          "f1_quadro_anotados": 0.9900937081659973,
+          "n_quadros_anotados_com_predicao": 1886,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_25",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.8142857142857143,
+          "n_quadros_anotados_com_predicao": 83,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        }
+      ]
+    },
+    "rotulos_por_intervalo": {
+      "descricao": "modelo com rótulos por intervalo anotado e classe de fundo",
+      "checkpoints": "models/oof_seeded_annotated",
+      "n_saidas": 4,
+      "pontuacao_maxima_por_janela": {
+        "n_janelas": 112047,
+        "n_videos": 56,
+        "media": 0.9643931135729273,
+        "percentis": {
+          "0": 0.34022021293640137,
+          "10": 0.8848036050796508,
+          "25": 0.9916146695613861,
+          "50": 0.9995688796043396,
+          "75": 0.9999517202377319,
+          "90": 0.9999924898147583,
+          "100": 1.0
+        },
+        "limiar_padrao": 0.5,
+        "fracao_janelas_acima_do_limiar": 0.9967513632672004
+      },
+      "f1_por_video": [
+        {
+          "video_id": "v_ArmFlapping_01",
+          "classe_do_video": "ArmFlapping",
+          "particao": 4,
+          "f1_quadro_anotados": 0.45045045045045046,
+          "n_quadros_anotados_com_predicao": 268,
+          "classes_no_gabarito": [
+            "ArmFlapping",
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_02",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 0.2817551963048499,
+          "n_quadros_anotados_com_predicao": 372,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_03",
+          "classe_do_video": "ArmFlapping",
+          "particao": 5,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 73,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_04",
+          "classe_do_video": "ArmFlapping",
+          "particao": 4,
+          "f1_quadro_anotados": 0.25311203319502074,
+          "n_quadros_anotados_com_predicao": 842,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_05",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 161,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_08",
+          "classe_do_video": "ArmFlapping",
+          "particao": 5,
+          "f1_quadro_anotados": 0.07169529499626587,
+          "n_quadros_anotados_com_predicao": 1291,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_09",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 0.255863539445629,
+          "n_quadros_anotados_com_predicao": 2045,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_10",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 0.3031458531935176,
+          "n_quadros_anotados_com_predicao": 890,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_12",
+          "classe_do_video": "ArmFlapping",
+          "particao": 1,
+          "f1_quadro_anotados": 0.19456617002629273,
+          "n_quadros_anotados_com_predicao": 3090,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_13",
+          "classe_do_video": "ArmFlapping",
+          "particao": 4,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 405,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_14",
+          "classe_do_video": "ArmFlapping",
+          "particao": 4,
+          "f1_quadro_anotados": 0.15151515151515152,
+          "n_quadros_anotados_com_predicao": 61,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_15",
+          "classe_do_video": "ArmFlapping",
+          "particao": 5,
+          "f1_quadro_anotados": 0.3844282238442822,
+          "n_quadros_anotados_com_predicao": 332,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_16",
+          "classe_do_video": "ArmFlapping",
+          "particao": 1,
+          "f1_quadro_anotados": 0.037296037296037296,
+          "n_quadros_anotados_com_predicao": 421,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_18",
+          "classe_do_video": "ArmFlapping",
+          "particao": 5,
+          "f1_quadro_anotados": 0.31315240083507306,
+          "n_quadros_anotados_com_predicao": 404,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_19",
+          "classe_do_video": "ArmFlapping",
+          "particao": 2,
+          "f1_quadro_anotados": 0.12207720588235293,
+          "n_quadros_anotados_com_predicao": 2484,
+          "classes_no_gabarito": [
+            "ArmFlapping",
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_20",
+          "classe_do_video": "ArmFlapping",
+          "particao": 1,
+          "f1_quadro_anotados": 0.5930232558139535,
+          "n_quadros_anotados_com_predicao": 121,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_21",
+          "classe_do_video": "ArmFlapping",
+          "particao": 1,
+          "f1_quadro_anotados": 0.23452768729641693,
+          "n_quadros_anotados_com_predicao": 271,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_22",
+          "classe_do_video": "ArmFlapping",
+          "particao": 2,
+          "f1_quadro_anotados": 0.2586046511627907,
+          "n_quadros_anotados_com_predicao": 936,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_24",
+          "classe_do_video": "ArmFlapping",
+          "particao": 2,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 174,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_ArmFlapping_25",
+          "classe_do_video": "ArmFlapping",
+          "particao": 3,
+          "f1_quadro_anotados": 0.1889763779527559,
+          "n_quadros_anotados_com_predicao": 115,
+          "classes_no_gabarito": [
+            "ArmFlapping"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_01",
+          "classe_do_video": "HeadBanging",
+          "particao": 4,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 11,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_02",
+          "classe_do_video": "HeadBanging",
+          "particao": 5,
+          "f1_quadro_anotados": 0.2485207100591716,
+          "n_quadros_anotados_com_predicao": 296,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_03",
+          "classe_do_video": "HeadBanging",
+          "particao": 2,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 62,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_05",
+          "classe_do_video": "HeadBanging",
+          "particao": 2,
+          "f1_quadro_anotados": 0.6463022508038585,
+          "n_quadros_anotados_com_predicao": 421,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_06",
+          "classe_do_video": "HeadBanging",
+          "particao": 1,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 271,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_07",
+          "classe_do_video": "HeadBanging",
+          "particao": 5,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 93,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_10",
+          "classe_do_video": "HeadBanging",
+          "particao": 4,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 181,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_13",
+          "classe_do_video": "HeadBanging",
+          "particao": 4,
+          "f1_quadro_anotados": 0.418426103646833,
+          "n_quadros_anotados_com_predicao": 412,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_15",
+          "classe_do_video": "HeadBanging",
+          "particao": 2,
+          "f1_quadro_anotados": 0.240625,
+          "n_quadros_anotados_com_predicao": 563,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_16",
+          "classe_do_video": "HeadBanging",
+          "particao": 1,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 211,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_17",
+          "classe_do_video": "HeadBanging",
+          "particao": 2,
+          "f1_quadro_anotados": 0.18687872763419483,
+          "n_quadros_anotados_com_predicao": 1368,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_18",
+          "classe_do_video": "HeadBanging",
+          "particao": 1,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 272,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_19",
+          "classe_do_video": "HeadBanging",
+          "particao": 3,
+          "f1_quadro_anotados": 0.21180555555555555,
+          "n_quadros_anotados_com_predicao": 1488,
+          "classes_no_gabarito": [
+            "ArmFlapping",
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_20",
+          "classe_do_video": "HeadBanging",
+          "particao": 1,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 813,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_21",
+          "classe_do_video": "HeadBanging",
+          "particao": 4,
+          "f1_quadro_anotados": 0.2832183908045977,
+          "n_quadros_anotados_com_predicao": 1867,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_22",
+          "classe_do_video": "HeadBanging",
+          "particao": 5,
+          "f1_quadro_anotados": 0.040983606557377046,
+          "n_quadros_anotados_com_predicao": 239,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_HeadBanging_24",
+          "classe_do_video": "HeadBanging",
+          "particao": 5,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 100,
+          "classes_no_gabarito": [
+            "HeadBanging"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_01",
+          "classe_do_video": "Spinning",
+          "particao": 5,
+          "f1_quadro_anotados": 0.3013182674199623,
+          "n_quadros_anotados_com_predicao": 451,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_02",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 0.38605898123324395,
+          "n_quadros_anotados_com_predicao": 301,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_04",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.9462783171521035,
+          "n_quadros_anotados_com_predicao": 1628,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_05",
+          "classe_do_video": "Spinning",
+          "particao": 4,
+          "f1_quadro_anotados": 0.49032258064516127,
+          "n_quadros_anotados_com_predicao": 117,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_07",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 0.9473684210526315,
+          "n_quadros_anotados_com_predicao": 240,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_08",
+          "classe_do_video": "Spinning",
+          "particao": 5,
+          "f1_quadro_anotados": 0.8235294117647058,
+          "n_quadros_anotados_com_predicao": 430,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_09",
+          "classe_do_video": "Spinning",
+          "particao": 4,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 399,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_10",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 0.5632183908045977,
+          "n_quadros_anotados_com_predicao": 750,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_11",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.38022813688212925,
+          "n_quadros_anotados_com_predicao": 213,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_12",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 0.2916666666666667,
+          "n_quadros_anotados_com_predicao": 82,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_14",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.8245125348189415,
+          "n_quadros_anotados_com_predicao": 211,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_15",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.7453703703703703,
+          "n_quadros_anotados_com_predicao": 271,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_16",
+          "classe_do_video": "Spinning",
+          "particao": 5,
+          "f1_quadro_anotados": 0.7782101167315175,
+          "n_quadros_anotados_com_predicao": 314,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_18",
+          "classe_do_video": "Spinning",
+          "particao": 1,
+          "f1_quadro_anotados": 0.34663162924032487,
+          "n_quadros_anotados_com_predicao": 6921,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_19",
+          "classe_do_video": "Spinning",
+          "particao": 4,
+          "f1_quadro_anotados": 0.8516483516483516,
+          "n_quadros_anotados_com_predicao": 209,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_21",
+          "classe_do_video": "Spinning",
+          "particao": 5,
+          "f1_quadro_anotados": 0.7079439252336449,
+          "n_quadros_anotados_com_predicao": 553,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_22",
+          "classe_do_video": "Spinning",
+          "particao": 2,
+          "f1_quadro_anotados": 0.6141607000795545,
+          "n_quadros_anotados_com_predicao": 1742,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_23",
+          "classe_do_video": "Spinning",
+          "particao": 4,
+          "f1_quadro_anotados": 0.8720095693779905,
+          "n_quadros_anotados_com_predicao": 1886,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        },
+        {
+          "video_id": "v_Spinning_25",
+          "classe_do_video": "Spinning",
+          "particao": 3,
+          "f1_quadro_anotados": 0.0,
+          "n_quadros_anotados_com_predicao": 83,
+          "classes_no_gabarito": [
+            "Spinning"
+          ]
+        }
+      ]
+    }
+  }
+}
