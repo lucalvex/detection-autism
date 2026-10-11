@@ -4,19 +4,22 @@
 # O QUE FAZ: gera resultados_tabelas.tex (raiz do repositório) com as
 # tabelas de resultado do TCC no formato do abntex2 (\caption, \label,
 # \legend), lendo tudo dos arquivos de resultado -- nenhum número é
-# digitado à mão. Vírgula decimal. Cada legenda diz se os valores são
-# agregados sobre os vídeos ou média e desvio-padrão entre partições.
+# digitado à mão. Vírgula decimal. Cada legenda diz qual modelo base é
+# usado e se os valores são agregados sobre os vídeos, por vídeo ou
+# média e desvio-padrão entre partições.
 #
 # Requer \usepackage{booktabs} no preâmbulo do documento.
 #
-# Fontes:
-#   data/results/cv_metrics.json                          (tabela 1)
-#   data/results/metricas.json                            (tabelas 2 e 3, modelo base, models/oof)
-#   data/results/comparacao_final.json                    (tabela 4)
-#   data/results/comparacao_{base_reseeded,rodada_a}/metricas.json (tabela 5)
-#   data/results/videos_desempenho_mediano.json           (tabela 6)
-#   data/results/analises_posteriores.json                (tabela 7)
-#   data/results/resumo_dados.json                        (número de vídeos e de partições)
+# Fontes (todas versionadas em data/results/):
+#   cv_metrics.json, classification_report_per_fold.txt  validação cruzada do modelo base (treino original)
+#   metricas.json                                        avaliação temporal do modelo base (treino original)
+#   comparacao_final.json                                comparação registrada
+#   comparacao_{base_reseeded,rodada_a}/metricas.json    avaliação temporal dos dois modelos da comparação
+#   distribuicoes_por_janela_e_video.json                maior pontuação por janela e F1 por vídeo
+#   videos_desempenho_mediano.json                       regra dos vídeos de desempenho mediano
+#   analises_posteriores.json                            análises posteriores
+#   resumo_dados.json                                    número de vídeos
+#   ../datasets_annotated/labels.json                    nomes das classes
 #
 # Uso: python src/gerar_tabelas.py [--saida resultados_tabelas.tex]
 # ============================================================
@@ -27,13 +30,18 @@ import re
 import statistics
 from pathlib import Path
 
+import numpy as np
+
 R = Path("data/results")
+LABELS = Path("data/datasets_annotated/labels.json")
 CLASSES_REAIS = ["ArmFlapping", "HeadBanging", "Spinning"]
-NOME_FUNDO = "Fundo"
-FONTE = "Fonte: o autor."
+FONTE = "Fonte: Elaborado pelo autor."
+
+BASE_ORIGINAL = "modelo base (treino original)"
+BASE_SEMENTES = "modelo base treinado novamente com sementes fixas"
 BASE = "Base"
 INTERVALOS = "Intervalos"
-SIGLAS_MODELOS = (f"{BASE}: base re-seedado, com rótulo por vídeo; "
+SIGLAS_MODELOS = (f"{BASE}: {BASE_SEMENTES}, com rótulo por vídeo; "
                   f"{INTERVALOS}: modelo com rótulos por intervalo anotado e classe de fundo.")
 
 
@@ -62,12 +70,22 @@ def esc(texto):
           .replace("&", "\\&").replace("%", "\\%").replace("#", "\\#"))
 
 
+def _nomes_das_classes():
+  """id em minúsculas -> nome legível em minúsculas, a partir dos nomes
+  CamelCase do labels.json (ArmFlapping -> arm flapping)."""
+  return {nome.lower(): re.sub(r"(?<!^)(?=[A-Z])", " ", nome).lower() for nome in ler(LABELS)}
+
+
+NOMES = _nomes_das_classes()
+
+
 def nome_classe(c):
-  return NOME_FUNDO if c == "Background" else c
+  if c.lower() == "background":
+    return "fundo"
+  return f"\\textit{{{NOMES[c.lower()]}}}"
 
 
 def colunas(spec):
-  # conta colunas l/c/r e p{...} de uma especificação de tabular
   return len(re.findall(r"[lcr]|p\{[^}]*\}", spec))
 
 
@@ -81,7 +99,7 @@ def celulas_ocupadas(linha):
 
 def tabela(rotulo, titulo, spec, cabecalho, corpo, nota, tamanho=None):
   """cabecalho e corpo: listas de linhas; cada linha é uma lista de
-  células, ou a string "\\midrule"/"\\cmidrule..." inserida como está."""
+  células, ou uma string (\\midrule, \\cmidrule...) inserida como está."""
 
   n = colunas(spec)
   partes = ["\\begin{table}[htbp]", "\\centering"]
@@ -117,10 +135,14 @@ def sim_nao(valor):
   return "sim" if valor else "não"
 
 
+def media(vals):
+  return sum(vals) / len(vals)
+
+
 def f1_acaso(suportes):
   """F1 por classe de um classificador que sorteia uniformemente entre
-  as k classes: revocação = 1/k, precisão = proporção real p da
-  classe, F1 = 2p(1/k)/(p+1/k). Mesma fórmula de
+  as k classes: revocação = 1/k, precisão = proporção real p da classe,
+  F1 = 2p(1/k)/(p+1/k). Mesma fórmula de
   evaluate_temporal.chance_level_macro_f1."""
 
   total = sum(suportes.values())
@@ -133,30 +155,60 @@ def f1_acaso(suportes):
 
 
 # ---------------------------------------------------------------
-# 1. validação cruzada por janela, modelo base
+# validação cruzada por janela, modelo base (treino original)
 # ---------------------------------------------------------------
 
-def t1_cv_base(cv):
-  classes = list(cv["per_class"].keys())
+def ler_relatorio_por_particao(caminho, classes):
+  """Lê o classification_report de cada partição gravado pelo
+  train_classifier.py na mesma rodada do cv_metrics.json."""
+  particoes = []
+  for linha in open(caminho, encoding="utf-8"):
+    if linha.startswith("====="):
+      particoes.append({})
+      continue
+    partes = linha.split()
+    if particoes and len(partes) == 5 and partes[0] in classes:
+      particoes[-1][partes[0]] = {"precision": float(partes[1]), "recall": float(partes[2]), "f1": float(partes[3])}
+  return particoes
+
+
+def t_cv_base(cv, por_particao):
+  assert len(por_particao) == cv["n_splits"]
+  casas_gravadas = 4  # o relatório por partição é impresso com 4 casas; tolerância de arredondamento
+  tol = 0.5 * 10 ** -casas_gravadas
+  for c in CLASSES_REAIS:
+    for chave, campo in (("precision", "precision"), ("recall", "recall"), ("f1", "f1")):
+      vals = [p[c][campo] for p in por_particao]
+      assert abs(np.mean(vals) - cv["per_class"][c][f"{chave}_mean"]) <= tol, (c, chave)
+      assert abs(np.std(vals) - cv["per_class"][c][f"{chave}_std"]) <= 2 * tol, (c, chave)
+
   corpo = []
-  for c in classes:
+  for c in CLASSES_REAIS:
     m = cv["per_class"][c]
-    corpo.append([c, pm(m["precision_mean"], m["precision_std"]), pm(m["recall_mean"], m["recall_std"]),
+    corpo.append([nome_classe(c), pm(m["precision_mean"], m["precision_std"]), pm(m["recall_mean"], m["recall_std"]),
                   pm(m["f1_mean"], m["f1_std"]), inteiro(m["support"])])
   corpo.append("\\midrule")
-  for rotulo, chave in (("Média macro", "macro_avg"), ("Média ponderada", "weighted_avg")):
-    m = cv[chave]
-    corpo.append([rotulo, pm(m["precision_mean"], m["precision_std"]), pm(m["recall_mean"], m["recall_std"]),
-                  pm(m["f1_mean"], m["f1_std"]), inteiro(m["support"])])
+  macro = {campo: [media([p[c][campo] for c in CLASSES_REAIS]) for p in por_particao] for campo in ("precision", "recall", "f1")}
+  suporte_reais = sum(cv["per_class"][c]["support"] for c in CLASSES_REAIS)
+  corpo.append([f"Média macro ({len(CLASSES_REAIS)} estereotipias)",
+                pm(np.mean(macro["precision"]), np.std(macro["precision"])), pm(np.mean(macro["recall"]), np.std(macro["recall"])),
+                pm(np.mean(macro["f1"]), np.std(macro["f1"])), inteiro(suporte_reais)])
+  w = cv["weighted_avg"]
+  assert w["support"] == suporte_reais
+  corpo.append(["Média ponderada", pm(w["precision_mean"], w["precision_std"]), pm(w["recall_mean"], w["recall_std"]),
+                pm(w["f1_mean"], w["f1_std"]), inteiro(w["support"])])
   corpo.append("\\midrule")
   corpo.append(["Acurácia (\\%)", mc(3, pm(cv["mean_accuracy"], cv["std_accuracy"], 2)), ""])
-  sem_dado = [c for c in classes if cv["per_class"][c]["support"] == 0]
-  nota = (f"Média $\\pm$ desvio-padrão entre as {cv['n_splits']} partições da validação cruzada por vídeo; "
-          f"suporte = total de janelas de teste somado nas partições. "
-          f"{', '.join(sem_dado)} não têm nenhuma janela no conjunto e entram na média macro com valor nulo.")
+
+  sem_dado = [c for c in cv["per_class"] if cv["per_class"][c]["support"] == 0]
+  nota = (f"Modelo base (treino original). Média $\\pm$ desvio-padrão entre as {cv['n_splits']} partições da validação "
+          "cruzada por vídeo; suporte = total de janelas de teste somado nas partições. A média macro é calculada "
+          "partição a partição sobre as estereotipias, a partir dos valores por partição gravados em "
+          f"classification\\_report\\_per\\_fold.txt; as {len(sem_dado)} classes sem nenhuma janela no conjunto ficam "
+          "de fora, e a média ponderada não muda, porque o peso delas é zero.")
   return tabela(
     "tab:cv-base",
-    "Métricas por janela na validação cruzada do modelo base (rótulo por vídeo)",
+    "Métricas por janela na validação cruzada do modelo base (treino original)",
     "lrrrr",
     [["Classe", "Precisão", "Revocação", "F1", "Suporte"]],
     corpo, nota, "\\small",
@@ -164,22 +216,17 @@ def t1_cv_base(cv):
 
 
 # ---------------------------------------------------------------
-# 2. por quadro, modelo base
+# por quadro, modelo base (treino original)
 # ---------------------------------------------------------------
 
 def bloco_quadro(rep, classes):
-  suportes = {c: rep[c]["support"] for c in classes}
-  acaso = f1_acaso(suportes)
+  acaso = f1_acaso({c: rep[c]["support"] for c in classes})
   linhas = [[nome_classe(c), num(rep[c]["precision"]), num(rep[c]["recall"]), num(rep[c]["f1-score"]),
              num(acaso[c]), inteiro(rep[c]["support"])] for c in classes]
   return linhas, acaso
 
 
-def media(vals):
-  return sum(vals) / len(vals)
-
-
-def t2_quadro_base(m, n_videos):
+def t_quadro_base(m, n_videos):
   todos = m["por_quadro"]["todos_os_quadros"]["pooled_56_videos"]
   anot_bloco = m["por_quadro"]["somente_quadros_anotados"]
   anot = anot_bloco["pooled_56_videos"]
@@ -209,13 +256,14 @@ def t2_quadro_base(m, n_videos):
                 num(media([rep_a[c]["recall"] for c in CLASSES_REAIS])), num(f1), num(acaso_macro),
                 inteiro(sum(rep_a[c]["support"] for c in CLASSES_REAIS))])
 
-  nota = (f"Valores agregados sobre os {n_videos} vídeos (predições fora da partição). "
+  nota = (f"Modelo base (treino original), com predições fora da partição; valores agregados sobre os {n_videos} vídeos. "
           "F1 ao acaso: classificador que sorteia uniformemente entre as $k$ classes do bloco, "
-          "$F_1 = 2p(1/k)/(p+1/k)$, com $p$ a proporção real da classe. "
-          "Nos quadros anotados, uma predição de fundo conta como erro da classe anotada.")
+          "$F_1 = 2p(1/k)/(p+1/k)$, com $p$ a proporção real da classe. No modelo base, fundo é a predição de "
+          "qualquer uma das classes sem nenhum exemplo de treino. Nos quadros anotados, uma predição de fundo conta "
+          "como erro da classe anotada.")
   return tabela(
     "tab:quadro-base",
-    "Métricas por quadro do modelo base (rótulo por vídeo)",
+    "Métricas por quadro do modelo base (treino original)",
     "lrrrrr",
     [["Classe", "Precisão", "Revocação", "F1", "F1 ao acaso", "Quadros"]],
     corpo, nota, "\\small",
@@ -223,7 +271,7 @@ def t2_quadro_base(m, n_videos):
 
 
 # ---------------------------------------------------------------
-# 3. por evento, modelo base, regra principal
+# por evento, modelo base (treino original), regra principal
 # ---------------------------------------------------------------
 
 def descricao_regra(rp):
@@ -231,11 +279,10 @@ def descricao_regra(rp):
   return f"limiar {num(rp['limiar'], 2)}, duração mínima de {dur}"
 
 
-def t3_evento_base(m, n_videos):
+def t_evento_base(m, n_videos):
   rp = m["por_evento"]["regra_principal"]
   ious = sorted(rp["por_iou"], key=float)
-  resumo = []
-  detalhe = []
+  resumo, detalhe = [], []
   for i, iou in enumerate(ious):
     p = rp["por_iou"][iou]["pooled_56_videos"]
     resumo.append([num(float(iou), 1), num(p["macro_f1"]), inteiro(p["n_pares_casados"]),
@@ -244,33 +291,34 @@ def t3_evento_base(m, n_videos):
       detalhe.append("\\midrule")
     for c in CLASSES_REAIS:
       k = p["por_classe"][c]
-      detalhe.append([num(float(iou), 1), c, inteiro(k["tp"]), inteiro(k["fp"]), inteiro(k["fn"]),
+      detalhe.append([num(float(iou), 1), nome_classe(c), inteiro(k["tp"]), inteiro(k["fp"]), inteiro(k["fn"]),
                       num(k["precisao"]), num(k["revocacao"]), num(k["f1"])])
 
-  nota = (f"Valores agregados sobre os {n_videos} vídeos (predições fora da partição); regra principal: "
-          f"{descricao_regra(rp)}. Erros de início e de fim: média em segundos, só sobre os pares casados.")
+  comum = (f"Modelo base (treino original), com predições fora da partição; valores agregados sobre os {n_videos} vídeos; "
+           f"regra principal: {descricao_regra(rp)}.")
   t_resumo = tabela(
     "tab:evento-base",
-    "Métricas por evento do modelo base na regra principal",
+    "Métricas por evento do modelo base (treino original) na regra principal",
     "rrrrr",
     [["IoU", "F1 macro", "Pares casados", "Erro de início (s)", "Erro de fim (s)"]],
-    resumo, nota, "\\small",
+    resumo, comum + " Erros de início e de fim: média em segundos, só sobre os pares casados.", "\\small",
   )
   t_detalhe = tabela(
     "tab:evento-base-classe",
-    "Métricas por evento do modelo base na regra principal, por classe",
+    "Métricas por evento do modelo base (treino original) na regra principal, por classe",
     "rlrrrrrr",
     [["IoU", "Classe", "VP", "FP", "FN", "Precisão", "Revocação", "F1"]],
-    detalhe, nota, "\\small",
+    detalhe, comum + " VP: trechos casados com um intervalo anotado da mesma classe; FP: trechos sem par; "
+    "FN: intervalos anotados sem par.", "\\small",
   )
   return t_resumo + "\n\n" + t_detalhe
 
 
 # ---------------------------------------------------------------
-# 4. comparação registrada
+# comparação registrada
 # ---------------------------------------------------------------
 
-def t4_comparacao(cf, n_videos):
+def t_comparacao(cf, n_videos):
   m1, m2 = cf["metricas_principais"]
   cab = [
     ["", mc(2, "Métrica 1"), mc(2, "Métrica 2")],
@@ -297,17 +345,17 @@ def t4_comparacao(cf, n_videos):
           "considerados melhores se as duas condições acima fossem atendidas.")
   return tabela(
     "tab:comparacao",
-    "Comparação registrada entre o base re-seedado e o modelo com rótulos por intervalo",
+    f"Comparação registrada entre o {BASE_SEMENTES} e o modelo com rótulos por intervalo",
     "lrrrr",
     cab, corpo, nota, "\\small",
   )
 
 
 # ---------------------------------------------------------------
-# 5. precisão, revocação e F1 por classe, dois modelos, todos os quadros
+# precisão, revocação e F1 por classe, dois modelos, todos os quadros
 # ---------------------------------------------------------------
 
-def t5_dois_modelos(base, rodada_a, n_videos):
+def t_dois_modelos(base, rodada_a, n_videos):
   rb = base["por_quadro"]["todos_os_quadros"]["pooled_56_videos"]
   ra = rodada_a["por_quadro"]["todos_os_quadros"]["pooled_56_videos"]
   assert rb["labels"] == ra["labels"]
@@ -322,8 +370,8 @@ def t5_dois_modelos(base, rodada_a, n_videos):
     assert b["support"] == a["support"]
     corpo.append([nome_classe(c), num(b["precision"]), num(b["recall"]), num(b["f1-score"]),
                   num(a["precision"]), num(a["recall"]), num(a["f1-score"]), inteiro(b["support"])])
-  nota = (f"Valores agregados sobre os {n_videos} vídeos (predições fora da partição), todos os quadros com predição. "
-          f"{SIGLAS_MODELOS} No {BASE}, ``fundo'' é a predição de qualquer uma das classes sem nenhum exemplo de treino, "
+  nota = (f"Predições fora da partição; valores agregados sobre os {n_videos} vídeos, todos os quadros com predição. "
+          f"{SIGLAS_MODELOS} No {BASE}, fundo é a predição de qualquer uma das classes sem nenhum exemplo de treino, "
           f"rara: daí a precisão alta com revocação quase nula; no {INTERVALOS}, é uma saída treinada.")
   return tabela(
     "tab:classes-dois-modelos",
@@ -334,36 +382,122 @@ def t5_dois_modelos(base, rodada_a, n_videos):
 
 
 # ---------------------------------------------------------------
-# 6. distribuição do F1 por vídeo
+# matriz de confusão por quadro, só quadros anotados
 # ---------------------------------------------------------------
 
-def t6_f1_por_video(vm):
-  regra = vm["regra"]
+def t_confusao(base_original, rodada_a, n_videos):
+  blocos = (
+    (maiuscula_inicial(BASE_ORIGINAL), base_original["por_quadro"]["somente_quadros_anotados"]["pooled_56_videos"]),
+    ("Modelo com rótulos por intervalo", rodada_a["por_quadro"]["somente_quadros_anotados"]["pooled_56_videos"]),
+  )
+  labels = blocos[0][1]["labels"]
+  assert all(b["labels"] == labels for _, b in blocos)
+  previstas = labels  # as 3 estereotipias e o fundo
+  idx_fundo = labels.index("Background")
+  cab = [
+    ["", mc(len(previstas), "Classe prevista"), ""],
+    f"\\cmidrule(lr){{2-{len(previstas) + 1}}}",
+    ["Classe anotada"] + [nome_classe(c) for c in previstas] + ["Total"],
+  ]
   corpo = []
-  for c in regra["um_video_por_classe"]:
-    f1s = [r["f1_quadro_anotados"] for r in vm["por_video"] if r["classe_do_video"] == c and r["f1_quadro_anotados"] is not None]
-    e = vm["escolhidos"][c]
-    corpo.append([c, inteiro(len(f1s)), num(min(f1s)), num(statistics.median(f1s)), num(max(f1s)),
-                  inteiro(sum(1 for v in f1s if v == 0)), f"{esc(e['video_id'])} ({num(e['f1_quadro_anotados'])})"])
-  nota = ("Valores por vídeo, não agregados: F1 por quadro de cada vídeo nos quadros anotados, com o modelo de rótulos "
-          "por intervalo fora da partição e predição natural (fundo conta como erro); macro F1 sobre as classes presentes "
-          f"no gabarito do vídeo. ``F1 zero'': número de vídeos com F1 nulo. Mediana estatística; o vídeo de desempenho "
-          f"mediano é o da posição {esc(regra['posicao_mediana'].split(' ')[0])} "
-          f"na ordem crescente, com desempate pela {esc(regra['desempate'].replace(' (aprovado)', ''))}.")
+  for i, (titulo, b) in enumerate(blocos):
+    if i:
+      corpo.append("\\midrule")
+    corpo.append([mc(len(previstas) + 2, titulo, "l")])
+    cm = b["confusion_matrix"]
+    for c in CLASSES_REAIS:
+      linha = cm[labels.index(c)]
+      assert sum(linha) == b["report"][c]["support"], (titulo, c)
+      corpo.append([nome_classe(c)] + [inteiro(v) for v in linha] + [inteiro(sum(linha))])
+  base_cm = blocos[0][1]["confusion_matrix"]
+  base_sem_fundo = all(base_cm[labels.index(c)][idx_fundo] == 0 for c in CLASSES_REAIS)
+  nota = (f"Predições fora da partição; contagens de quadros agregadas sobre os {n_videos} vídeos, só nos quadros "
+          "anotados no XML (linhas: classe anotada; colunas: classe prevista). No modelo base, fundo é a predição "
+          "de qualquer uma das classes sem nenhum exemplo de treino"
+          + ("; ele não previu fundo em nenhum quadro anotado." if base_sem_fundo else ".")
+          + " No modelo com rótulos por intervalo, fundo é uma saída treinada.")
+  return tabela(
+    "tab:confusao-anotados",
+    "Matriz de confusão por quadro nos quadros anotados",
+    "l" + "r" * (len(previstas) + 1),
+    cab, corpo, nota, "\\small",
+  )
+
+
+# ---------------------------------------------------------------
+# distribuição da maior pontuação por janela
+# ---------------------------------------------------------------
+
+def t_pontuacao_maxima(dist, n_videos):
+  modelos = ((BASE, dist["modelos"]["base_sementes_fixas"]), (INTERVALOS, dist["modelos"]["rotulos_por_intervalo"]))
+  niveis = sorted(modelos[0][1]["pontuacao_maxima_por_janela"]["percentis"], key=float)
+  nome_nivel = {niveis[0]: "Mínimo", niveis[-1]: "Máximo"}
+  limiar = modelos[0][1]["pontuacao_maxima_por_janela"]["limiar_padrao"]
+  assert all(m["pontuacao_maxima_por_janela"]["limiar_padrao"] == limiar for _, m in modelos)
+  cab = [["Modelo", "Saídas", "Janelas", "Média"]
+         + [nome_nivel.get(n, "Mediana" if float(n) == 50 else f"P{n}") for n in niveis]
+         + [f"$\\geq$ {num(limiar, 2)}"]]
+  corpo = []
+  for nome, m in modelos:
+    p = m["pontuacao_maxima_por_janela"]
+    assert p["n_videos"] == n_videos
+    corpo.append([nome, inteiro(m["n_saidas"]), inteiro(p["n_janelas"]), num(p["media"])]
+                 + [num(p["percentis"][n]) for n in niveis] + [num(p["fracao_janelas_acima_do_limiar"])])
+  nota = (f"Maior pontuação de cada janela: máximo da softmax sobre todas as saídas do modelo, com predições fora da "
+          f"partição, em todas as janelas dos {n_videos} vídeos (valores agregados sobre as janelas). P$n$: percentil $n$. "
+          f"Última coluna: fração das janelas com maior pontuação igual ou acima do limiar padrão. {SIGLAS_MODELOS}")
+  return tabela(
+    "tab:pontuacao-maxima",
+    "Distribuição da maior pontuação por janela nos dois modelos",
+    "l" + "r" * (len(cab[0]) - 1),
+    cab, corpo, nota, "\\footnotesize",
+  )
+
+
+# ---------------------------------------------------------------
+# distribuição do F1 por vídeo, dois modelos
+# ---------------------------------------------------------------
+
+def mediano_por_regra(linhas):
+  ordem = sorted(linhas, key=lambda r: (r["f1_quadro_anotados"], r["video_id"]))
+  return ordem[(len(ordem) - 1) // 2]
+
+
+def t_f1_por_video(dist, vm):
+  regra = vm["regra"]
+  modelos = ((BASE, dist["modelos"]["base_sementes_fixas"]), (INTERVALOS, dist["modelos"]["rotulos_por_intervalo"]))
+  corpo = []
+  for i, c in enumerate(regra["um_video_por_classe"]):
+    if i:
+      corpo.append("\\midrule")
+    for nome, m in modelos:
+      linhas = [r for r in m["f1_por_video"] if r["classe_do_video"] == c and r["f1_quadro_anotados"] is not None]
+      f1s = [r["f1_quadro_anotados"] for r in linhas]
+      e = mediano_por_regra(linhas)
+      if nome == INTERVALOS:
+        assert e["video_id"] == vm["escolhidos"][c]["video_id"]
+      corpo.append([nome_classe(c), nome, inteiro(len(f1s)), num(min(f1s)), num(statistics.median(f1s)), num(max(f1s)),
+                    inteiro(sum(1 for v in f1s if v == 0)), f"{esc(e['video_id'])} ({num(e['f1_quadro_anotados'])})"])
+  nota = ("Valores por vídeo, não agregados: F1 por quadro de cada vídeo nos quadros anotados, com predições fora da "
+          "partição e predição natural (fundo conta como erro); macro F1 sobre as classes presentes no gabarito do "
+          f"vídeo. {SIGLAS_MODELOS} ``F1 zero'': número de vídeos com F1 nulo. Mediana estatística; o vídeo mediano é o "
+          f"da posição {esc(regra['posicao_mediana'].split(' ')[0])} na ordem crescente, com desempate pela "
+          f"{esc(regra['desempate'].replace(' (aprovado)', ''))}; os vídeos de desempenho mediano usados na interface "
+          "são os do modelo com rótulos por intervalo.")
   return tabela(
     "tab:f1-por-video",
-    "Distribuição do F1 por quadro por vídeo, em cada classe",
-    "lrrrrrl",
-    [["Classe", "Vídeos", "Mínimo", "Mediana", "Máximo", "F1 zero", "Vídeo mediano (F1)"]],
+    "Distribuição do F1 por quadro por vídeo, em cada classe, nos dois modelos",
+    "llrrrrrl",
+    [["Classe", "Modelo", "Vídeos", "Mínimo", "Mediana", "Máximo", "F1 zero", "Vídeo mediano (F1)"]],
     corpo, nota, "\\small",
   )
 
 
 # ---------------------------------------------------------------
-# 7. análises posteriores
+# análises posteriores
 # ---------------------------------------------------------------
 
-def t7_posteriores(ap):
+def t_posteriores(ap):
   a1 = ap["analise_1_argmax_forcado_3_classes"]
   forc = a1["rodada_a_argmax_forcado_3_classes"]
   base1 = a1["base_re_seedado_metrica_1_original"]
@@ -397,7 +531,7 @@ def t7_posteriores(ap):
   corpo.append("\\midrule")
   for onde, chave in (("dentro", "media_fracao_anotados"), ("fora", "media_fracao_fundo")):
     for c in CLASSES_REAIS:
-      corpo.append([f"Fração prevista como a classe do vídeo, {onde} dos episódios: {c}",
+      corpo.append([f"Fração prevista como a classe do vídeo, {onde} dos episódios: {nome_classe(c)}",
                     num(fr["rodada_a"][c][chave]), num(fr["base_re_seedado"][c][chave]), VIDEOS])
 
   nota = ("Análises definidas depois de conhecer o resultado da comparação registrada; não fazem parte do critério e "
@@ -423,6 +557,7 @@ def validar(tex):
   rotulos = re.findall(r"\\label\{([^}]*)\}", tex)
   assert len(rotulos) == len(set(rotulos)), "rótulos repetidos"
   assert tex.count("\\legend{") == tex.count("\\begin{table}")
+  assert "re-seed" not in tex.lower()
   return rotulos
 
 
@@ -431,27 +566,32 @@ def main():
   ap_.add_argument("--saida", default="resultados_tabelas.tex")
   args = ap_.parse_args()
 
-  resumo = ler(R / "resumo_dados.json")
-  n_videos = resumo["n_videos_usados"]
+  n_videos = ler(R / "resumo_dados.json")["n_videos_usados"]
   vm = ler(R / "videos_desempenho_mediano.json")
   assert len(vm["por_video"]) == n_videos
+  cv = ler(R / "cv_metrics.json")
+  base_original = ler(R / "metricas.json")
+  base_sementes = ler(R / "comparacao_base_reseeded" / "metricas.json")
+  rodada_a = ler(R / "comparacao_rodada_a" / "metricas.json")
+  dist = ler(R / "distribuicoes_por_janela_e_video.json")
 
   blocos = [
-    t1_cv_base(ler(R / "cv_metrics.json")),
-    t2_quadro_base(ler(R / "metricas.json"), n_videos),
-    t3_evento_base(ler(R / "metricas.json"), n_videos),
-    t4_comparacao(ler(R / "comparacao_final.json"), n_videos),
-    t5_dois_modelos(ler(R / "comparacao_base_reseeded" / "metricas.json"), ler(R / "comparacao_rodada_a" / "metricas.json"), n_videos),
-    t6_f1_por_video(vm),
-    t7_posteriores(ler(R / "analises_posteriores.json")),
+    t_cv_base(cv, ler_relatorio_por_particao(R / "classification_report_per_fold.txt", list(cv["per_class"]))),
+    t_quadro_base(base_original, n_videos),
+    t_evento_base(base_original, n_videos),
+    t_comparacao(ler(R / "comparacao_final.json"), n_videos),
+    t_dois_modelos(base_sementes, rodada_a, n_videos),
+    t_confusao(base_original, rodada_a, n_videos),
+    t_pontuacao_maxima(dist, n_videos),
+    t_f1_por_video(dist, vm),
+    t_posteriores(ler(R / "analises_posteriores.json")),
   ]
 
   cabecalho = (
-    "% Gerado por src/gerar_tabelas.py a partir de data/results/*.json -- não edite à mão.\n"
+    "% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.\n"
     "% Requer \\usepackage{booktabs}.\n"
-    "% A matriz de confusão agregada da validação cruzada do modelo base não foi gravada em nenhum\n"
-    "% arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png), por isso\n"
-    "% não aparece na tabela de validação cruzada.\n"
+    "% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em\n"
+    "% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).\n"
   )
   tex = cabecalho + "\n" + "\n\n".join(blocos) + "\n"
   rotulos = validar(tex)
