@@ -1,0 +1,86 @@
+{
+  "n_splits": 5,
+  "fold_accuracies": [
+    52.51418091866763,
+    44.990021812781364,
+    56.016475433951165,
+    56.003148585451676,
+    50.63933896505562
+  ],
+  "mean_accuracy": 52.032633143181485,
+  "std_accuracy": 4.0842997821655125,
+  "per_class": {
+    "ArmFlapping": {
+      "precision_mean": 0.661187478111851,
+      "precision_std": 0.03010998022241321,
+      "recall_mean": 0.5963817167407486,
+      "recall_std": 0.1234596298068291,
+      "f1_mean": 0.6211048461098024,
+      "f1_std": 0.07908952472617005,
+      "support": 51765.0
+    },
+    "HeadBanging": {
+      "precision_mean": 0.2638262035160661,
+      "precision_std": 0.09881849811774167,
+      "recall_mean": 0.25400907923129024,
+      "recall_std": 0.136913078255738,
+      "f1_mean": 0.23820844701312782,
+      "f1_std": 0.09476131718242106,
+      "support": 24846.0
+    },
+    "Rocking": {
+      "precision_mean": 0.0,
+      "precision_std": 0.0,
+      "recall_mean": 0.0,
+      "recall_std": 0.0,
+      "f1_mean": 0.0,
+      "f1_std": 0.0,
+      "support": 0.0
+    },
+    "HandMovement": {
+      "precision_mean": 0.0,
+      "precision_std": 0.0,
+      "recall_mean": 0.0,
+      "recall_std": 0.0,
+      "f1_mean": 0.0,
+      "f1_std": 0.0,
+      "support": 0.0
+    },
+    "Spinning": {
+      "precision_mean": 0.5196083581192441,
+      "precision_std": 0.04957330736598079,
+      "recall_mean": 0.6077098608702941,
+      "recall_std": 0.06319594679600495,
+      "f1_mean": 0.5560111964062542,
+      "f1_std": 0.024454721732744093,
+      "support": 35436.0
+    },
+    "Normal": {
+      "precision_mean": 0.0,
+      "precision_std": 0.0,
+      "recall_mean": 0.0,
+      "recall_std": 0.0,
+      "f1_mean": 0.0,
+      "f1_std": 0.0,
+      "support": 0.0
+    }
+  },
+  "macro_avg": {
+    "precision_mean": 0.24077033995786018,
+    "precision_std": 0.016402066004332756,
+    "recall_mean": 0.2430167761403888,
+    "recall_std": 0.015937432790611765,
+    "f1_mean": 0.23588741492153073,
+    "f1_std": 0.014766939840530445,
+    "support": 112047.0
+  },
+  "weighted_avg": {
+    "precision_mean": 0.5317345042596034,
+    "precision_std": 0.027125975586611634,
+    "recall_mean": 0.520326331431815,
+    "recall_std": 0.040842997821655146,
+    "f1_mean": 0.5148779477572307,
+    "f1_std": 0.0339189763402912,
+    "support": 112047.0
+  }
+}
