@@ -19,7 +19,12 @@
           "100": 1.0
         },
         "limiar_padrao": 0.5,
-        "fracao_janelas_acima_do_limiar": 0.9975724472765893
+        "fracao_janelas_acima_do_limiar": 0.9975724472765893,
+        "fracao_janelas_igual_ou_acima": {
+          "0.90": 0.9264772818549358,
+          "0.99": 0.8509554026435335,
+          "0.999": 0.7721045632636304
+        }
       },
       "f1_por_video": [
         {
@@ -605,7 +610,12 @@
           "100": 1.0
         },
         "limiar_padrao": 0.5,
-        "fracao_janelas_acima_do_limiar": 0.9967513632672004
+        "fracao_janelas_acima_do_limiar": 0.9967513632672004,
+        "fracao_janelas_igual_ou_acima": {
+          "0.90": 0.8923130472034058,
+          "0.99": 0.7612787490963614,
+          "0.999": 0.586334306139388
+        }
       },
       "f1_por_video": [
         {

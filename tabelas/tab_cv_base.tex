@@ -1,0 +1,26 @@
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
+% Requer \usepackage{booktabs}.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Métricas por janela na validação cruzada do modelo base (treino original)}
+\label{tab:cv-base}
+\begin{tabular}{lrrrr}
+\toprule
+Classe & Precisão & Revocação & F1 & Suporte \\
+\midrule
+\textit{arm flapping} & 0,661 $\pm$ 0,030 & 0,596 $\pm$ 0,123 & 0,621 $\pm$ 0,079 & 51.765 \\
+\textit{head banging} & 0,264 $\pm$ 0,099 & 0,254 $\pm$ 0,137 & 0,238 $\pm$ 0,095 & 24.846 \\
+\textit{spinning} & 0,520 $\pm$ 0,050 & 0,608 $\pm$ 0,063 & 0,556 $\pm$ 0,024 & 35.436 \\
+\midrule
+Média macro (3 estereotipias) & 0,482 $\pm$ 0,033 & 0,486 $\pm$ 0,032 & 0,472 $\pm$ 0,030 & 112.047 \\
+Média ponderada & 0,532 $\pm$ 0,027 & 0,520 $\pm$ 0,041 & 0,515 $\pm$ 0,034 & 112.047 \\
+\midrule
+Acurácia (\%) & \multicolumn{3}{c}{52,03 $\pm$ 4,08} &  \\
+\bottomrule
+\end{tabular}
+\legend{Modelo base (treino original). Média $\pm$ desvio-padrão entre as 5 partições da validação cruzada por vídeo; suporte = total de janelas de teste somado nas partições. A média macro é calculada partição a partição sobre as estereotipias, a partir dos valores por partição gravados em classification\_report\_per\_fold.txt; as 3 classes sem nenhuma janela no conjunto ficam de fora, e a média ponderada não muda, porque o peso delas é zero. Fonte: Elaborado pelo autor.}
+\end{table}

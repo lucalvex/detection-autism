@@ -1,0 +1,29 @@
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
+% Requer \usepackage{booktabs}.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Matriz de confusão por quadro nos quadros anotados}
+\label{tab:confusao-anotados}
+\begin{tabular}{lrrrrr}
+\toprule
+ & \multicolumn{4}{c}{Classe prevista} &  \\
+\cmidrule(lr){2-5}
+Classe anotada & \textit{arm flapping} & \textit{head banging} & \textit{spinning} & fundo & Total \\
+\midrule
+\multicolumn{6}{l}{Modelo base (treino original)} \\
+\textit{arm flapping} & 9.281 & 2.499 & 2.503 & 0 & 14.283 \\
+\textit{head banging} & 3.553 & 2.533 & 3.055 & 0 & 9.141 \\
+\textit{spinning} & 2.123 & 2.145 & 12.533 & 0 & 16.801 \\
+\midrule
+\multicolumn{6}{l}{Modelo com rótulos por intervalo} \\
+\textit{arm flapping} & 1.509 & 549 & 230 & 11.995 & 14.283 \\
+\textit{head banging} & 526 & 1.132 & 427 & 7.056 & 9.141 \\
+\textit{spinning} & 252 & 375 & 7.175 & 8.999 & 16.801 \\
+\bottomrule
+\end{tabular}
+\legend{Predições fora da partição; contagens de quadros agregadas sobre os 56 vídeos, só nos quadros anotados no XML (linhas: classe anotada; colunas: classe prevista). No modelo base, fundo é a predição de qualquer uma das classes sem nenhum exemplo de treino; ele não previu fundo em nenhum quadro anotado. No modelo com rótulos por intervalo, fundo é uma saída treinada. Fonte: Elaborado pelo autor.}
+\end{table}

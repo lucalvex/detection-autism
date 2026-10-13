@@ -1,0 +1,32 @@
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
+% Requer \usepackage{booktabs}.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Comparação registrada entre o modelo base treinado novamente com sementes fixas e o modelo com rótulos por intervalo}
+\label{tab:comparacao}
+\begin{tabular}{lrrrr}
+\toprule
+ & \multicolumn{2}{c}{Métrica 1} & \multicolumn{2}{c}{Métrica 2} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & Base & Intervalos & Base & Intervalos \\
+\midrule
+Agregado (56 vídeos) & 0,562 & 0,322 & 0,020 & 0,014 \\
+\midrule
+Partição 1 & 0,501 & 0,177 & 0,011 & 0,003 \\
+Partição 2 & 0,455 & 0,328 & 0,018 & 0,023 \\
+Partição 3 & 0,505 & 0,471 & 0,035 & 0,012 \\
+Partição 4 & 0,596 & 0,398 & 0,016 & 0,018 \\
+Partição 5 & 0,582 & 0,307 & 0,025 & 0,014 \\
+Partições com Intervalos maior & \multicolumn{2}{c}{0 de 5} & \multicolumn{2}{c}{2 de 5} \\
+\midrule
+\multicolumn{4}{l}{Melhora nas duas métricas agregadas} & não \\
+\multicolumn{4}{l}{Melhora nas duas métricas em partições suficientes, pelo critério} & não \\
+\multicolumn{5}{l}{Veredito: sem diferença distinguível} \\
+\bottomrule
+\end{tabular}
+\legend{Linha ``Agregado'': valores agregados sobre os 56 vídeos; demais linhas: valor de cada partição. Métrica 1: macro F1 por quadro, restrito aos quadros anotados. Métrica 2: F1 por evento, IoU 0,3, regra principal. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. Critério registrado antes da avaliação (criterio\_comparacao.md): os rótulos por intervalo só seriam considerados melhores se as duas condições acima fossem atendidas. Fonte: Elaborado pelo autor.}
+\end{table}

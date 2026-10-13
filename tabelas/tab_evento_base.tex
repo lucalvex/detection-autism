@@ -1,0 +1,21 @@
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
+% Requer \usepackage{booktabs}.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Métricas por evento do modelo base (treino original) na regra principal}
+\label{tab:evento-base}
+\begin{tabular}{rrrrr}
+\toprule
+IoU & F1 macro & Pares casados & Erro de início (s) & Erro de fim (s) \\
+\midrule
+0,1 & 0,034 & 86 & 4,89 & 5,70 \\
+0,3 & 0,022 & 56 & 3,66 & 4,51 \\
+0,5 & 0,013 & 32 & 3,14 & 4,64 \\
+\bottomrule
+\end{tabular}
+\legend{Modelo base (treino original), com predições fora da partição; valores agregados sobre os 56 vídeos; regra principal: limiar 0,50, duração mínima de uma janela, o piso natural da regra. Erros de início e de fim: média em segundos, só sobre os pares casados. Fonte: Elaborado pelo autor.}
+\end{table}
