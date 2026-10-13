@@ -1,0 +1,34 @@
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
+% Requer \usepackage{booktabs}.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Análises posteriores, definidas depois do resultado da comparação}
+\label{tab:posteriores}
+\begin{tabular}{p{5.4cm}rrp{2.8cm}}
+\toprule
+Análise & Intervalos & Base & Agregação \\
+\midrule
+Discriminação entre as estereotipias, sem o fundo: macro F1 por quadro (anotados)$^{a}$ & 0,553 $\pm$ 0,103 & 0,528 $\pm$ 0,053 & Média $\pm$ desvio entre partições \\
+Partições com Intervalos maior & \multicolumn{2}{c}{3 de 5} & Por partição \\
+\midrule
+Acurácia balanceada binária (estereotipia contra fundo) & 0,579 $\pm$ 0,034 & 0,500 $\pm$ 0,000 & Média $\pm$ desvio entre partições \\
+\midrule
+Ablação, ordem dos quadros embaralhada: macro F1 por quadro (anotados)$^{a}$ & 0,553 $\rightarrow$ 0,520 & 0,528 $\rightarrow$ 0,524 & Média entre partições \\
+Ablação, ordem dos quadros embaralhada: acurácia balanceada binária & 0,579 $\rightarrow$ 0,551 & --- & Média entre partições \\
+Ablação, dx e dy zerados: macro F1 por quadro (anotados)$^{a}$ & 0,553 $\rightarrow$ 0,484 & 0,528 $\rightarrow$ 0,484 & Média entre partições \\
+Ablação, dx e dy zerados: acurácia balanceada binária & 0,579 $\rightarrow$ 0,521 & --- & Média entre partições \\
+\midrule
+Fração prevista como a classe do vídeo, dentro dos episódios: \textit{arm flapping} & 0,111 & 0,569 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, dentro dos episódios: \textit{head banging} & 0,079 & 0,371 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, dentro dos episódios: \textit{spinning} & 0,457 & 0,761 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, fora dos episódios: \textit{arm flapping} & 0,071 & 0,538 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, fora dos episódios: \textit{head banging} & 0,100 & 0,353 & Média entre os vídeos da classe \\
+Fração prevista como a classe do vídeo, fora dos episódios: \textit{spinning} & 0,249 & 0,643 & Média entre os vídeos da classe \\
+\bottomrule
+\end{tabular}
+\legend{Análises definidas depois de conhecer o resultado da comparação registrada; não fazem parte do critério e não mudam o veredito. A agregação de cada linha está na última coluna. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. $^{a}$No Intervalos, argmax só entre as saídas das estereotipias, ignorando a de fundo; no Base, predição natural. Nas ablações, valores sem $\rightarrow$ com a ablação. Fonte: Elaborado pelo autor.}
+\end{table}

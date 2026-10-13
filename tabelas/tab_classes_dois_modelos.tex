@@ -1,0 +1,24 @@
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
+% Requer \usepackage{booktabs}.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Precisão, revocação e F1 por classe nos dois modelos, em todos os quadros}
+\label{tab:classes-dois-modelos}
+\begin{tabular}{lrrrrrrr}
+\toprule
+ & \multicolumn{3}{c}{Base} & \multicolumn{3}{c}{Intervalos} &  \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Classe & Precisão & Revocação & F1 & Precisão & Revocação & F1 & Quadros \\
+\midrule
+\textit{arm flapping} & 0,213 & 0,674 & 0,324 & 0,246 & 0,106 & 0,148 & 14.283 \\
+\textit{head banging} & 0,099 & 0,276 & 0,146 & 0,230 & 0,124 & 0,161 & 9.141 \\
+\textit{spinning} & 0,303 & 0,747 & 0,431 & 0,556 & 0,427 & 0,483 & 16.801 \\
+fundo & 1,000 & 0,000 & 0,000 & 0,682 & 0,836 & 0,751 & 71.822 \\
+\bottomrule
+\end{tabular}
+\legend{Predições fora da partição; valores agregados sobre os 56 vídeos, todos os quadros com predição. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. No Base, fundo é a predição de qualquer uma das classes sem nenhum exemplo de treino, rara: daí a precisão alta com revocação quase nula; no Intervalos, é uma saída treinada. Fonte: Elaborado pelo autor.}
+\end{table}

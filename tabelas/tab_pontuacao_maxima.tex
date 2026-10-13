@@ -1,0 +1,22 @@
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
+% Requer \usepackage{booktabs}.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Distribuição da maior pontuação por janela nos dois modelos}
+\label{tab:pontuacao-maxima}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+ &  &  &  &  &  & \multicolumn{3}{c}{Fração de janelas} \\
+\cmidrule(lr){7-9}
+Modelo & Saídas & Janelas & Média & P10 & P25 & $\geq$ 0,90 & $\geq$ 0,99 & $\geq$ 0,999 \\
+\midrule
+Base & 6 & 112.047 & 0,976 & 0,956 & 0,999 & 0,926 & 0,851 & 0,772 \\
+Intervalos & 4 & 112.047 & 0,964 & 0,885 & 0,992 & 0,892 & 0,761 & 0,586 \\
+\bottomrule
+\end{tabular}
+\legend{Maior pontuação de cada janela: máximo da softmax sobre todas as saídas do modelo, com predições fora da partição, em todas as janelas dos 56 vídeos (valores agregados sobre as janelas). P$n$: percentil $n$. Fração de janelas: fração das janelas com maior pontuação igual ou acima do valor da coluna. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. Fonte: Elaborado pelo autor.}
+\end{table}

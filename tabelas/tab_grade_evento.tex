@@ -1,0 +1,33 @@
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
+% Requer \usepackage{booktabs}.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Métricas por evento do modelo base (treino original) por duração mínima do trecho}
+\label{tab:grade-evento}
+\begin{tabular}{rrrrr}
+\toprule
+Duração mínima (s) & F1 macro & Pares casados & Comportamentos alcançáveis & Teto de revocação \\
+\midrule
+0,5 & 0,022 & 56 & 101 de 101 & 1,000 \\
+1,0 & 0,022 & 56 & 101 de 101 & 1,000 \\
+1,5 & 0,047 & 55 & 101 de 101 & 1,000 \\
+2,0 & 0,063 & 53 & 101 de 101 & 1,000 \\
+2,5 & 0,083 & 50 & 101 de 101 & 1,000 \\
+3,0 & 0,098 & 45 & 101 de 101 & 1,000 \\
+3,5 & 0,114 & 42 & 97 de 101 & 0,960 \\
+4,0 & 0,125 & 38 & 97 de 101 & 0,960 \\
+4,5 & 0,137 & 35 & 88 de 101 & 0,871 \\
+5,0 & 0,141 & 31 & 88 de 101 & 0,871 \\
+6,0 & 0,154 & 28 & 79 de 101 & 0,782 \\
+7,0 & 0,165 & 25 & 73 de 101 & 0,723 \\
+8,0 & 0,170 & 23 & 64 de 101 & 0,634 \\
+\midrule
+\multicolumn{5}{l}{Melhor par da grade inteira$^{a}$: limiar 0,30, duração mínima 8,0 s, F1 macro 0,185} \\
+\bottomrule
+\end{tabular}
+\legend{Modelo base (treino original), com predições fora da partição; valores agregados sobre os 56 vídeos; limiar 0,50 e IoU 0,3. Teto de revocação: fração dos 101 comportamentos anotados nesses vídeos com duração maior ou igual à duração mínima; os mais curtos não podem ser casados. $^{a}$Par limiar e duração mínima de maior F1 macro em toda a grade, para o mesmo IoU, selecionado a posteriori nos mesmos dados em que é avaliado: não é uma escolha prévia e tende a superestimar o desempenho em vídeos novos. Fonte: Elaborado pelo autor.}
+\end{table}

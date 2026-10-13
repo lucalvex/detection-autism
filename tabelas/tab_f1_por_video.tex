@@ -1,0 +1,26 @@
+% Gerado por src/gerar_tabelas.py a partir de data/results/ -- não edite à mão.
+% Requer \usepackage{booktabs}.
+% A matriz de confusão por janela da validação cruzada do modelo base (treino original) não foi gravada em
+% nenhum arquivo de resultado (train_classifier.py só gerou data/results/confusion_matrix.png).
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Distribuição do F1 por quadro por vídeo, em cada classe, nos dois modelos}
+\label{tab:f1-por-video}
+\begin{tabular}{llrrrrrl}
+\toprule
+Classe & Modelo & Vídeos & Mínimo & Mediana & Máximo & F1 zero & Vídeo mediano (F1) \\
+\midrule
+\textit{arm flapping} & Base & 20 & 0,000 & 0,673 & 1,000 & 2 & v\_ArmFlapping\_02 (0,642) \\
+\textit{arm flapping} & Intervalos & 20 & 0,000 & 0,215 & 0,593 & 4 & v\_ArmFlapping\_12 (0,195) \\
+\midrule
+\textit{head banging} & Base & 17 & 0,000 & 0,472 & 1,000 & 2 & v\_HeadBanging\_21 (0,472) \\
+\textit{head banging} & Intervalos & 17 & 0,000 & 0,000 & 0,646 & 9 & v\_HeadBanging\_24 (0,000) \\
+\midrule
+\textit{spinning} & Base & 19 & 0,219 & 0,873 & 1,000 & 0 & v\_Spinning\_10 (0,873) \\
+\textit{spinning} & Intervalos & 19 & 0,000 & 0,614 & 0,947 & 2 & v\_Spinning\_22 (0,614) \\
+\bottomrule
+\end{tabular}
+\legend{Valores por vídeo, não agregados: F1 por quadro de cada vídeo nos quadros anotados, com predições fora da partição e predição natural (fundo conta como erro); macro F1 sobre as classes presentes no gabarito do vídeo. Base: modelo base treinado novamente com sementes fixas, com rótulo por vídeo; Intervalos: modelo com rótulos por intervalo anotado e classe de fundo. ``F1 zero'': número de vídeos com F1 nulo. Mediana estatística; o vídeo mediano é o da posição (n-1)//2 na ordem crescente, com desempate pela ordem alfabética do video\_id; os vídeos de desempenho mediano usados na interface são os do modelo com rótulos por intervalo. Fonte: Elaborado pelo autor.}
+\end{table}

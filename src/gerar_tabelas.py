@@ -428,29 +428,86 @@ def t_confusao(base_original, rodada_a, n_videos):
 # distribuição da maior pontuação por janela
 # ---------------------------------------------------------------
 
+def num_corte(texto):
+  """Escreve um corte gravado como texto ("0.999") com as mesmas casas,
+  e pelo menos duas."""
+  casas = max(2, len(texto.split(".")[1]))
+  return num(float(texto), casas)
+
+
 def t_pontuacao_maxima(dist, n_videos):
   modelos = ((BASE, dist["modelos"]["base_sementes_fixas"]), (INTERVALOS, dist["modelos"]["rotulos_por_intervalo"]))
-  niveis = sorted(modelos[0][1]["pontuacao_maxima_por_janela"]["percentis"], key=float)
-  nome_nivel = {niveis[0]: "Mínimo", niveis[-1]: "Máximo"}
-  limiar = modelos[0][1]["pontuacao_maxima_por_janela"]["limiar_padrao"]
-  assert all(m["pontuacao_maxima_por_janela"]["limiar_padrao"] == limiar for _, m in modelos)
-  cab = [["Modelo", "Saídas", "Janelas", "Média"]
-         + [nome_nivel.get(n, "Mediana" if float(n) == 50 else f"P{n}") for n in niveis]
-         + [f"$\\geq$ {num(limiar, 2)}"]]
+  percentis = ["10", "25"]
+  cortes = sorted(modelos[0][1]["pontuacao_maxima_por_janela"]["fracao_janelas_igual_ou_acima"], key=float)
+  assert all(sorted(m["pontuacao_maxima_por_janela"]["fracao_janelas_igual_ou_acima"], key=float) == cortes for _, m in modelos)
+  cab = [
+    ["", "", "", "", "", "", mc(len(cortes), "Fração de janelas")],
+    f"\\cmidrule(lr){{7-{6 + len(cortes)}}}",
+    ["Modelo", "Saídas", "Janelas", "Média"] + [f"P{p}" for p in percentis] + [f"$\\geq$ {num_corte(c)}" for c in cortes],
+  ]
   corpo = []
   for nome, m in modelos:
     p = m["pontuacao_maxima_por_janela"]
     assert p["n_videos"] == n_videos
     corpo.append([nome, inteiro(m["n_saidas"]), inteiro(p["n_janelas"]), num(p["media"])]
-                 + [num(p["percentis"][n]) for n in niveis] + [num(p["fracao_janelas_acima_do_limiar"])])
+                 + [num(p["percentis"][q]) for q in percentis]
+                 + [num(p["fracao_janelas_igual_ou_acima"][c]) for c in cortes])
   nota = (f"Maior pontuação de cada janela: máximo da softmax sobre todas as saídas do modelo, com predições fora da "
           f"partição, em todas as janelas dos {n_videos} vídeos (valores agregados sobre as janelas). P$n$: percentil $n$. "
-          f"Última coluna: fração das janelas com maior pontuação igual ou acima do limiar padrão. {SIGLAS_MODELOS}")
+          f"Fração de janelas: fração das janelas com maior pontuação igual ou acima do valor da coluna. {SIGLAS_MODELOS}")
   return tabela(
     "tab:pontuacao-maxima",
     "Distribuição da maior pontuação por janela nos dois modelos",
-    "l" + "r" * (len(cab[0]) - 1),
-    cab, corpo, nota, "\\footnotesize",
+    "l" + "r" * (len(cab[-1]) - 1),
+    cab, corpo, nota, "\\small",
+  )
+
+
+# ---------------------------------------------------------------
+# grade limiar x duração mínima, por evento, modelo base (treino original)
+# ---------------------------------------------------------------
+
+def t_grade_evento(m, n_videos):
+  ev = m["por_evento"]
+  g = ev["grade_completa"]
+  iou = re.search(r"IoU=([0-9.]+)", g["objetivo"]).group(1)
+  limiar = ev["regra_principal"]["limiar"]
+  j = g["limiares"].index(limiar)
+  tetos = {t["duracao_minima_s"]: t for t in g["teto_revocacao_por_duracao_minima"]}
+  total = g["total_eventos_anotados"]
+
+  corpo = []
+  for i, d in enumerate(g["duracoes_minimas_s"]):
+    t = tetos[d]
+    assert abs(t["teto_revocacao_aproximado"] - (total - t["eventos_mais_curtos_que_duracao_minima"]) / total) < 1e-12
+    corpo.append([num(d, 1), num(g["macro_f1"][i][j]), inteiro(g["pares_casados"][i][j]),
+                  f"{inteiro(total - t['eventos_mais_curtos_que_duracao_minima'])} de {inteiro(total)}",
+                  num(t["teto_revocacao_aproximado"])])
+
+  # o melhor par gravado tem que ser o máximo da grade inteira
+  melhor = ev["melhor_par_da_grade"]
+  pares = [(g["macro_f1"][i][k], g["limiares"][k], g["duracoes_minimas_s"][i])
+           for i in range(len(g["duracoes_minimas_s"])) for k in range(len(g["limiares"]))]
+  f1_max, lim_max, dur_max = max(pares)
+  assert (lim_max, dur_max) == (melhor["limiar"], melhor["duracao_minima_config_s"])
+  f1_melhor = melhor["por_iou"][iou]["pooled_56_videos"]["macro_f1"]
+  assert abs(f1_melhor - f1_max) < 1e-12
+  corpo.append("\\midrule")
+  corpo.append([mc(5, f"Melhor par da grade inteira$^{{a}}$: limiar {num(lim_max, 2)}, duração mínima "
+                   f"{num(dur_max, 1)} s, F1 macro {num(f1_melhor)}", "l")])
+
+  nota = (f"Modelo base (treino original), com predições fora da partição; valores agregados sobre os {n_videos} vídeos; "
+          f"limiar {num(limiar, 2)} e IoU {num(float(iou), 1)}. Teto de revocação: fração dos {inteiro(total)} "
+          "comportamentos anotados nesses vídeos com duração maior ou igual à duração mínima; os mais curtos não podem "
+          "ser casados. $^{a}$Par limiar e duração mínima de maior F1 macro em toda a grade, para o mesmo IoU, "
+          "selecionado a posteriori nos mesmos dados em que é avaliado: não é uma escolha prévia e tende a "
+          "superestimar o desempenho em vídeos novos.")
+  return tabela(
+    "tab:grade-evento",
+    "Métricas por evento do modelo base (treino original) por duração mínima do trecho",
+    "rrrrr",
+    [["Duração mínima (s)", "F1 macro", "Pares casados", "Comportamentos alcançáveis", "Teto de revocação"]],
+    corpo, nota, "\\small",
   )
 
 
@@ -561,9 +618,15 @@ def validar(tex):
   return rotulos
 
 
+def nome_do_arquivo(tabela_tex):
+  rotulo = re.search(r"\\label\{([^}]*)\}", tabela_tex).group(1)
+  return re.sub(r"[^A-Za-z0-9]", "_", rotulo) + ".tex"
+
+
 def main():
   ap_ = argparse.ArgumentParser()
   ap_.add_argument("--saida", default="resultados_tabelas.tex")
+  ap_.add_argument("--pasta", default="tabelas", help="um arquivo por tabela, com o nome do rótulo")
   args = ap_.parse_args()
 
   n_videos = ler(R / "resumo_dados.json")["n_videos_usados"]
@@ -579,6 +642,7 @@ def main():
     t_cv_base(cv, ler_relatorio_por_particao(R / "classification_report_per_fold.txt", list(cv["per_class"]))),
     t_quadro_base(base_original, n_videos),
     t_evento_base(base_original, n_videos),
+    t_grade_evento(base_original, n_videos),
     t_comparacao(ler(R / "comparacao_final.json"), n_videos),
     t_dois_modelos(base_sementes, rodada_a, n_videos),
     t_confusao(base_original, rodada_a, n_videos),
@@ -596,8 +660,24 @@ def main():
   tex = cabecalho + "\n" + "\n\n".join(blocos) + "\n"
   rotulos = validar(tex)
 
+  # um arquivo por tabela; as tabelas não têm linhas em branco dentro
+  tabelas = [t for bloco in blocos for t in bloco.split("\n\n")]
+  assert len(tabelas) == len(rotulos)
+  pasta = Path(args.pasta)
+  pasta.mkdir(exist_ok=True)
+  nomes = []
+  for t in tabelas:
+    nome = nome_do_arquivo(t)
+    validar(t)
+    (pasta / nome).write_text(cabecalho + "\n" + t + "\n", encoding="utf-8")
+    nomes.append(nome)
+  # remove arquivos de tabelas que deixaram de existir (só os gerados por este script)
+  for antigo in pasta.glob("tab_*.tex"):
+    if antigo.name not in nomes:
+      antigo.unlink()
+
   Path(args.saida).write_text(tex, encoding="utf-8")
-  print(f"{len(rotulos)} tabelas gravadas em {args.saida}: {', '.join(rotulos)}")
+  print(f"{len(rotulos)} tabelas gravadas em {args.saida} e em {pasta}/: {', '.join(nomes)}")
 
 
 if __name__ == "__main__":

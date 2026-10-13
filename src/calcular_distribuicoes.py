@@ -26,6 +26,8 @@ from selecionar_videos_mediana import classe_do_nome, f1_do_video
 
 SAIDA = Path("data/results/distribuicoes_por_janela_e_video.json")
 PERCENTIS = [0, 10, 25, 50, 75, 90, 100]
+# frações de janelas com maior pontuação >= cada valor (parâmetros da análise)
+CORTES_FRACAO = ["0.90", "0.99", "0.999"]
 
 MODELOS = {
   "base_sementes_fixas": {
@@ -70,6 +72,7 @@ def avaliar(chave, cfg):
       "percentis": {str(p): float(np.percentile(maximos, p)) for p in PERCENTIS},
       "limiar_padrao": limiar,
       "fracao_janelas_acima_do_limiar": float((maximos >= limiar).mean()),
+      "fracao_janelas_igual_ou_acima": {c: float((maximos >= float(c)).mean()) for c in CORTES_FRACAO},
     },
     "f1_por_video": por_video,
   }
