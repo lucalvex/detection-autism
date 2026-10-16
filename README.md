@@ -177,4 +177,6 @@ python src/utils/save_pose_image.py      # salva um PNG de uma imagem única, an
 python src/utils/keypoints.py            # imprime no console os keypoints brutos de um vídeo (script de teste rápido)
 ```
 
-`figuras/` é só para figuras do texto e nunca deve conter quadros de vídeo ou imagens de crianças; o `.gitignore` e o hook bloqueiam `.png`, `.jpg` e `.jpeg` em qualquer outra pasta.
+`figuras/` é só para figuras do texto e nunca deve conter quadros de vídeo ou imagens de crianças; o `.gitignore` e o hook bloqueiam `.png`, `.jpg` e `.jpeg` em qualquer outra pasta, exceto `demo/assets/`.
+
+`demo/assets/` é só para elementos da interface, como a logo da UEM, e nunca para quadros de vídeo ou imagens de crianças. `logo_uem_recorte.png` é a `logo_uem.png` recortada ao desenho, com o fundo branco tornado transparente.

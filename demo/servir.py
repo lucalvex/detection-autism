@@ -17,6 +17,7 @@
 # ============================================================
 
 import http.server
+import os
 import re
 from pathlib import Path
 
@@ -34,6 +35,8 @@ RESULTADOS = {
 
 PERMITIDOS = [
   re.compile(r"^/demo/[A-Za-z0-9_\-/]+\.(html|css|js|json)$"),
+  # elementos visuais da interface, como a logo; nunca quadros de vídeo
+  re.compile(r"^/demo/assets/[A-Za-z0-9_\-]+\.(png|svg)$"),
   re.compile(r"^/saidas/v_[A-Za-z0-9_]+_(sessao|pontos)\.json$"),
 ]
 
@@ -56,6 +59,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     ".css": "text/css; charset=utf-8",
     ".js": "text/javascript; charset=utf-8",
     ".json": "application/json; charset=utf-8",
+    ".png": "image/png",
+    ".svg": "image/svg+xml",
   }
 
   def __init__(self, *args, **kwargs):
@@ -87,8 +92,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
   # várias conexões ao mesmo tempo: uma conexão presa do navegador não
-  # bloqueia as outras
-  http.server.ThreadingHTTPServer.allow_reuse_address = True
+  # bloqueia as outras. No Windows, SO_REUSEADDR deixa um segundo
+  # servidor ocupar a mesma porta em silêncio (e um servidor antigo seguir
+  # respondendo); lá ele fica desligado, para a porta ocupada dar erro.
+  http.server.ThreadingHTTPServer.allow_reuse_address = os.name != "nt"
   with http.server.ThreadingHTTPServer(("127.0.0.1", PORTA), Handler) as httpd:
     print(f"Interface em http://127.0.0.1:{PORTA}/demo/apresentacao.html", flush=True)
     httpd.serve_forever()
