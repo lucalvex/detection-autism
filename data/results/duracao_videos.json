@@ -1,0 +1,541 @@
+{
+  "descricao": "Duração dos vídeos usados no trabalho (models/oof/fold_assignments.json), lida do próprio arquivo de vídeo, não das detecções de pose. quadros = contagem por decodificação (ffprobe -count_frames), igual ao cabeçalho do contêiner e ao OpenCV; fps = avg_frame_rate do fluxo de vídeo, igual ao do OpenCV; duracao_s = quadros / fps. duracao_conteiner_s é a duração informada pelo contêiner, só para conferência. quadros_avaliados = último quadro com pessoa detectada + 1.",
+  "gerado_por": "src/duracao_videos.py",
+  "resumo": {
+    "n_videos": 56,
+    "quadros_nos_arquivos": 125772,
+    "duracao_media_s": 88.02005017515704,
+    "duracao_mediana_s": 64.89910987161578,
+    "duracao_minima_s": 15.233333333333333,
+    "video_mais_curto": "v_HeadBanging_24",
+    "duracao_maxima_s": 294.8,
+    "video_mais_longo": "v_Spinning_18",
+    "duracao_total_s": 4929.122809808792,
+    "duracao_total_min": 82.15204683014653,
+    "fps_minimo": 9.969,
+    "video_fps_minimo": "v_Spinning_08",
+    "fps_maximo": 30.0,
+    "n_videos_fps_maximo": 24
+  },
+  "faixa_avaliada_no_tcc": {
+    "descricao": "Os 125345 quadros citados no TCC são a faixa avaliada: em cada vídeo, do primeiro quadro ao último com pessoa detectada (n_frames de evaluate_temporal.py, que é o fim da última janela). Os quadros depois do último com pessoa detectada não entram na avaliação; nenhum intervalo anotado no XML cai neles.",
+    "quadros_faixa_avaliada": 125345,
+    "confere_com_total_do_tcc": true,
+    "quadros_finais_sem_deteccao_total": 427,
+    "quadros_finais_sem_deteccao_por_video": {
+      "v_ArmFlapping_03": 1,
+      "v_ArmFlapping_16": 9,
+      "v_HeadBanging_19": 386,
+      "v_Spinning_16": 4,
+      "v_Spinning_22": 5,
+      "v_Spinning_23": 22
+    },
+    "intervalos_anotados_nos_quadros_finais": 0
+  },
+  "por_video": {
+    "v_ArmFlapping_01": {
+      "quadros": 1098,
+      "fps": 24.12082514734774,
+      "fps_fracao": "24555/1018",
+      "duracao_conteiner_s": 45.534331,
+      "duracao_s": 45.52083078802688,
+      "quadros_avaliados": 1098,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_02": {
+      "quadros": 1538,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 51.26966,
+      "duracao_s": 51.266666666666666,
+      "quadros_avaliados": 1538,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_03": {
+      "quadros": 931,
+      "fps": 15.033,
+      "fps_fracao": "15033/1000",
+      "duracao_conteiner_s": 61.950839,
+      "duracao_s": 61.93041974323156,
+      "quadros_avaliados": 930,
+      "quadros_finais_sem_deteccao": 1
+    },
+    "v_ArmFlapping_04": {
+      "quadros": 5994,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 199.80771,
+      "duracao_s": 199.8,
+      "quadros_avaliados": 5994,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_05": {
+      "quadros": 526,
+      "fps": 15.0,
+      "fps_fracao": "15/1",
+      "duracao_conteiner_s": 35.085351,
+      "duracao_s": 35.06666666666667,
+      "quadros_avaliados": 526,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_08": {
+      "quadros": 6078,
+      "fps": 23.954031117397452,
+      "fps_fracao": "33871/1414",
+      "duracao_conteiner_s": 253.747664,
+      "duracao_s": 253.73599834666825,
+      "quadros_avaliados": 6078,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_09": {
+      "quadros": 5041,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 168.042812,
+      "duracao_s": 168.03333333333333,
+      "quadros_avaliados": 5041,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_10": {
+      "quadros": 3213,
+      "fps": 23.95401554404145,
+      "fps_fracao": "36985/1544",
+      "duracao_conteiner_s": 134.141678,
+      "duracao_s": 134.13199945924023,
+      "quadros_avaliados": 3213,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_12": {
+      "quadros": 4911,
+      "fps": 29.6752,
+      "fps_fracao": "18547/625",
+      "duracao_conteiner_s": 165.511837,
+      "duracao_s": 165.49172372890493,
+      "quadros_avaliados": 4911,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_13": {
+      "quadros": 2587,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 86.238912,
+      "duracao_s": 86.23333333333333,
+      "quadros_avaliados": 2587,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_14": {
+      "quadros": 846,
+      "fps": 15.014,
+      "fps_fracao": "7507/500",
+      "duracao_conteiner_s": 56.35483,
+      "duracao_s": 56.347409084854135,
+      "quadros_avaliados": 846,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_15": {
+      "quadros": 1147,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 38.243265,
+      "duracao_s": 38.233333333333334,
+      "quadros_avaliados": 1147,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_16": {
+      "quadros": 1603,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 53.452336,
+      "duracao_s": 53.43333333333333,
+      "quadros_avaliados": 1594,
+      "quadros_finais_sem_deteccao": 9
+    },
+    "v_ArmFlapping_18": {
+      "quadros": 2652,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 88.421587,
+      "duracao_s": 88.4,
+      "quadros_avaliados": 2652,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_19": {
+      "quadros": 7813,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 260.435011,
+      "duracao_s": 260.43333333333334,
+      "quadros_avaliados": 7813,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_20": {
+      "quadros": 3322,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 110.735964,
+      "duracao_s": 110.73333333333333,
+      "quadros_avaliados": 3322,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_21": {
+      "quadros": 671,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 22.384036,
+      "duracao_s": 22.366666666666667,
+      "quadros_avaliados": 671,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_22": {
+      "quadros": 1800,
+      "fps": 14.767,
+      "fps_fracao": "14767/1000",
+      "duracao_conteiner_s": 121.904762,
+      "duracao_s": 121.8934109839507,
+      "quadros_avaliados": 1800,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_24": {
+      "quadros": 1033,
+      "fps": 25.0,
+      "fps_fracao": "25/1",
+      "duracao_conteiner_s": 41.331519,
+      "duracao_s": 41.32,
+      "quadros_avaliados": 1033,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_ArmFlapping_25": {
+      "quadros": 705,
+      "fps": 29.97002997002997,
+      "fps_fracao": "30000/1001",
+      "duracao_conteiner_s": 23.545034,
+      "duracao_s": 23.523500000000002,
+      "quadros_avaliados": 705,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_01": {
+      "quadros": 310,
+      "fps": 10.014352818371608,
+      "fps_fracao": "38375/3832",
+      "duracao_conteiner_s": 31.168,
+      "duracao_s": 30.95557003257329,
+      "quadros_avaliados": 310,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_02": {
+      "quadros": 1693,
+      "fps": 29.97002997002997,
+      "fps_fracao": "30000/1001",
+      "duracao_conteiner_s": 56.51737,
+      "duracao_s": 56.48976666666667,
+      "quadros_avaliados": 1693,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_03": {
+      "quadros": 227,
+      "fps": 14.822,
+      "fps_fracao": "7411/500",
+      "duracao_conteiner_s": 15.424,
+      "duracao_s": 15.315072189987857,
+      "quadros_avaliados": 227,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_05": {
+      "quadros": 581,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 19.388662,
+      "duracao_s": 19.366666666666667,
+      "quadros_avaliados": 581,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_06": {
+      "quadros": 690,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 23.010975,
+      "duracao_s": 23.0,
+      "quadros_avaliados": 690,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_07": {
+      "quadros": 2633,
+      "fps": 14.58456425406204,
+      "fps_fracao": "39495/2708",
+      "duracao_conteiner_s": 180.674467,
+      "duracao_s": 180.53333333333333,
+      "quadros_avaliados": 2633,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_10": {
+      "quadros": 1369,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 45.650431,
+      "duracao_s": 45.63333333333333,
+      "quadros_avaliados": 1369,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_13": {
+      "quadros": 680,
+      "fps": 23.06547619047619,
+      "fps_fracao": "3875/168",
+      "duracao_conteiner_s": 29.489342,
+      "duracao_s": 29.481290322580644,
+      "quadros_avaliados": 680,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_15": {
+      "quadros": 1459,
+      "fps": 27.688,
+      "fps_fracao": "3461/125",
+      "duracao_conteiner_s": 52.709297,
+      "duracao_s": 52.694308003467206,
+      "quadros_avaliados": 1459,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_16": {
+      "quadros": 1818,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 60.604082,
+      "duracao_s": 60.6,
+      "quadros_avaliados": 1818,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_17": {
+      "quadros": 3249,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 108.321088,
+      "duracao_s": 108.3,
+      "quadros_avaliados": 3249,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_18": {
+      "quadros": 504,
+      "fps": 20.0,
+      "fps_fracao": "20/1",
+      "duracao_conteiner_s": 25.216871,
+      "duracao_s": 25.2,
+      "quadros_avaliados": 504,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_19": {
+      "quadros": 7289,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 242.973605,
+      "duracao_s": 242.96666666666667,
+      "quadros_avaliados": 6903,
+      "quadros_finais_sem_deteccao": 386
+    },
+    "v_HeadBanging_20": {
+      "quadros": 1726,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 57.539048,
+      "duracao_s": 57.53333333333333,
+      "quadros_avaliados": 1726,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_21": {
+      "quadros": 2671,
+      "fps": 29.97002997002997,
+      "fps_fracao": "30000/1001",
+      "duracao_conteiner_s": 89.141406,
+      "duracao_s": 89.12236666666666,
+      "quadros_avaliados": 2671,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_22": {
+      "quadros": 884,
+      "fps": 16.785714285714285,
+      "fps_fracao": "235/14",
+      "duracao_conteiner_s": 52.686077,
+      "duracao_s": 52.66382978723404,
+      "quadros_avaliados": 884,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_HeadBanging_24": {
+      "quadros": 457,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 15.25551,
+      "duracao_s": 15.233333333333333,
+      "quadros_avaliados": 457,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_01": {
+      "quadros": 4452,
+      "fps": 29.97002997002997,
+      "fps_fracao": "30000/1001",
+      "duracao_conteiner_s": 148.56127,
+      "duracao_s": 148.54840000000002,
+      "quadros_avaliados": 4452,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_02": {
+      "quadros": 2855,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 95.178594,
+      "duracao_s": 95.16666666666667,
+      "quadros_avaliados": 2855,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_04": {
+      "quadros": 2050,
+      "fps": 24.0,
+      "fps_fracao": "24/1",
+      "duracao_conteiner_s": 85.426213,
+      "duracao_s": 85.41666666666667,
+      "quadros_avaliados": 2050,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_05": {
+      "quadros": 189,
+      "fps": 10.0,
+      "fps_fracao": "10/1",
+      "duracao_conteiner_s": 18.901043,
+      "duracao_s": 18.9,
+      "quadros_avaliados": 189,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_07": {
+      "quadros": 590,
+      "fps": 19.91687424350573,
+      "fps_fracao": "53100000/2666081",
+      "duracao_conteiner_s": 29.628662,
+      "duracao_s": 29.62312222222222,
+      "quadros_avaliados": 590,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_08": {
+      "quadros": 805,
+      "fps": 9.969,
+      "fps_fracao": "9969/1000",
+      "duracao_conteiner_s": 80.759002,
+      "duracao_s": 80.75032601063296,
+      "quadros_avaliados": 805,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_09": {
+      "quadros": 2064,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 68.800726,
+      "duracao_s": 68.8,
+      "quadros_avaliados": 2064,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_10": {
+      "quadros": 1269,
+      "fps": 29.97002997002997,
+      "fps_fracao": "30000/1001",
+      "duracao_conteiner_s": 42.353197,
+      "duracao_s": 42.3423,
+      "quadros_avaliados": 1269,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_11": {
+      "quadros": 433,
+      "fps": 12.777,
+      "fps_fracao": "12777/1000",
+      "duracao_conteiner_s": 33.901134,
+      "duracao_s": 33.88901933161149,
+      "quadros_avaliados": 433,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_12": {
+      "quadros": 3423,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 114.102857,
+      "duracao_s": 114.1,
+      "quadros_avaliados": 3423,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_14": {
+      "quadros": 2327,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 77.577868,
+      "duracao_s": 77.56666666666666,
+      "quadros_avaliados": 2327,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_15": {
+      "quadros": 754,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 25.147211,
+      "duracao_s": 25.133333333333333,
+      "quadros_avaliados": 754,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_16": {
+      "quadros": 2024,
+      "fps": 16.0,
+      "fps_fracao": "16/1",
+      "duracao_conteiner_s": 126.502313,
+      "duracao_s": 126.5,
+      "quadros_avaliados": 2020,
+      "quadros_finais_sem_deteccao": 4
+    },
+    "v_Spinning_18": {
+      "quadros": 8844,
+      "fps": 30.0,
+      "fps_fracao": "30/1",
+      "duracao_conteiner_s": 294.800544,
+      "duracao_s": 294.8,
+      "quadros_avaliados": 8844,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_19": {
+      "quadros": 3960,
+      "fps": 29.97002997002997,
+      "fps_fracao": "30000/1001",
+      "duracao_conteiner_s": 132.144762,
+      "duracao_s": 132.132,
+      "quadros_avaliados": 3960,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_21": {
+      "quadros": 1624,
+      "fps": 12.779,
+      "fps_fracao": "12779/1000",
+      "duracao_conteiner_s": 127.106032,
+      "duracao_s": 127.08349636121763,
+      "quadros_avaliados": 1624,
+      "quadros_finais_sem_deteccao": 0
+    },
+    "v_Spinning_22": {
+      "quadros": 2008,
+      "fps": 25.0,
+      "fps_fracao": "25/1",
+      "duracao_conteiner_s": 80.341043,
+      "duracao_s": 80.32,
+      "quadros_avaliados": 2003,
+      "quadros_finais_sem_deteccao": 5
+    },
+    "v_Spinning_23": {
+      "quadros": 2318,
+      "fps": 14.745654938533276,
+      "fps_fracao": "34785/2359",
+      "duracao_conteiner_s": 157.199093,
+      "duracao_s": 157.19885007905708,
+      "quadros_avaliados": 2296,
+      "quadros_finais_sem_deteccao": 22
+    },
+    "v_Spinning_25": {
+      "quadros": 2034,
+      "fps": 29.97002997002997,
+      "fps_fracao": "30000/1001",
+      "duracao_conteiner_s": 67.871927,
+      "duracao_s": 67.8678,
+      "quadros_avaliados": 2034,
+      "quadros_finais_sem_deteccao": 0
+    }
+  }
+}
