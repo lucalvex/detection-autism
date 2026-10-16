@@ -6,6 +6,12 @@
     "headbanging": 34,
     "spinning": 38
   },
+  "n_comportamentos_anotados_videos_usados": 101,
+  "comportamentos_por_categoria_videos_usados": {
+    "armflapping": 49,
+    "headbanging": 25,
+    "spinning": 27
+  },
   "n_videos_usados": 56,
   "n_particoes": 5,
   "divisao": "por vídeo (StratifiedGroupKFold, random_state=42); cada vídeo é teste em exatamente uma partição",

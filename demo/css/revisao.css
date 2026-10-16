@@ -1,4 +1,4 @@
-.titulo { display: flex; flex-direction: column; gap: 4px; }
+.titulo { display: flex; flex-direction: column; gap: 4px; margin-top: 22px; }
 .titulo span { font-size: 14px; }
 h1 { margin: 0; font-size: 30px; line-height: 1.1; font-weight: 700; letter-spacing: -0.01em; }
 
@@ -14,12 +14,12 @@ h1 { margin: 0; font-size: 30px; line-height: 1.1; font-weight: 700; letter-spac
 
 .barra-sessao #btn-exportar { margin-left: auto; }
 
-.campo { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.campo { display: flex; align-items: center; gap: 10px; font-size: 16px; color: var(--texto); }
 .campo select {
   height: 44px;
   padding: 0 12px;
   font: inherit;
-  font-size: 15px;
+  font-size: 16px;
   border: 1px solid #8C9895;
   border-radius: 6px;
   background: var(--superficie);

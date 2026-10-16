@@ -33,10 +33,18 @@ def main():
   folds = json.load(open(FOLD_ASSIGNMENTS, encoding="utf-8"))
   video_to_fold = folds["video_to_fold"]
 
+  # só os comportamentos dos vídeos que entraram na avaliação
+  categorias_usados = {}
+  for vid in video_to_fold:
+    for b in load_annotations(XMLS_DIR / f"{vid}.xml")["behaviours"]:
+      categorias_usados[b["category"]] = categorias_usados.get(b["category"], 0) + 1
+
   saida = {
     "n_anotacoes_xml": len(xmls),
     "n_comportamentos_anotados": n_comportamentos,
     "comportamentos_por_categoria": categorias,
+    "n_comportamentos_anotados_videos_usados": sum(categorias_usados.values()),
+    "comportamentos_por_categoria_videos_usados": categorias_usados,
     "n_videos_usados": len(video_to_fold),
     "n_particoes": folds["n_splits"],
     "divisao": "por vídeo (StratifiedGroupKFold, random_state=%d); cada vídeo é teste em exatamente uma partição" % folds["random_state"],

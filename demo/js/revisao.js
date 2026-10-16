@@ -2,7 +2,7 @@ import { buildSegments } from "./timeline.js";
 import {
   CORES, RESULTADOS, carregarJSON, carregarSessao, num, fmtTempo, centroJanela,
   sequencias, trechosJanelasLongas, caminhoCurva, svg, html,
-  desenharEsqueleto, mostrarErro,
+  desenharEsqueleto, mostrarErro, nomeClasse, rotuloSessao, DESCRICAO_FUNDO,
 } from "./comum.js";
 
 const W = 1140;
@@ -77,7 +77,7 @@ async function iniciar() {
 
     const sel = $("sel-sessao");
     for (const e of escolhidos) {
-      sel.appendChild(html("option", { value: e.video_id, texto: `${e.video_id} (${e.classe_do_video})` }));
+      sel.appendChild(html("option", { value: e.video_id, texto: rotuloSessao(e.video_id) }));
     }
     sel.value = id;
     sel.addEventListener("change", () => {
@@ -119,7 +119,7 @@ async function iniciar() {
 function montarCabecalho() {
   const s = estado.sessao;
   $("sessao-info").textContent =
-    `Sessão ${s.sessao.id}, ${fmtTempo(estado.T)} de vídeo, ${s.sessao.total_quadros} quadros a ${num(estado.fps, 2)} quadros por segundo`;
+    `Sessão ${rotuloSessao(s.sessao.id)} (${s.sessao.id}), ${fmtTempo(estado.T)} de vídeo, ${s.sessao.total_quadros} quadros a ${num(estado.fps, 2)} quadros por segundo`;
   $("tc-total").textContent = fmtTempo(estado.T);
 
   const aviso = $("aviso-particao");
@@ -197,7 +197,10 @@ function montarLinhaDoTempo() {
     const resumo = html("span", { class: "resumo num" });
     linha.appendChild(html("div", { class: "trilha-rotulo" }, [
       html("span", { class: "quadradinho", estilo: `background:${cor}` }),
-      html("span", { class: "textos" }, [html("span", { class: "nome", texto: classe.nome }), resumo]),
+      html("span", { class: "textos" }, [
+        html("span", { class: "nome" }, [neutra ? `Fundo (${DESCRICAO_FUNDO})` : nomeClasse(classe, { apoio: false })]),
+        resumo,
+      ]),
     ]));
     const plot = html("div", { class: "trilha-plot", estilo: `height:${ALT_CLASSE}px` });
     const el = svg("svg", { width: W, height: ALT_CLASSE, "aria-hidden": "true" });
@@ -277,7 +280,7 @@ function renderizarLista() {
   const lista = $("lista-trechos");
   lista.replaceChildren();
   const decisoes = lerDecisoes();
-  const nomes = Object.fromEntries(estado.classes.map((c) => [c.id, c.nome]));
+  const porId = Object.fromEntries(estado.classes.map((c) => [c.id, c]));
   let revisados = 0;
 
   estado.segmentos.forEach((t, i) => {
@@ -302,7 +305,7 @@ function renderizarLista() {
     lista.appendChild(html("div", { class: "trecho", "data-indice": i }, [
       html("span", { class: "quadradinho", estilo: `background:${CORES[t.classe]}` }),
       html("button", { type: "button", class: "trecho-ir", onclick: () => { estado.escolhido = i; irPara((t.quadro_inicio + 0.5) / estado.fps); } }, [
-        html("span", { class: "nome", texto: nomes[t.classe] }),
+        html("span", { class: "nome" }, [nomeClasse(porId[t.classe])]),
         html("span", {
           class: "faixa",
           texto: `${fmtTempo(t.inicio_s)} a ${fmtTempo(t.fim_s)}, ${num(t.duracao_s, 1)} s, pico ${num(t.pico, 2)}`,
@@ -540,7 +543,7 @@ function atualizarQuadro() {
       if (v >= estado.limiar && j.quadro_inicio >= s.quadro_inicio && j.quadro_fim <= s.quadro_fim && v > p) p = v;
     }
     $("chip-cor").style.background = CORES[s.classe];
-    $("chip-nome").textContent = estado.classes[classe].nome;
+    $("chip-nome").replaceChildren(nomeClasse(estado.classes[classe]));
     $("chip-p").textContent = p >= 0 ? num(p, 2) : "—";
     chip.hidden = false;
   } else {

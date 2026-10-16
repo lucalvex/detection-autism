@@ -2,7 +2,18 @@ import { buildSegments } from "./timeline.js";
 import {
   CORES, RESULTADOS, OSSOS, carregarJSON, carregarSessao, num, fmtTempo, fmtTempoFino,
   centroJanela, janelaMaisProxima, sequencias, caminhoCurva, svg, html, mostrarErro,
+  nomeClasse, rotuloSessao,
 } from "./comum.js";
+
+// lista "a, b e c" de fragmentos ou textos
+function juntar(itens) {
+  const out = [];
+  itens.forEach((x, i) => {
+    if (i) out.push(i === itens.length - 1 ? " e " : ", ");
+    out.push(x);
+  });
+  return out;
+}
 
 const $ = (id) => document.getElementById(id);
 const SUB = { 0: "₀", 1: "₁", 2: "₂", 3: "₃", 4: "₄", 5: "₅", 6: "₆", 7: "₇", 8: "₈", 9: "₉" };
@@ -55,12 +66,12 @@ function montarMedianos() {
 
   const lista = $("medianos-lista");
   lista.replaceChildren();
-  const nomes = Object.fromEntries(estado.video.sessao.classes.map((c) => [c.id, c.nome]));
+  const porId = Object.fromEntries(estado.video.sessao.classes.map((c) => [c.id, c]));
   for (const [classe, e] of Object.entries(medianos.escolhidos)) {
     const id = classe.toLowerCase();
     const empatados = medianos.empatados_com_o_escolhido[classe].length;
     const detalhe =
-      `F1 por quadro ${num(e.f1_quadro_anotados, 2)}, ${e.posicao_na_ordem + 1}º de ${e.n_videos_da_classe}` +
+      `${rotuloSessao(e.video_id)} · F1 por quadro ${num(e.f1_quadro_anotados, 3)}, ${e.posicao_na_ordem + 1}º de ${e.n_videos_da_classe}` +
       (empatados > 1 ? `, empatado com outros ${empatados - 1}` : "");
     lista.appendChild(html("button", {
       type: "button",
@@ -70,7 +81,7 @@ function montarMedianos() {
     }, [
       html("span", { class: "quadradinho", estilo: `background:${CORES[id]}` }),
       html("span", { class: "textos" }, [
-        html("span", { class: "nome", texto: `${nomes[id]}: ${e.video_id}` }),
+        html("span", { class: "nome" }, [nomeClasse(porId[id])]),
         html("span", { class: "detalhe", texto: detalhe }),
       ]),
     ]));
@@ -104,7 +115,7 @@ function etapas() {
   const ex = intervaloExemplo();
   const janela = janelaMaisProxima(s.janelas, s.sessao.fps, ex.meio);
   const nLongas = s.janelas.filter((j) => j.janela_longa).length;
-  const saidas = s.classes.map((c) => c.nome).join(", ");
+  const saidas = juntar(s.classes.map((c) => nomeClasse(c, { apoio: false })));
 
   return [
     {
@@ -143,7 +154,7 @@ function etapas() {
       params: [
         ["Camadas LSTM:", String(m.lstm_camadas)],
         ["Unidades por camada:", String(m.lstm_unidades)],
-        ["Ativação de saída:", `${m.ativacao_saida}, ${m.n_saidas} saídas (${saidas})`],
+        ["Ativação de saída:", [`${m.ativacao_saida}, ${m.n_saidas} saídas (`, ...saidas, ")"]],
       ],
       visual: visualLSTM,
     },
@@ -151,7 +162,7 @@ function etapas() {
       titulo: "Pontuações", curto: "Uma pontuação por classe.",
       texto: "Cada janela recebe uma pontuação por classe, e as pontuações de uma janela somam 1. Uma janela isolada é ruidosa; o sinal que interessa é uma pontuação alta que se sustenta por várias janelas seguidas.",
       params: [
-        ["Exemplo:", `janela de ${fmtTempoFino(janela.quadro_inicio / s.sessao.fps)} a ${fmtTempoFino(janela.quadro_fim / s.sessao.fps)} de ${estado.video.id}, no meio do intervalo anotado de ${ex.classe.nome}`],
+        ["Exemplo:", [`janela de ${fmtTempoFino(janela.quadro_inicio / s.sessao.fps)} a ${fmtTempoFino(janela.quadro_fim / s.sessao.fps)} de ${estado.video.id}, no meio do intervalo anotado de `, nomeClasse(ex.classe, { apoio: false })]],
       ],
       visual: visualPontuacoes,
     },
@@ -193,7 +204,7 @@ function mostrarEtapa(j) {
   $("etapa-titulo").textContent = e.titulo;
   $("etapa-descricao").textContent = e.texto;
   const dl = $("etapa-params");
-  dl.replaceChildren(...e.params.map(([k, v]) => html("div", {}, [html("dt", { texto: k }), html("dd", { texto: v })])));
+  dl.replaceChildren(...e.params.map(([k, v]) => html("div", {}, [html("dt", { texto: k }), html("dd", {}, Array.isArray(v) ? v : [v])])));
   $("btn-anterior").disabled = j === 0;
   $("btn-proxima").disabled = j === lista.length - 1;
   const visual = $("etapa-visual");
@@ -231,7 +242,16 @@ function caminhoOssos(q, tf) {
 }
 
 function legenda(container, texto) {
-  container.appendChild(html("p", { class: "legenda", texto }));
+  container.appendChild(html("p", { class: "legenda" }, Array.isArray(texto) ? texto : [texto]));
+}
+
+// <i>head banging</i>, sem o apoio em português
+function en(id) {
+  return nomeClasse({ id, nome: "" }, { apoio: false });
+}
+
+function rotuloTrilha(c) {
+  return c.id === "background" ? "Fundo (sem estereotipia anotada)" : nomeClasse(c);
 }
 
 function visualQuadros(container) {
@@ -255,9 +275,11 @@ function visualQuadros(container) {
     linha.appendChild(html("div", { class: "quadro" }, [caixa, html("span", { class: "tc", texto: fmtTempoFino(f / fps) })]));
   });
   container.appendChild(linha);
-  legenda(container,
-    `Cinco quadros seguidos de ${estado.video.id}, no meio do intervalo anotado de ${ex.classe.nome} (${ex.anotacao.inicio_s} s a ${ex.anotacao.fim_s} s no XML). ` +
-    "Desenhados a partir dos pontos exportados; quadro sem detecção fica vazio, sem preencher.");
+  legenda(container, [
+    `Cinco quadros seguidos de ${estado.video.id}, no meio do intervalo anotado de `, en(ex.classe.id),
+    ` (${ex.anotacao.inicio_s} s a ${ex.anotacao.fim_s} s no XML). ` +
+    "Desenhados a partir dos pontos exportados; quadro sem detecção fica vazio, sem preencher.",
+  ]);
 }
 
 function visualPose(container) {
@@ -360,7 +382,7 @@ function visualLSTM(container) {
     ]));
   }
   cadeia.appendChild(html("div", { class: "saidas" }, s.classes.map((c) =>
-    html("div", { class: "saida" }, [html("span", { class: "quadradinho", estilo: `width:10px;height:10px;background:${CORES[c.id]}` }), c.nome])
+    html("div", { class: "saida" }, [html("span", { class: "quadradinho", estilo: `width:10px;height:10px;background:${CORES[c.id]}` }), nomeClasse(c)])
   )));
   container.appendChild(html("div", { class: "lstm" }, [
     cadeia,
@@ -380,11 +402,14 @@ function visualPontuacoes(container) {
     ? ` Janela longa: por quadros sem detecção, ela cobre ${j.quadro_fim - j.quadro_inicio} quadros do vídeo para juntar ${s.modelo.janela_quadros} com pessoa.`
     : "";
   const barras = html("div", { class: "barras" }, [
-    html("span", { class: "cab", texto: `Janela de ${fmtTempoFino(j.quadro_inicio / fps)} a ${fmtTempoFino(j.quadro_fim / fps)} de ${estado.video.id}; o XML anota ${ex.classe.nome} de ${ex.anotacao.inicio_s} s a ${ex.anotacao.fim_s} s.${longa}` }),
+    html("span", { class: "cab" }, [
+      `Janela de ${fmtTempoFino(j.quadro_inicio / fps)} a ${fmtTempoFino(j.quadro_fim / fps)} de ${estado.video.id}; o XML anota `,
+      en(ex.classe.id), ` de ${ex.anotacao.inicio_s} s a ${ex.anotacao.fim_s} s.${longa}`,
+    ]),
   ]);
   s.classes.forEach((c, i) => {
     barras.appendChild(html("div", { class: "barra" }, [
-      html("div", { class: "linha1" }, [html("span", { texto: c.nome }), html("span", { class: "num", texto: num(j.pontuacoes[i], 2) })]),
+      html("div", { class: "linha1" }, [html("span", {}, [rotuloTrilha(c)]), html("span", { class: "num", texto: num(j.pontuacoes[i], 2) })]),
       html("div", { class: "trilho" }, [html("div", { class: "valor", estilo: `width:${(j.pontuacoes[i] * 576).toFixed(0)}px;background:${CORES[c.id]}` })]),
     ]));
   });
@@ -429,7 +454,7 @@ function visualTrechos(container) {
     }
     el.appendChild(svg("line", { x1: 0, x2: W, y1: baseY + 3, y2: baseY + 3, stroke: "#C3CBC8", "stroke-width": 1 }));
     bloco.appendChild(html("div", {}, [
-      html("span", { class: "rot" }, [html("span", { class: "quadradinho", estilo: `width:10px;height:10px;background:${cor}` }), c.nome + (neutra ? " (pontuação de fundo)" : "")]),
+      html("span", { class: "rot" }, [html("span", { class: "quadradinho", estilo: `width:10px;height:10px;background:${cor}` }), rotuloTrilha(c)]),
       el,
     ]));
   });
@@ -447,22 +472,28 @@ function montarRodape() {
   const [m1, m2] = comparacao.metricas_principais;
   const rodape = $("rodape");
   const bloco = (titulo, filhos) => html("div", {}, [html("h3", { texto: titulo }), html("p", {}, filhos)]);
-  const nClasses = Object.keys(resumo.comportamentos_por_categoria).length;
+  const nClasses = Object.keys(resumo.comportamentos_por_categoria_videos_usados).length;
+  // a frase sobre "pior" só vale se, de fato, os dois agregados do modelo
+  // com rótulos por intervalo forem menores
+  const ambasMenores = [m1, m2].every((m) => m.pooled_56_videos.rodada_a < m.pooled_56_videos.base_re_seedado);
   rodape.replaceChildren(
     bloco("Dados", [
-      `SSBD: ${resumo.n_videos_usados} vídeos usados, de ${resumo.n_anotacoes_xml} anotações, com ${resumo.n_comportamentos_anotados} comportamentos anotados de ${nClasses} classes.`,
+      `SSBD: ${resumo.n_videos_usados} vídeos usados, de ${resumo.n_anotacoes_xml} anotações, com ${resumo.n_comportamentos_anotados_videos_usados} comportamentos anotados nesses vídeos, de ${nClasses} classes.`,
     ]),
     bloco("Validação", [
       `Divisão por vídeo em ${resumo.n_particoes} partições: cada vídeo é avaliado só pelo modelo da partição em que ficou fora do treino.`,
     ]),
     bloco("Resultados", [
-      `Rodada A contra o mesmo modelo com rótulo por vídeo, pelo critério registrado antes da avaliação. ` +
-      `${capitalizar(m1.metrica)}: ${num(m1.pooled_56_videos.rodada_a, 2)} contra ${num(m1.pooled_56_videos.base_re_seedado, 2)}. ` +
+      `Modelo com rótulos por intervalo contra o modelo base, pelo critério registrado antes da avaliação. ` +
+      `${capitalizar(m1.metrica)}: ${num(m1.pooled_56_videos.rodada_a, 3)} contra ${num(m1.pooled_56_videos.base_re_seedado, 3)}. ` +
       `${capitalizar(m2.metrica)}: ${num(m2.pooled_56_videos.rodada_a, 3)} contra ${num(m2.pooled_56_videos.base_re_seedado, 3)}. Veredito: `,
       html("span", { class: "veredito", texto: comparacao.veredito }),
       ".",
+      ambasMenores
+        ? " O critério não previa o desfecho ‘pior’; nas duas métricas agregadas, os valores do modelo com rótulos por intervalo foram menores."
+        : "",
     ]),
-    bloco("Uso pretendido", ["Triagem e acompanhamento. Não é um instrumento diagnóstico."]),
+    bloco("Uso pretendido", ["Protótipo. Na avaliação deste trabalho, o desempenho não permite o uso para triagem ou diagnóstico."]),
   );
 }
 
@@ -484,17 +515,21 @@ function montarPosteriores() {
   const rankingHB = medianos.ranking_por_classe.HeadBanging;
   const zerosHB = rankingHB.filter((r) => r.f1 === 0).length;
 
+  const INTERVALOS = "no modelo com rótulos por intervalo";
+  const BASE = "no modelo base";
+  const de = (a) => `de ${num(a.sem_ablacao, 3)} para ${num(a.com_ablacao, 3)}`;
   const itens = [
-    `Presença de estereotipia (qualquer classe contra fundo): acurácia balanceada de ${num(bin.rodada_a.acuracia_balanceada_media_entre_folds, 2)} na Rodada A ` +
-      `e de ${num(bin.base_re_seedado.acuracia_balanceada_media_entre_folds, 2)} no modelo com rótulo por vídeo; o acaso é ${num(acaso, 2)}.`,
-    `Embaralhar a ordem dos quadros de cada janela: F1 por quadro de ${num(f1(ab.shuffle, "rodada_a_forcado_3_classes").sem_ablacao, 2)} para ${num(f1(ab.shuffle, "rodada_a_forcado_3_classes").com_ablacao, 2)} na Rodada A (argmax entre as três estereotipias) ` +
-      `e de ${num(f1(ab.shuffle, "base_re_seedado_natural").sem_ablacao, 2)} para ${num(f1(ab.shuffle, "base_re_seedado_natural").com_ablacao, 2)} no modelo com rótulo por vídeo.`,
-    `Zerar o deslocamento dx, dy, mantendo só a posição: de ${num(f1(ab.zero_dxdy, "rodada_a_forcado_3_classes").sem_ablacao, 2)} para ${num(f1(ab.zero_dxdy, "rodada_a_forcado_3_classes").com_ablacao, 2)} na Rodada A ` +
-      `e de ${num(f1(ab.zero_dxdy, "base_re_seedado_natural").sem_ablacao, 2)} para ${num(f1(ab.zero_dxdy, "base_re_seedado_natural").com_ablacao, 2)} no modelo com rótulo por vídeo.`,
-    `HeadBanging não foi aprendido: nos vídeos dessa classe, a Rodada A prevê HeadBanging em ${num(hb.media_fracao_anotados * 100, 0)}% dos quadros dentro dos intervalos anotados ` +
-      `e em ${num(hb.media_fracao_fundo * 100, 0)}% dos quadros fora deles; o F1 por quadro é 0 em ${zerosHB} de ${rankingHB.length} vídeos.`,
+    [`Presença de estereotipia (qualquer classe contra fundo): acurácia balanceada de ${num(bin.rodada_a.acuracia_balanceada_media_entre_folds, 3)} ${INTERVALOS} ` +
+      `e de ${num(bin.base_re_seedado.acuracia_balanceada_media_entre_folds, 3)} ${BASE}; o acaso é ${num(acaso, 3)}.`],
+    [`Embaralhar a ordem dos quadros de cada janela: F1 por quadro ${de(f1(ab.shuffle, "rodada_a_forcado_3_classes"))} ${INTERVALOS} (argmax só entre as estereotipias) ` +
+      `e ${de(f1(ab.shuffle, "base_re_seedado_natural"))} ${BASE}.`],
+    [`Zerar o deslocamento dx, dy, mantendo só a posição: ${de(f1(ab.zero_dxdy, "rodada_a_forcado_3_classes"))} ${INTERVALOS} ` +
+      `e ${de(f1(ab.zero_dxdy, "base_re_seedado_natural"))} ${BASE}.`],
+    [en("headbanging"), ` não foi aprendido: nos vídeos dessa classe, a fração de quadros prevista como `, en("headbanging"),
+      ` ${INTERVALOS} é ${num(hb.media_fracao_anotados, 3)} dentro dos intervalos anotados e ${num(hb.media_fracao_fundo, 3)} fora deles; ` +
+      `o F1 por quadro é 0 em ${zerosHB} de ${rankingHB.length} vídeos.`],
   ];
-  $("posteriores-lista").replaceChildren(...itens.map((t) => html("li", { texto: t })));
+  $("posteriores-lista").replaceChildren(...itens.map((partes) => html("li", {}, partes)));
 }
 
 iniciar();

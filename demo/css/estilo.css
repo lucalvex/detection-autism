@@ -52,6 +52,25 @@ button:disabled { opacity: 0.4; cursor: default; }
   gap: 24px;
 }
 
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.marca { display: flex; align-items: center; gap: 18px; }
+.marca img { height: 48px; width: auto; display: block; }
+.marca-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--texto);
+}
+
 .modo {
   display: flex;
   gap: 4px;

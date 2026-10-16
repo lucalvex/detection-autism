@@ -40,15 +40,18 @@ keyframes/
 # CSVs gerados (inclui data/poses/*.csv), qualquer pasta
 *.csv
 
-# Imagens: bloqueadas em qualquer pasta, exceto figuras/ na raiz, que é
-# só para figuras do texto e nunca deve ter quadros de vídeo nem
-# imagens de crianças
+# Imagens: bloqueadas em qualquer pasta, exceto figuras/ (só figuras do
+# texto) e demo/assets/ (só elementos da interface, como a logo); nenhuma
+# das duas pode ter quadros de vídeo nem imagens de crianças
 *.png
 *.jpg
 *.jpeg
 !/figuras/**/*.png
 !/figuras/**/*.jpg
 !/figuras/**/*.jpeg
+!/demo/assets/**/*.png
+!/demo/assets/**/*.jpg
+!/demo/assets/**/*.jpeg
 
 # Configurações do VS Code
 .vscode/

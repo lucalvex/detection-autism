@@ -8,6 +8,38 @@ export const CORES = {
   background: "#7F8C89",
 };
 
+// Nomes das classes como no texto do TCC: em inglês, em minúsculas e em
+// itálico, com o nome em português (do _sessao.json) como apoio.
+export const NOMES_EN = {
+  armflapping: "arm flapping",
+  headbanging: "head banging",
+  spinning: "spinning",
+};
+export const NOME_FUNDO = "fundo";
+export const DESCRICAO_FUNDO = "sem estereotipia anotada";
+
+// classe: { id, nome } do _sessao.json. Devolve um fragmento:
+// <i>arm flapping</i> (balançar os braços)
+export function nomeClasse(classe, { apoio = true } = {}) {
+  const frag = document.createDocumentFragment();
+  if (classe.id === "background") {
+    frag.append(apoio ? `${NOME_FUNDO} (${DESCRICAO_FUNDO})` : NOME_FUNDO);
+    return frag;
+  }
+  const i = document.createElement("i");
+  i.textContent = NOMES_EN[classe.id];
+  frag.append(i);
+  if (apoio) frag.append(` (${classe.nome.toLowerCase()})`);
+  return frag;
+}
+
+// "v_ArmFlapping_12" -> "Arm Flapping - 12"
+export function rotuloSessao(videoId) {
+  const m = /^v_([A-Za-z]+)_(\d+)$/.exec(videoId);
+  if (!m) return videoId;
+  return m[1].replace(/([a-z])([A-Z])/g, "$1 $2") + " - " + m[2];
+}
+
 // Ligações entre os 17 pontos COCO, as mesmas do design.
 export const OSSOS = [
   [5, 6], [5, 7], [7, 9], [6, 8], [8, 10], [5, 11], [6, 12], [11, 12], [11, 13],
