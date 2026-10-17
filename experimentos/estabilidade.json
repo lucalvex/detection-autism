@@ -1,0 +1,35 @@
+{
+  "validacao": {
+    "f1_evento_iou_0.3": {
+      "media": 0.03292689319503508,
+      "desvio": 0.0022616297302629823
+    },
+    "acuracia_balanceada_presenca": {
+      "media": 0.6394007807400918,
+      "desvio": 0.012587893913904765
+    },
+    "macro_f1_quadro_todos": {
+      "media": 0.36363857735795496,
+      "desvio": 0.018391785216501953
+    }
+  },
+  "teste": {
+    "f1_evento_iou_0.3": {
+      "media": 0.03195515809597916,
+      "desvio": 0.002851798683527488
+    },
+    "acuracia_balanceada_presenca": {
+      "media": 0.5845518985903385,
+      "desvio": 0.007430312444481536
+    },
+    "macro_f1_quadro_todos": {
+      "media": 0.3912508710382749,
+      "desvio": 0.009596808884922068
+    }
+  },
+  "execucoes": [
+    "06_15fps_janela_2s",
+    "09_final_semente_1000",
+    "09_final_semente_2000"
+  ]
+}
