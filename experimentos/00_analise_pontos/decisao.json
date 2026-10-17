@@ -1,0 +1,69 @@
+{
+  "quadros_com_pessoa": 113671,
+  "fracao_algum_ponto_conf_baixa": 0.9610982572511898,
+  "fracao_conf_baixa_por_ponto": [
+    0.22949564972596354,
+    0.2930298844912071,
+    0.344722928451408,
+    0.3466319465826816,
+    0.5200534876969499,
+    0.09360346966244688,
+    0.0902252993287646,
+    0.2959417969402926,
+    0.29650482532923966,
+    0.3023198529088334,
+    0.29354892628726764,
+    0.4162363311662605,
+    0.4119080504262301,
+    0.6540278523106158,
+    0.6540366496291931,
+    0.7715952177776214,
+    0.7705395395483456
+  ],
+  "fracao_algum_ponto_em_0_0": 0.00013195977865946459,
+  "fracao_normalizacao_ausente": 0.4542935313316501,
+  "fracao_acima_de_5": 0.10826859973080205,
+  "fracao_dos_picos_com_normalizacao_ausente": 0.3584951653530511,
+  "distancia_ombros_menor_que_1px": 74,
+  "distancia_ombros_p1_p50_px": [
+    4.640252256393433,
+    88.85111999511719
+  ],
+  "altura_tronco_p1_p50_px": [
+    9.912627410888671,
+    109.4037857055664
+  ],
+  "por_classe": {
+    "ArmFlapping": {
+      "quadros": 52345,
+      "fracao_normalizacao_ausente": 0.39765020536823004,
+      "fracao_acima_de_5": 0.06203075747444837
+    },
+    "HeadBanging": {
+      "quadros": 25339,
+      "fracao_normalizacao_ausente": 0.6165594538063854,
+      "fracao_acima_de_5": 0.11275109514976914
+    },
+    "Spinning": {
+      "quadros": 35987,
+      "fracao_normalizacao_ausente": 0.42243032206074416,
+      "fracao_acima_de_5": 0.1723677994831467
+    }
+  },
+  "spinning": {
+    "quadros": 35987,
+    "anotados": 16889,
+    "picos": 6203,
+    "picos_dentro": 2657,
+    "fracao_anotada": 0.4693083613527107,
+    "fracao_dos_picos_dentro": 0.42834112526197,
+    "taxa_de_picos_dentro": 0.1573213334122802,
+    "taxa_de_picos_fora": 0.18567389255419417
+  },
+  "problema_confirmado": true,
+  "conferencia_csv": {
+    "n": 56,
+    "iguais": 56,
+    "dif": 0
+  }
+}
