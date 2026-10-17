@@ -55,3 +55,15 @@ keyframes/
 
 # Configurações do VS Code
 .vscode/
+# YOLO11m-Pose (experimentos/, etapa 2) -- pesos não vão para o git
+models/yolo11m-pose.pt
+
+# Experimentos: poses (dados de pose), modelos, pontuações e arquivos de andamento
+experimentos/poses/
+experimentos/**/modelos/
+experimentos/**/*.pkl
+experimentos/**/particao_*.json
+experimentos/**/andamento_*.txt
+experimentos/progresso.log
+experimentos/rodando.pid
+experimentos/*.log
