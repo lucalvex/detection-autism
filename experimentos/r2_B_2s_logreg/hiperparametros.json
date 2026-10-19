@@ -1,0 +1,40 @@
+{
+  "escolhido": {
+    "C": 0.01
+  },
+  "criterio": "maior média das 3 métricas de validação (agregado)",
+  "grade": {
+    "{\"C\": 0.01}": {
+      "media_das_3": 0.2965045874684903,
+      "agregado_validacao": {
+        "f1_evento_iou_0.3": 0.009150266434772078,
+        "acuracia_balanceada_presenca": 0.548468686775597,
+        "macro_f1_quadro_todos": 0.3318948091951017
+      }
+    },
+    "{\"C\": 0.1}": {
+      "media_das_3": 0.2954977657689426,
+      "agregado_validacao": {
+        "f1_evento_iou_0.3": 0.00903452585599251,
+        "acuracia_balanceada_presenca": 0.5478177661879088,
+        "macro_f1_quadro_todos": 0.3296410052629265
+      }
+    },
+    "{\"C\": 1}": {
+      "media_das_3": 0.2951496580223252,
+      "agregado_validacao": {
+        "f1_evento_iou_0.3": 0.009220770701078232,
+        "acuracia_balanceada_presenca": 0.5475141959361505,
+        "macro_f1_quadro_todos": 0.3287140074297469
+      }
+    },
+    "{\"C\": 10}": {
+      "media_das_3": 0.2952143928862749,
+      "agregado_validacao": {
+        "f1_evento_iou_0.3": 0.009226040163597177,
+        "acuracia_balanceada_presenca": 0.5476071845915346,
+        "macro_f1_quadro_todos": 0.3288099539036929
+      }
+    }
+  }
+}

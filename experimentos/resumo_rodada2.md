@@ -7,3 +7,4 @@ Protocolo: `protocolo_rodada2.md`. Cada célula: agregado / média ± desvio ent
 | R | referência: 06_15fps_janela_2s (rodada 1) | 0,035 / 0,040 ± 0,024 | 0,656 / 0,653 ± 0,026 | 0,389 / 0,392 ± 0,083 | referência | 18 min |
 | r2_A1_dxdy | só dx, dy | 0,016 / 0,008 ± 0,006 | 0,638 / 0,648 ± 0,011 | 0,344 / 0,359 ± 0,073 | não | 19 min |
 | r2_A2_dxdy_angulos | dx, dy + velocidade e aceleração angulares | 0,005 / 0,008 ± 0,004 | 0,611 / 0,617 ± 0,042 | 0,336 / 0,360 ± 0,093 | não | 20 min |
+| r2_B_2s_logreg | periodicidade, 2 s, logreg | 0,008 / 0,010 ± 0,005 | 0,547 / 0,546 ± 0,033 | 0,336 / 0,326 ± 0,004 | linha de base (não supera o melhor LSTM) | 2 min |
