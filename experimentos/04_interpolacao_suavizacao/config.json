@@ -1,0 +1,20 @@
+{
+  "descricao": "lacunas até 0,5 s interpoladas, média móvel de 0,2 s",
+  "pose": "yolo11n",
+  "normalizacao": "robusta",
+  "interp_lacuna_s": 0.5,
+  "suavizacao_s": 0.2,
+  "fps_alvo": null,
+  "janela": 30,
+  "passo_treino": 1,
+  "lr": 0.001,
+  "lote": 32,
+  "oculto": 128,
+  "camadas": 2,
+  "max_epocas": 500,
+  "paciencia": 20,
+  "rotulos": "intervalos_4_classes",
+  "subamostrar_fundo": true,
+  "semente": 42,
+  "teste_calculado": false
+}
