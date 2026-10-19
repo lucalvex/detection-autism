@@ -1,0 +1,42 @@
+{
+  "agregado_validacao": {
+    "f1_evento_iou_0.3": 0.012904170804391652,
+    "acuracia_balanceada_presenca": 0.6199149583370998,
+    "macro_f1_quadro_todos": 0.34942407908705486
+  },
+  "por_particao": {
+    "1": {
+      "f1_evento_iou_0.3": 0.009216589861751152,
+      "acuracia_balanceada_presenca": 0.6600686900617968,
+      "macro_f1_quadro_todos": 0.3583705022687428
+    },
+    "2": {
+      "f1_evento_iou_0.3": 0.00989997171436653,
+      "acuracia_balanceada_presenca": 0.6270862690571786,
+      "macro_f1_quadro_todos": 0.31301673726135315
+    },
+    "3": {
+      "f1_evento_iou_0.3": 0.0,
+      "acuracia_balanceada_presenca": 0.6231685019023974,
+      "macro_f1_quadro_todos": 0.4151237571469194
+    },
+    "4": {
+      "f1_evento_iou_0.3": 0.01346801346801347,
+      "acuracia_balanceada_presenca": 0.6191193962276207,
+      "macro_f1_quadro_todos": 0.2743601679551569
+    },
+    "5": {
+      "f1_evento_iou_0.3": 0.05832269050659856,
+      "acuracia_balanceada_presenca": 0.5844489398750384,
+      "macro_f1_quadro_todos": 0.43039032303112734
+    }
+  },
+  "epoca_escolhida_por_particao": {
+    "1": 1,
+    "2": 1,
+    "3": 1,
+    "4": 1,
+    "5": 1
+  },
+  "tempo_s": 609.8536958694458
+}
