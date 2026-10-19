@@ -67,3 +67,4 @@ experimentos/**/andamento_*.txt
 experimentos/progresso.log
 experimentos/rodando.pid
 experimentos/*.log
+experimentos/*.pid
