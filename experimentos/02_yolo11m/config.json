@@ -1,0 +1,20 @@
+{
+  "descricao": "pose com YOLO11m-Pose",
+  "pose": "yolo11m",
+  "normalizacao": "tcc",
+  "interp_lacuna_s": 0.0,
+  "suavizacao_s": 0.0,
+  "fps_alvo": null,
+  "janela": 30,
+  "passo_treino": 1,
+  "lr": 0.001,
+  "lote": 32,
+  "oculto": 128,
+  "camadas": 2,
+  "max_epocas": 500,
+  "paciencia": 20,
+  "rotulos": "intervalos_4_classes",
+  "subamostrar_fundo": true,
+  "semente": 42,
+  "teste_calculado": false
+}
