@@ -10,3 +10,4 @@ Protocolo: `protocolo_rodada2.md`. Cada célula: agregado / média ± desvio ent
 | r2_B_2s_logreg | periodicidade, 2 s, logreg | 0,008 / 0,010 ± 0,005 | 0,547 / 0,546 ± 0,033 | 0,336 / 0,326 ± 0,004 | linha de base (não supera o melhor LSTM) | 2 min |
 | r2_B_2s_gb | periodicidade, 2 s, gb | 0,009 / 0,012 ± 0,003 | 0,626 / 0,639 ± 0,031 | 0,420 / 0,418 ± 0,057 | linha de base (não supera o melhor LSTM) | 4 min |
 | r2_B_4s_logreg | periodicidade, 4 s, logreg | 0,013 / 0,014 ± 0,006 | 0,597 / 0,598 ± 0,049 | 0,376 / 0,364 ± 0,019 | linha de base (não supera o melhor LSTM) | 1 min |
+| r2_B_4s_gb | periodicidade, 4 s, gb | 0,017 / 0,023 ± 0,009 | 0,645 / 0,649 ± 0,018 | 0,410 / 0,418 ± 0,062 | linha de base (não supera o melhor LSTM) | 4 min |

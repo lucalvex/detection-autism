@@ -1,0 +1,30 @@
+{
+  "descricao": "periodicidade, janela de 4 s, gradient boosting",
+  "modelo": "periodicidade",
+  "entrada": "xy_dxdy",
+  "dropout": 0.0,
+  "peso_l2": 0.0,
+  "aumento": false,
+  "pose": "yolo11n",
+  "normalizacao": "robusta",
+  "interp_lacuna_s": 0.0,
+  "suavizacao_s": 0.0,
+  "fps_alvo": 15,
+  "janela": 60,
+  "passo_treino": 1,
+  "lr": 0.001,
+  "lote": 32,
+  "oculto": 128,
+  "camadas": 2,
+  "max_epocas": 500,
+  "paciencia": 20,
+  "rotulos": "intervalos_4_classes",
+  "subamostrar_fundo": true,
+  "semente": 42,
+  "classificador": "gb",
+  "teste_calculado": false,
+  "hiper": {
+    "learning_rate": 0.1,
+    "max_leaf_nodes": 63
+  }
+}

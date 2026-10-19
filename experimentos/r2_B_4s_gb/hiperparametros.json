@@ -1,0 +1,41 @@
+{
+  "escolhido": {
+    "learning_rate": 0.1,
+    "max_leaf_nodes": 63
+  },
+  "criterio": "maior média das 3 métricas de validação (agregado)",
+  "grade": {
+    "{\"learning_rate\": 0.05, \"max_leaf_nodes\": 15}": {
+      "media_das_3": 0.35223544992631634,
+      "agregado_validacao": {
+        "f1_evento_iou_0.3": 0.01629342141794243,
+        "acuracia_balanceada_presenca": 0.6318429983315265,
+        "macro_f1_quadro_todos": 0.40856993002948006
+      }
+    },
+    "{\"learning_rate\": 0.05, \"max_leaf_nodes\": 63}": {
+      "media_das_3": 0.3523818418735523,
+      "agregado_validacao": {
+        "f1_evento_iou_0.3": 0.021083796331235246,
+        "acuracia_balanceada_presenca": 0.6398637690781812,
+        "macro_f1_quadro_todos": 0.3961979602112406
+      }
+    },
+    "{\"learning_rate\": 0.1, \"max_leaf_nodes\": 15}": {
+      "media_das_3": 0.35571452326092706,
+      "agregado_validacao": {
+        "f1_evento_iou_0.3": 0.017670514260454587,
+        "acuracia_balanceada_presenca": 0.6402754248852103,
+        "macro_f1_quadro_todos": 0.4091976306371162
+      }
+    },
+    "{\"learning_rate\": 0.1, \"max_leaf_nodes\": 63}": {
+      "media_das_3": 0.35733370535616243,
+      "agregado_validacao": {
+        "f1_evento_iou_0.3": 0.02058193786871182,
+        "acuracia_balanceada_presenca": 0.6437585150086986,
+        "macro_f1_quadro_todos": 0.40766066319107686
+      }
+    }
+  }
+}
