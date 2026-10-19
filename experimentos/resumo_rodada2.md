@@ -13,3 +13,5 @@ Protocolo: `protocolo_rodada2.md`. Cada célula: agregado / média ± desvio ent
 | r2_B_4s_gb | periodicidade, 4 s, gb | 0,017 / 0,023 ± 0,009 | 0,645 / 0,649 ± 0,018 | 0,410 / 0,418 ± 0,062 | linha de base (não supera o melhor LSTM) | 4 min |
 | r2_C1_dropout_0.3 | dropout 0,3 | 0,027 / 0,027 ± 0,014 | 0,657 / 0,647 ± 0,033 | 0,353 / 0,362 ± 0,053 | não | 21 min |
 | r2_C1_dropout_0.5 | dropout 0,5 | 0,029 / 0,030 ± 0,015 | 0,650 / 0,646 ± 0,010 | 0,362 / 0,376 ± 0,066 | não | 21 min |
+| r2_C2_l2_1e-4 | penalização L2 1e-4 | 0,036 / 0,040 ± 0,020 | 0,675 / 0,667 ± 0,030 | 0,372 / 0,390 ± 0,070 | não | 20 min |
+| r2_C2_l2_1e-3 | penalização L2 1e-3 | 0,030 / 0,040 ± 0,027 | 0,634 / 0,641 ± 0,030 | 0,376 / 0,370 ± 0,051 | não | 20 min |
