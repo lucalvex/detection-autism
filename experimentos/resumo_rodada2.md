@@ -9,3 +9,4 @@ Protocolo: `protocolo_rodada2.md`. Cada célula: agregado / média ± desvio ent
 | r2_A2_dxdy_angulos | dx, dy + velocidade e aceleração angulares | 0,005 / 0,008 ± 0,004 | 0,611 / 0,617 ± 0,042 | 0,336 / 0,360 ± 0,093 | não | 20 min |
 | r2_B_2s_logreg | periodicidade, 2 s, logreg | 0,008 / 0,010 ± 0,005 | 0,547 / 0,546 ± 0,033 | 0,336 / 0,326 ± 0,004 | linha de base (não supera o melhor LSTM) | 2 min |
 | r2_B_2s_gb | periodicidade, 2 s, gb | 0,009 / 0,012 ± 0,003 | 0,626 / 0,639 ± 0,031 | 0,420 / 0,418 ± 0,057 | linha de base (não supera o melhor LSTM) | 4 min |
+| r2_B_4s_logreg | periodicidade, 4 s, logreg | 0,013 / 0,014 ± 0,006 | 0,597 / 0,598 ± 0,049 | 0,376 / 0,364 ± 0,019 | linha de base (não supera o melhor LSTM) | 1 min |
