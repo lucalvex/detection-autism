@@ -1,0 +1,32 @@
+{
+  "semente": 42,
+  "inicializacao_pytorch_por_particao": {
+    "1": 43,
+    "2": 44,
+    "3": 45,
+    "4": 46,
+    "5": 47
+  },
+  "ordem_dos_lotes_por_particao": {
+    "1": 43,
+    "2": 44,
+    "3": 45,
+    "4": 46,
+    "5": 47
+  },
+  "subamostragem_fundo_treino_por_particao": {
+    "1": 43,
+    "2": 44,
+    "3": 45,
+    "4": 46,
+    "5": 47
+  },
+  "subamostragem_fundo_validacao_por_particao": {
+    "1": 1043,
+    "2": 1044,
+    "3": 1045,
+    "4": 1046,
+    "5": 1047
+  },
+  "divisao_validacao": "divisao_validacao.json (semente 42 + partição, a mesma em todos os experimentos)"
+}
