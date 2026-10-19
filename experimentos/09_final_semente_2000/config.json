@@ -1,0 +1,20 @@
+{
+  "descricao": "modelo final, semente 2000",
+  "pose": "yolo11n",
+  "normalizacao": "robusta",
+  "interp_lacuna_s": 0.0,
+  "suavizacao_s": 0.0,
+  "fps_alvo": 15,
+  "janela": 30,
+  "passo_treino": 1,
+  "lr": 0.001,
+  "lote": 32,
+  "oculto": 128,
+  "camadas": 2,
+  "max_epocas": 500,
+  "paciencia": 20,
+  "rotulos": "intervalos_4_classes",
+  "subamostrar_fundo": true,
+  "semente": 2000,
+  "teste_calculado": true
+}
