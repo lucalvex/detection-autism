@@ -8,6 +8,7 @@ Protocolo: `protocolo_rodada3.md`. Cada célula: agregado / média ± desvio ent
 | r3_I1_interpolacao_limitada | interpolação até 0,5 s, ausentes = 0 + marca, sem ombro/quadril = sem pessoa | 0,052 / 0,054 ± 0,025 | 0,651 / 0,667 ± 0,063 | 0,411 / 0,430 ± 0,050 | não | 14 min |
 | r3_I2_limitada_confianca | I1 + confiança de cada ponto | 0,047 / 0,043 ± 0,019 | 0,665 / 0,677 ± 0,041 | 0,440 / 0,450 ± 0,070 | não | 15 min |
 | r3_I3_treino_a | I3-treino, critério (a): descarta quadro sem os dois ombros e os dois quadris confiáveis só no treino | 0,050 / 0,046 ± 0,014 | 0,666 / 0,672 ± 0,038 | 0,444 / 0,426 ± 0,027 | não | 10 min |
+| r3_I3_treino_b | I3-treino, critério (b): descarta quadro sem um ombro e um quadril confiáveis só no treino | 0,051 / 0,053 ± 0,027 | 0,680 / 0,675 ± 0,048 | 0,463 / 0,434 ± 0,050 | sim | 11 min |
 
 **Decisão:** em andamento
 
