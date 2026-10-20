@@ -91,3 +91,25 @@ No (b), o centro dos ombros e o dos quadris usam só os pontos confiáveis, e o 
 - no teste: os 56 vídeos, cada um uma vez.
 
 A tabela por ponto passa a se chamar `r3_tabela_pontos/tabela_por_ponto.*`. O nome antigo terminava em `_pontos.json` e era barrado pelo hook, uma regra feita para os pontos brutos da demo.
+
+## Adendo de 2026-10-20 20:58: correção da comparação (cobertura total)
+
+**Problema.** A regra da I1 tirava da sequência os quadros sem ombro ou quadril recuperável em 0,5 s, também na validação e no teste. Por isso, I1, I2 e I3-treino foram avaliadas em cerca de 56% dos quadros que o `r2_C4_aumento` avalia: 61.371 de 108.784 no teste. Saíram 30% dos quadros de *arm flapping*, 50% de *head banging* e 37% de *spinning*.
+
+A comparação pelo critério misturava conjuntos de quadros diferentes e é inválida. Pelo mesmo motivo, a I3-teste já tinha ficado fora da escolha. A escolha da `r3_I3_treino_b` como modelo final, e a avaliação feita para ela, ficam substituídas pela correção abaixo.
+
+**Correção (sem treinar nada).** Os modelos já treinados de I1, I2, I3-treino (a) e I3-treino (b) geram predições em todos os quadros com pessoa detectada que o `r2_C4_aumento` avalia. Nas sequências de validação e de teste:
+- nenhum quadro é removido;
+- nos quadros em que ombros ou quadris não podem ser recuperados em 0,5 s, o centro e a escala vêm da normalização do `r2_C4_aumento` (interpolação sem limite desses pontos);
+- esses pontos ficam marcados como ausentes (0 + marca);
+- os demais pontos seguem a regra da I1.
+
+Antes de calcular as métricas, confere-se que cada modelo é avaliado exatamente nos mesmos quadros que o `r2_C4_aumento`, por partição e por vídeo, e registra-se a contagem.
+
+**Decisão.** A decisão vale pela cobertura total: o mesmo critério na validação, para as quatro variantes contra o `r2_C4_aumento`.
+- **Alguma passa:** a avaliação de teste completa é refeita com cobertura total nas 3 sementes, com os 17 vídeos de *head banging*. Só a I3-treino (b) tem sementes 1000 e 2000 treinadas; se a vencedora for outra, essas sementes não são treinadas sem nova autorização.
+- **Nenhuma passa:** o modelo final continua `r2_C4_aumento`.
+
+**Informação, sem peso na decisão.** A comparação no subconjunto: o `r2_C4_aumento` avaliado só nos quadros que a I1 mantém.
+
+Os resultados ficam em `r3_cobertura_*`, e os da primeira avaliação são mantidos como estão.
