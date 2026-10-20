@@ -1,0 +1,21 @@
+{
+  "agregado_56_videos": {
+    "f1_evento_iou_0.3": 0.06338203146516376,
+    "acuracia_balanceada_presenca": 0.608730249635622,
+    "macro_f1_quadro_todos": 0.5125566886228027,
+    "macro_f1_quadro_anotados": 0.5821209176751495
+  },
+  "media_entre_particoes": {
+    "f1_evento_iou_0.3": 0.05977088983362475,
+    "acuracia_balanceada_presenca": 0.6051997851044131,
+    "macro_f1_quadro_todos": 0.43313288187676324,
+    "macro_f1_quadro_anotados": 0.4453460348113499
+  },
+  "desvio_entre_particoes": {
+    "f1_evento_iou_0.3": 0.029404675030121022,
+    "acuracia_balanceada_presenca": 0.048903976181074275,
+    "macro_f1_quadro_todos": 0.07115058599986727,
+    "macro_f1_quadro_anotados": 0.14174895328847814
+  },
+  "n_videos": 51
+}
