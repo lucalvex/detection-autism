@@ -36,3 +36,4 @@ Pós-processamento escolhido: mediana 2,0 s, junção 1,0 s; F1 por evento no te
 Ablações, macro F1 nos quadros anotados com 3 classes (agregado / média entre partições), sementes 42, 1000 e 2000: sem_ablacao: 0,631 / 0,616, 0,642 / 0,610, 0,646 / 0,625; ordem: 0,623 / 0,608, 0,620 / 0,589, 0,631 / 0,616; dxdy: 0,634 / 0,601, 0,631 / 0,589, 0,629 / 0,605.
 Fração da classe do vídeo, dentro / fora dos episódios (semente 42, sem ablação): *ArmFlapping* 0,143 / 0,128; *HeadBanging* 0,268 / 0,114; *Spinning* 0,512 / 0,190.
 *Head banging* com F1 zero: 7 de 17, 7 de 17, 9 de 17 (sementes 42, 1000, 2000). Por classe, matriz de confusão e curva de erro: `r2_avaliacao_final/avaliacao_final.json` e `r2_C4_aumento/curva_erro.pdf`.
+Curva de dados: `r2_E_curva_dados/curva_dados.pdf`.
