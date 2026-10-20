@@ -1,0 +1,666 @@
+{
+  "modelo_final": "r2_C4_aumento",
+  "configuracao": {
+    "modelo": "lstm",
+    "entrada": "xy_dxdy",
+    "dropout": 0.0,
+    "peso_l2": 0.0,
+    "aumento": true,
+    "pose": "yolo11n",
+    "normalizacao": "robusta",
+    "interp_lacuna_s": 0.0,
+    "suavizacao_s": 0.0,
+    "fps_alvo": 15,
+    "janela": 30,
+    "passo_treino": 1,
+    "lr": 0.001,
+    "lote": 32,
+    "oculto": 128,
+    "camadas": 2,
+    "max_epocas": 500,
+    "paciencia": 20,
+    "rotulos": "intervalos_4_classes",
+    "subamostrar_fundo": true,
+    "semente": 42
+  },
+  "sementes": {
+    "42": {
+      "sem_ablacao": {
+        "metricas": {
+          "agregado_56_videos": {
+            "f1_evento_iou_0.3": 0.024935038910487446,
+            "acuracia_balanceada_presenca": 0.6192887303944618,
+            "macro_f1_quadro_todos": 0.44896858600980105,
+            "macro_f1_quadro_anotados": 0.4544687554185806
+          },
+          "media_entre_particoes": {
+            "f1_evento_iou_0.3": 0.02667909359858022,
+            "acuracia_balanceada_presenca": 0.6130542129086993,
+            "macro_f1_quadro_todos": 0.41591393613161676,
+            "macro_f1_quadro_anotados": 0.4027852451669024
+          },
+          "desvio_entre_particoes": {
+            "f1_evento_iou_0.3": 0.009777168601013303,
+            "acuracia_balanceada_presenca": 0.040389176826604256,
+            "macro_f1_quadro_todos": 0.06819174160965844,
+            "macro_f1_quadro_anotados": 0.10276284856897429
+          },
+          "n_videos": 56
+        },
+        "macro_f1_anotados_3_classes": {
+          "agregado": 0.6309151011448136,
+          "media": 0.6163550914645114,
+          "desvio": 0.10640093658840999
+        },
+        "fracao_classe_do_video": {
+          "ArmFlapping": {
+            "n_videos": 20,
+            "dentro": 0.14260598247117168,
+            "fora": 0.12799414789688784
+          },
+          "HeadBanging": {
+            "n_videos": 17,
+            "dentro": 0.26754189863532724,
+            "fora": 0.11404031279729701
+          },
+          "Spinning": {
+            "n_videos": 19,
+            "dentro": 0.5123715484055781,
+            "fora": 0.19003583147065187
+          }
+        }
+      },
+      "head_banging_f1_zero": {
+        "n_zero": 7,
+        "n_videos": 17
+      },
+      "f1_evento_com_pos_processamento": {
+        "agregado": 0.1582983412251705,
+        "media": 0.15789308376561498,
+        "desvio": 0.04985488029747643
+      },
+      "ordem": {
+        "metricas": {
+          "agregado_56_videos": {
+            "f1_evento_iou_0.3": 0.012030042016525681,
+            "acuracia_balanceada_presenca": 0.5984571147720351,
+            "macro_f1_quadro_todos": 0.42969119768061703,
+            "macro_f1_quadro_anotados": 0.4248422475547963
+          },
+          "media_entre_particoes": {
+            "f1_evento_iou_0.3": 0.013557465141558278,
+            "acuracia_balanceada_presenca": 0.5913644112261685,
+            "macro_f1_quadro_todos": 0.39385923668275274,
+            "macro_f1_quadro_anotados": 0.3659349372081817
+          },
+          "desvio_entre_particoes": {
+            "f1_evento_iou_0.3": 0.002816488425431727,
+            "acuracia_balanceada_presenca": 0.047413595782147606,
+            "macro_f1_quadro_todos": 0.06388485538989304,
+            "macro_f1_quadro_anotados": 0.09375349335434636
+          },
+          "n_videos": 56
+        },
+        "macro_f1_anotados_3_classes": {
+          "agregado": 0.6228186715040328,
+          "media": 0.6080025203498182,
+          "desvio": 0.10517855010382611
+        },
+        "fracao_classe_do_video": {
+          "ArmFlapping": {
+            "n_videos": 20,
+            "dentro": 0.150941447104084,
+            "fora": 0.13433930611116704
+          },
+          "HeadBanging": {
+            "n_videos": 17,
+            "dentro": 0.274496145800509,
+            "fora": 0.11891723843558465
+          },
+          "Spinning": {
+            "n_videos": 19,
+            "dentro": 0.3645182794386133,
+            "fora": 0.13288825383376607
+          }
+        }
+      },
+      "dxdy": {
+        "metricas": {
+          "agregado_56_videos": {
+            "f1_evento_iou_0.3": 0.03265517286131099,
+            "acuracia_balanceada_presenca": 0.5719984539889261,
+            "macro_f1_quadro_todos": 0.4391233169888361,
+            "macro_f1_quadro_anotados": 0.4336052099004009
+          },
+          "media_entre_particoes": {
+            "f1_evento_iou_0.3": 0.03704337310172358,
+            "acuracia_balanceada_presenca": 0.5710136853055247,
+            "macro_f1_quadro_todos": 0.39599388510011674,
+            "macro_f1_quadro_anotados": 0.36171967015035833
+          },
+          "desvio_entre_particoes": {
+            "f1_evento_iou_0.3": 0.023901731242265512,
+            "acuracia_balanceada_presenca": 0.03836963302549886,
+            "macro_f1_quadro_todos": 0.07538422229376698,
+            "macro_f1_quadro_anotados": 0.10848709367065014
+          },
+          "n_videos": 56
+        },
+        "macro_f1_anotados_3_classes": {
+          "agregado": 0.6341046642720881,
+          "media": 0.6010746759766591,
+          "desvio": 0.09503936722681133
+        },
+        "fracao_classe_do_video": {
+          "ArmFlapping": {
+            "n_videos": 20,
+            "dentro": 0.14739780762144522,
+            "fora": 0.13216182760331058
+          },
+          "HeadBanging": {
+            "n_videos": 17,
+            "dentro": 0.21462913688675775,
+            "fora": 0.08921362384296956
+          },
+          "Spinning": {
+            "n_videos": 19,
+            "dentro": 0.3778583625388179,
+            "fora": 0.13164018855330942
+          }
+        }
+      }
+    },
+    "1000": {
+      "sem_ablacao": {
+        "metricas": {
+          "agregado_56_videos": {
+            "f1_evento_iou_0.3": 0.04199381681779804,
+            "acuracia_balanceada_presenca": 0.5815321224370082,
+            "macro_f1_quadro_todos": 0.43829785830599266,
+            "macro_f1_quadro_anotados": 0.4749853257787951
+          },
+          "media_entre_particoes": {
+            "f1_evento_iou_0.3": 0.04927213368362421,
+            "acuracia_balanceada_presenca": 0.590181868127092,
+            "macro_f1_quadro_todos": 0.40927467043077614,
+            "macro_f1_quadro_anotados": 0.43861726100267306
+          },
+          "desvio_entre_particoes": {
+            "f1_evento_iou_0.3": 0.023008552550816373,
+            "acuracia_balanceada_presenca": 0.022457835877108798,
+            "macro_f1_quadro_todos": 0.059224702575029396,
+            "macro_f1_quadro_anotados": 0.110229703521348
+          },
+          "n_videos": 56
+        },
+        "macro_f1_anotados_3_classes": {
+          "agregado": 0.6415464213404228,
+          "media": 0.6098158785194248,
+          "desvio": 0.09846955528431266
+        },
+        "fracao_classe_do_video": {
+          "ArmFlapping": {
+            "n_videos": 20,
+            "dentro": 0.19474262478799106,
+            "fora": 0.1738329334039144
+          },
+          "HeadBanging": {
+            "n_videos": 17,
+            "dentro": 0.21565584044532773,
+            "fora": 0.08437344372317633
+          },
+          "Spinning": {
+            "n_videos": 19,
+            "dentro": 0.48721424081476944,
+            "fora": 0.23923936417515915
+          }
+        }
+      },
+      "head_banging_f1_zero": {
+        "n_zero": 7,
+        "n_videos": 17
+      },
+      "f1_evento_com_pos_processamento": {
+        "agregado": 0.20804375557290533,
+        "media": 0.20320350421568403,
+        "desvio": 0.0657574866205679
+      },
+      "ordem": {
+        "metricas": {
+          "agregado_56_videos": {
+            "f1_evento_iou_0.3": 0.019601226483355425,
+            "acuracia_balanceada_presenca": 0.5598073604834743,
+            "macro_f1_quadro_todos": 0.4134814860185777,
+            "macro_f1_quadro_anotados": 0.4357561542709836
+          },
+          "media_entre_particoes": {
+            "f1_evento_iou_0.3": 0.02041776758736422,
+            "acuracia_balanceada_presenca": 0.5694465380195695,
+            "macro_f1_quadro_todos": 0.38343534229323273,
+            "macro_f1_quadro_anotados": 0.3973061600386125
+          },
+          "desvio_entre_particoes": {
+            "f1_evento_iou_0.3": 0.008049608182702063,
+            "acuracia_balanceada_presenca": 0.03166361726123093,
+            "macro_f1_quadro_todos": 0.04612368739245235,
+            "macro_f1_quadro_anotados": 0.10035884044301414
+          },
+          "n_videos": 56
+        },
+        "macro_f1_anotados_3_classes": {
+          "agregado": 0.6203068584327166,
+          "media": 0.5892746534264901,
+          "desvio": 0.09551897176869822
+        },
+        "fracao_classe_do_video": {
+          "ArmFlapping": {
+            "n_videos": 20,
+            "dentro": 0.1933272210272991,
+            "fora": 0.18232311775746401
+          },
+          "HeadBanging": {
+            "n_videos": 17,
+            "dentro": 0.21900764100206163,
+            "fora": 0.08815663920304495
+          },
+          "Spinning": {
+            "n_videos": 19,
+            "dentro": 0.30819481083075145,
+            "fora": 0.19640829219834313
+          }
+        }
+      },
+      "dxdy": {
+        "metricas": {
+          "agregado_56_videos": {
+            "f1_evento_iou_0.3": 0.05870404617377489,
+            "acuracia_balanceada_presenca": 0.5487780935399407,
+            "macro_f1_quadro_todos": 0.43154701185197425,
+            "macro_f1_quadro_anotados": 0.4620220368839563
+          },
+          "media_entre_particoes": {
+            "f1_evento_iou_0.3": 0.05695737845698977,
+            "acuracia_balanceada_presenca": 0.5615447183542315,
+            "macro_f1_quadro_todos": 0.39632440311381445,
+            "macro_f1_quadro_anotados": 0.41419707550591955
+          },
+          "desvio_entre_particoes": {
+            "f1_evento_iou_0.3": 0.01853707856054331,
+            "acuracia_balanceada_presenca": 0.03655049468497079,
+            "macro_f1_quadro_todos": 0.055159635649735195,
+            "macro_f1_quadro_anotados": 0.0953404234995954
+          },
+          "n_videos": 56
+        },
+        "macro_f1_anotados_3_classes": {
+          "agregado": 0.6312323111262784,
+          "media": 0.5885534589044374,
+          "desvio": 0.08211177052728061
+        },
+        "fracao_classe_do_video": {
+          "ArmFlapping": {
+            "n_videos": 20,
+            "dentro": 0.1964166045176205,
+            "fora": 0.1873247911358384
+          },
+          "HeadBanging": {
+            "n_videos": 17,
+            "dentro": 0.1565822799756627,
+            "fora": 0.07372181970183196
+          },
+          "Spinning": {
+            "n_videos": 19,
+            "dentro": 0.41232297404152196,
+            "fora": 0.2046427131872487
+          }
+        }
+      }
+    },
+    "2000": {
+      "sem_ablacao": {
+        "metricas": {
+          "agregado_56_videos": {
+            "f1_evento_iou_0.3": 0.044832937182605614,
+            "acuracia_balanceada_presenca": 0.581262758130501,
+            "macro_f1_quadro_todos": 0.43409279857009003,
+            "macro_f1_quadro_anotados": 0.4569403425304997
+          },
+          "media_entre_particoes": {
+            "f1_evento_iou_0.3": 0.04700383787006363,
+            "acuracia_balanceada_presenca": 0.5856279002335695,
+            "macro_f1_quadro_todos": 0.40842512122302155,
+            "macro_f1_quadro_anotados": 0.4297745633504332
+          },
+          "desvio_entre_particoes": {
+            "f1_evento_iou_0.3": 0.02024603846247242,
+            "acuracia_balanceada_presenca": 0.0316689266652767,
+            "macro_f1_quadro_todos": 0.09051966792706137,
+            "macro_f1_quadro_anotados": 0.1674128126933491
+          },
+          "n_videos": 56
+        },
+        "macro_f1_anotados_3_classes": {
+          "agregado": 0.6462826149915618,
+          "media": 0.6250771828346252,
+          "desvio": 0.11780826933399062
+        },
+        "fracao_classe_do_video": {
+          "ArmFlapping": {
+            "n_videos": 20,
+            "dentro": 0.16487251261530053,
+            "fora": 0.16603109414161707
+          },
+          "HeadBanging": {
+            "n_videos": 17,
+            "dentro": 0.21227587461612363,
+            "fora": 0.09823177754025475
+          },
+          "Spinning": {
+            "n_videos": 19,
+            "dentro": 0.5284617600238338,
+            "fora": 0.18952637071779477
+          }
+        }
+      },
+      "head_banging_f1_zero": {
+        "n_zero": 9,
+        "n_videos": 17
+      },
+      "f1_evento_com_pos_processamento": {
+        "agregado": 0.19868397309194982,
+        "media": 0.1819184151984825,
+        "desvio": 0.0920965520091345
+      },
+      "ordem": {
+        "metricas": {
+          "agregado_56_videos": {
+            "f1_evento_iou_0.3": 0.022017225031605563,
+            "acuracia_balanceada_presenca": 0.5538324295774949,
+            "macro_f1_quadro_todos": 0.403533600546928,
+            "macro_f1_quadro_anotados": 0.4099454312026031
+          },
+          "media_entre_particoes": {
+            "f1_evento_iou_0.3": 0.021510129502104063,
+            "acuracia_balanceada_presenca": 0.5560767130722726,
+            "macro_f1_quadro_todos": 0.3737389409624269,
+            "macro_f1_quadro_anotados": 0.37386870404343114
+          },
+          "desvio_entre_particoes": {
+            "f1_evento_iou_0.3": 0.007866708759354394,
+            "acuracia_balanceada_presenca": 0.0321724605876598,
+            "macro_f1_quadro_todos": 0.07957287490685551,
+            "macro_f1_quadro_anotados": 0.1652353973422495
+          },
+          "n_videos": 56
+        },
+        "macro_f1_anotados_3_classes": {
+          "agregado": 0.6313334743435327,
+          "media": 0.6156104694988118,
+          "desvio": 0.11883217719802444
+        },
+        "fracao_classe_do_video": {
+          "ArmFlapping": {
+            "n_videos": 20,
+            "dentro": 0.1613698969300612,
+            "fora": 0.17326367839729145
+          },
+          "HeadBanging": {
+            "n_videos": 17,
+            "dentro": 0.21992946674882416,
+            "fora": 0.1070835791833048
+          },
+          "Spinning": {
+            "n_videos": 19,
+            "dentro": 0.30640188647308086,
+            "fora": 0.12639183058728143
+          }
+        }
+      },
+      "dxdy": {
+        "metricas": {
+          "agregado_56_videos": {
+            "f1_evento_iou_0.3": 0.06166746905815168,
+            "acuracia_balanceada_presenca": 0.5412373228659617,
+            "macro_f1_quadro_todos": 0.41295313835267533,
+            "macro_f1_quadro_anotados": 0.41691783616688766
+          },
+          "media_entre_particoes": {
+            "f1_evento_iou_0.3": 0.06860770599609214,
+            "acuracia_balanceada_presenca": 0.5475964170390404,
+            "macro_f1_quadro_todos": 0.38336820686604706,
+            "macro_f1_quadro_anotados": 0.38185386451221237
+          },
+          "desvio_entre_particoes": {
+            "f1_evento_iou_0.3": 0.04313273958944399,
+            "acuracia_balanceada_presenca": 0.0315693654435264,
+            "macro_f1_quadro_todos": 0.08823367568003784,
+            "macro_f1_quadro_anotados": 0.16228109194227022
+          },
+          "n_videos": 56
+        },
+        "macro_f1_anotados_3_classes": {
+          "agregado": 0.6285709958751027,
+          "media": 0.6045340749361623,
+          "desvio": 0.10507311915645652
+        },
+        "fracao_classe_do_video": {
+          "ArmFlapping": {
+            "n_videos": 20,
+            "dentro": 0.17411775565256263,
+            "fora": 0.17112918394994409
+          },
+          "HeadBanging": {
+            "n_videos": 17,
+            "dentro": 0.15409483745846775,
+            "fora": 0.06951317524859613
+          },
+          "Spinning": {
+            "n_videos": 19,
+            "dentro": 0.42247468246923336,
+            "fora": 0.14149053142311352
+          }
+        }
+      }
+    }
+  },
+  "pos_processamento": "mediana_2.0_juncao_1.0",
+  "por_classe": {
+    "todos_os_quadros": {
+      "agregado": {
+        "ArmFlapping": {
+          "precision": 0.24790737698505827,
+          "recall": 0.2219343091252889,
+          "f1-score": 0.23420294139383638,
+          "support": 14279.0
+        },
+        "HeadBanging": {
+          "precision": 0.27629947544110633,
+          "recall": 0.322032014228546,
+          "f1-score": 0.29741799702274013,
+          "support": 8996.0
+        },
+        "Spinning": {
+          "precision": 0.5662608936229078,
+          "recall": 0.5047783463838708,
+          "f1-score": 0.5337549304038857,
+          "support": 16219.0
+        },
+        "Background": {
+          "precision": 0.7214106786005798,
+          "recall": 0.7398181555780055,
+          "f1-score": 0.730498475218742,
+          "support": 69290.0
+        }
+      },
+      "media_desvio": {
+        "ArmFlapping": {
+          "precisao_media": 0.2003716413562954,
+          "precisao_desvio": 0.13608304714982372,
+          "revocacao_media": 0.17015712180059245,
+          "revocacao_desvio": 0.14803338694477172,
+          "f1_media": 0.171610896423464,
+          "f1_desvio": 0.12671568635820687
+        },
+        "HeadBanging": {
+          "precisao_media": 0.272386408887404,
+          "precisao_desvio": 0.277778547965245,
+          "revocacao_media": 0.23966621371799826,
+          "revocacao_desvio": 0.19423929875656534,
+          "f1_media": 0.22305282963557665,
+          "f1_desvio": 0.18804358025217713
+        },
+        "Spinning": {
+          "precisao_media": 0.5602818736421484,
+          "precisao_desvio": 0.15405198353986588,
+          "revocacao_media": 0.5462881183343796,
+          "revocacao_desvio": 0.1637198986020507,
+          "f1_media": 0.5427112567815584,
+          "f1_desvio": 0.14362079872307162
+        },
+        "Background": {
+          "precisao_media": 0.7194610803271841,
+          "precisao_desvio": 0.0893992382752135,
+          "revocacao_media": 0.7418949186652115,
+          "revocacao_desvio": 0.05310038351491241,
+          "f1_media": 0.7262807616858682,
+          "f1_desvio": 0.053613443442477836
+        }
+      }
+    },
+    "quadros_anotados": {
+      "agregado": {
+        "ArmFlapping": {
+          "precision": 0.8694101508916324,
+          "recall": 0.2219343091252889,
+          "f1-score": 0.3536041062262888,
+          "support": 14279.0
+        },
+        "HeadBanging": {
+          "precision": 0.42107558139534884,
+          "recall": 0.322032014228546,
+          "f1-score": 0.36495338876291256,
+          "support": 8996.0
+        },
+        "Spinning": {
+          "precision": 0.8925106290199498,
+          "recall": 0.5047783463838708,
+          "f1-score": 0.6448487712665406,
+          "support": 16219.0
+        },
+        "Background": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        }
+      },
+      "media_desvio": {
+        "ArmFlapping": {
+          "precisao_media": 0.7503520175511702,
+          "precisao_desvio": 0.2764801778319207,
+          "revocacao_media": 0.17015712180059245,
+          "revocacao_desvio": 0.14803338694477172,
+          "f1_media": 0.26280916996641634,
+          "f1_desvio": 0.19155663026532757
+        },
+        "HeadBanging": {
+          "precisao_media": 0.4431743391509769,
+          "precisao_desvio": 0.3940929842866103,
+          "revocacao_media": 0.23966621371799826,
+          "revocacao_desvio": 0.19423929875656534,
+          "f1_media": 0.2852851161601885,
+          "f1_desvio": 0.24012579423414038
+        },
+        "Spinning": {
+          "precisao_media": 0.880137809063284,
+          "precisao_desvio": 0.06868032859356825,
+          "revocacao_media": 0.5462881183343796,
+          "revocacao_desvio": 0.1637198986020507,
+          "f1_media": 0.6602614493741025,
+          "f1_desvio": 0.1377531298695662
+        },
+        "Background": {
+          "precisao_media": 0.0,
+          "precisao_desvio": 0.0,
+          "revocacao_media": 0.0,
+          "revocacao_desvio": 0.0,
+          "f1_media": 0.0,
+          "f1_desvio": 0.0
+        }
+      }
+    }
+  },
+  "confusao_quadros_anotados": {
+    "labels": [
+      "ArmFlapping",
+      "HeadBanging",
+      "Spinning",
+      "Background"
+    ],
+    "matriz": [
+      [
+        3169,
+        173,
+        395,
+        10542
+      ],
+      [
+        452,
+        2897,
+        591,
+        5056
+      ],
+      [
+        24,
+        3810,
+        8187,
+        4198
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "entre_sementes": {
+    "agregado_56_videos": {
+      "f1_evento_iou_0.3": {
+        "media": 0.037253930970297035,
+        "desvio": 0.008787547147238
+      },
+      "acuracia_balanceada_presenca": {
+        "media": 0.5940278703206571,
+        "desvio": 0.01786246395907094
+      },
+      "macro_f1_quadro_todos": {
+        "media": 0.4404530809619613,
+        "desvio": 0.006261309847546078
+      },
+      "macro_f1_quadro_anotados": {
+        "media": 0.46213147457595843,
+        "desvio": 0.009144882130512476
+      }
+    },
+    "media_entre_particoes": {
+      "f1_evento_iou_0.3": {
+        "media": 0.04098502171742269,
+        "desvio": 0.01015811583515269
+      },
+      "acuracia_balanceada_presenca": {
+        "media": 0.5962879937564537,
+        "desvio": 0.012000395393198712
+      },
+      "macro_f1_quadro_todos": {
+        "media": 0.4112045759284715,
+        "desvio": 0.003348033114763103
+      },
+      "macro_f1_quadro_anotados": {
+        "media": 0.42372568984000286,
+        "desvio": 0.015240844088011641
+      }
+    }
+  },
+  "tempo_s": 250.7241313457489
+}

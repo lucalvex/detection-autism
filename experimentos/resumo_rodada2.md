@@ -17,3 +17,22 @@ Protocolo: `protocolo_rodada2.md`. Cada célula: agregado / média ± desvio ent
 | r2_C2_l2_1e-3 | penalização L2 1e-3 | 0,030 / 0,040 ± 0,027 | 0,634 / 0,641 ± 0,030 | 0,376 / 0,370 ± 0,051 | não | 20 min |
 | r2_C3_1x64 | 1 camada de 64 unidades | 0,028 / 0,033 ± 0,019 | 0,644 / 0,646 ± 0,047 | 0,352 / 0,358 ± 0,039 | não | 5 min |
 | r2_C4_aumento | aumento de dados | 0,040 / 0,049 ± 0,031 | 0,668 / 0,676 ± 0,021 | 0,414 / 0,432 ± 0,090 | sim | 26 min |
+
+## Modelo final: r2_C4_aumento
+
+Configuração: `{"modelo": "lstm", "entrada": "xy_dxdy", "dropout": 0.0, "peso_l2": 0.0, "aumento": true, "pose": "yolo11n", "normalizacao": "robusta", "interp_lacuna_s": 0.0, "suavizacao_s": 0.0, "fps_alvo": 15, "janela": 30, "passo_treino": 1, "lr": 0.001, "lote": 32, "oculto": 128, "camadas": 2, "max_epocas": 500, "paciencia": 20, "rotulos": "intervalos_4_classes", "subamostrar_fundo": true, "semente": 42}`
+
+Teste (56 vídeos), agregado / média ± desvio entre partições:
+
+| | F1 evento IoU 0,3 | acurácia bal. | macro F1 quadros | macro F1 anotados |
+|---|---|---|---|---|
+| TCC, rótulos por intervalo | 0,014 / 0,014 ± 0,006 | 0,569 / 0,579 ± 0,034 | 0,386 / 0,379 ± 0,057 | 0,322 / 0,336 ± 0,098 |
+| R (rodada 1) | 0,028 / 0,026 ± 0,015 | 0,595 / 0,577 ± 0,026 | 0,402 / 0,368 ± 0,063 | 0,404 / 0,352 ± 0,128 |
+| modelo final, semente 42 | 0,025 / 0,027 ± 0,010 | 0,619 / 0,613 ± 0,040 | 0,449 / 0,416 ± 0,068 | 0,454 / 0,403 ± 0,103 |
+
+Três sementes (média ± desvio entre sementes; agregado | média entre partições): f1_evento_iou_0.3 0,037 ± 0,009 | 0,041 ± 0,010; acuracia_balanceada_presenca 0,594 ± 0,018 | 0,596 ± 0,012; macro_f1_quadro_todos 0,440 ± 0,006 | 0,411 ± 0,003; macro_f1_quadro_anotados 0,462 ± 0,009 | 0,424 ± 0,015.
+
+Pós-processamento escolhido: mediana 2,0 s, junção 1,0 s; F1 por evento no teste (semente 42): 0,158 / 0,158 ± 0,050.
+Ablações, macro F1 nos quadros anotados com 3 classes (agregado / média entre partições), sementes 42, 1000 e 2000: sem_ablacao: 0,631 / 0,616, 0,642 / 0,610, 0,646 / 0,625; ordem: 0,623 / 0,608, 0,620 / 0,589, 0,631 / 0,616; dxdy: 0,634 / 0,601, 0,631 / 0,589, 0,629 / 0,605.
+Fração da classe do vídeo, dentro / fora dos episódios (semente 42, sem ablação): *ArmFlapping* 0,143 / 0,128; *HeadBanging* 0,268 / 0,114; *Spinning* 0,512 / 0,190.
+*Head banging* com F1 zero: 7 de 17, 7 de 17, 9 de 17 (sementes 42, 1000, 2000). Por classe, matriz de confusão e curva de erro: `r2_avaliacao_final/avaliacao_final.json` e `r2_C4_aumento/curva_erro.pdf`.
