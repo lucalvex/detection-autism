@@ -64,3 +64,30 @@ A curva de quantidade de dados não é refeita.
 
 - **Retomada:** um resultado gravado só é reaproveitado se a configuração gravada for igual à pedida, ou, no pós-processamento e na avaliação, se o modelo final gravado for o mesmo. Se não for, o script registra um erro e não reaproveita.
 - **Commits:** se um `git add` ou um `git commit` falhar, os arquivos são tirados do índice (`git reset`). Nenhum arquivo fica preparado para um commit seu.
+
+## Adendo de 2026-10-20 15:21: variante I3, descarte por qualidade da pose
+
+Registrado antes de a I3 treinar. A I1 e a I2 já tinham terminado, sem passar no critério, e a avaliação final não tinha começado.
+
+**Descarte.** Um quadro é descartado quando os pontos mínimos da normalização não têm confiança ≥ 0,5. Esses pontos não são interpolados. Há dois critérios de mínimo:
+- (a) os dois ombros e os dois quadris;
+- (b) pelo menos um ombro e pelo menos um quadril.
+
+No (b), o centro dos ombros e o dos quadris usam só os pontos confiáveis, e o ponto não confiável fica ausente (0 + marca). Os demais pontos seguem a regra da I1, aplicada antes do descarte. A entrada é a mesma da I1: 85 atributos, com as marcas de presença.
+
+**I3-treino**, a versão principal, que concorre a modelo final:
+- o descarte vale só para os vídeos de treino de cada partição;
+- a validação (perda e métricas) e o teste usam todos os quadros, com a regra da I1.
+
+**I3-teste**, que fica só no relatório e não concorre a modelo final:
+- o descarte vale também para a validação e o teste;
+- os quadros descartados ficam sem predição e saem das métricas por quadro;
+- na métrica por evento, os intervalos anotados contam inteiros.
+
+**Decisão.** Concorrem I1, I2, I3-treino (a) e I3-treino (b), cada uma contra `r2_C4_aumento` pelo critério; fica a de maior soma de ganhos. Se alguma passar, segue a avaliação final de `protocolo_rodada3.md`.
+
+**Relatório.** Para cada critério, a fração de quadros e de quadros anotados descartados, por classe:
+- no treino: os vídeos de treino das 5 partições, somados;
+- no teste: os 56 vídeos, cada um uma vez.
+
+A tabela por ponto passa a se chamar `r3_tabela_pontos/tabela_por_ponto.*`. O nome antigo terminava em `_pontos.json` e era barrado pelo hook, uma regra feita para os pontos brutos da demo.
