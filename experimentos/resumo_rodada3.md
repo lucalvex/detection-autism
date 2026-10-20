@@ -10,6 +10,7 @@ Protocolo: `protocolo_rodada3.md`. Cada célula: agregado / média ± desvio ent
 | r3_I3_treino_a | I3-treino, critério (a): descarta quadro sem os dois ombros e os dois quadris confiáveis só no treino | 0,050 / 0,046 ± 0,014 | 0,666 / 0,672 ± 0,038 | 0,444 / 0,426 ± 0,027 | não | 10 min |
 | r3_I3_treino_b | I3-treino, critério (b): descarta quadro sem um ombro e um quadril confiáveis só no treino | 0,051 / 0,053 ± 0,027 | 0,680 / 0,675 ± 0,048 | 0,463 / 0,434 ± 0,050 | sim | 11 min |
 | r3_I3_teste_a | I3-teste, critério (a): descarta quadro sem os dois ombros e os dois quadris confiáveis no treino, na validação e no teste (não concorre) | 0,065 / 0,075 ± 0,030 | 0,675 / 0,683 ± 0,069 | 0,473 / 0,446 ± 0,033 | não concorre | 10 min |
+| r3_I3_teste_b | I3-teste, critério (b): descarta quadro sem um ombro e um quadril confiáveis no treino, na validação e no teste (não concorre) | 0,041 / 0,048 ± 0,019 | 0,687 / 0,697 ± 0,070 | 0,438 / 0,423 ± 0,023 | não concorre | 11 min |
 
 **Decisão:** em andamento
 
