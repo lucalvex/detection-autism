@@ -1,0 +1,113 @@
+{
+  "criterios": {
+    "a": {
+      "treino": {
+        "ArmFlapping": {
+          "quadros": 183958,
+          "descartados": 74501,
+          "fracao_quadros": 0.4049891823133541,
+          "anotados": 52403,
+          "anotados_descartados": 22677,
+          "fracao_anotados": 0.4327424002442608
+        },
+        "HeadBanging": {
+          "quadros": 76349,
+          "descartados": 47434,
+          "fracao_quadros": 0.6212786022082804,
+          "anotados": 26264,
+          "anotados_descartados": 14003,
+          "fracao_anotados": 0.5331632653061225
+        },
+        "Spinning": {
+          "quadros": 101910,
+          "descartados": 45347,
+          "fracao_quadros": 0.4449710528898047,
+          "anotados": 42445,
+          "anotados_descartados": 17546,
+          "fracao_anotados": 0.41338202379550004
+        }
+      },
+      "teste": {
+        "ArmFlapping": {
+          "quadros": 52345,
+          "descartados": 20815,
+          "fracao_quadros": 0.39765020536823004,
+          "anotados": 14770,
+          "anotados_descartados": 6413,
+          "fracao_anotados": 0.4341909275558565
+        },
+        "HeadBanging": {
+          "quadros": 25339,
+          "descartados": 15623,
+          "fracao_quadros": 0.6165594538063854,
+          "anotados": 8730,
+          "anotados_descartados": 4781,
+          "fracao_anotados": 0.5476517754868271
+        },
+        "Spinning": {
+          "quadros": 35987,
+          "descartados": 15202,
+          "fracao_quadros": 0.42243032206074416,
+          "anotados": 16889,
+          "anotados_descartados": 6860,
+          "fracao_anotados": 0.40618153827935344
+        }
+      }
+    },
+    "b": {
+      "treino": {
+        "ArmFlapping": {
+          "quadros": 183958,
+          "descartados": 67334,
+          "fracao_quadros": 0.3660292023179204,
+          "anotados": 52403,
+          "anotados_descartados": 20364,
+          "fracao_anotados": 0.38860370589470067
+        },
+        "HeadBanging": {
+          "quadros": 76349,
+          "descartados": 43382,
+          "fracao_quadros": 0.5682065252983012,
+          "anotados": 26264,
+          "anotados_descartados": 12614,
+          "fracao_anotados": 0.4802771855010661
+        },
+        "Spinning": {
+          "quadros": 101910,
+          "descartados": 41731,
+          "fracao_quadros": 0.40948876459621236,
+          "anotados": 42445,
+          "anotados_descartados": 15894,
+          "fracao_anotados": 0.37446106726351747
+        }
+      },
+      "teste": {
+        "ArmFlapping": {
+          "quadros": 52345,
+          "descartados": 18627,
+          "fracao_quadros": 0.35585060655267936,
+          "anotados": 14770,
+          "anotados_descartados": 5692,
+          "fracao_anotados": 0.3853757616790792
+        },
+        "HeadBanging": {
+          "quadros": 25339,
+          "descartados": 14201,
+          "fracao_quadros": 0.5604404277990449,
+          "anotados": 8730,
+          "anotados_descartados": 4261,
+          "fracao_anotados": 0.48808705612829323
+        },
+        "Spinning": {
+          "quadros": 35987,
+          "descartados": 13954,
+          "fracao_quadros": 0.38775113235334985,
+          "anotados": 16889,
+          "anotados_descartados": 6231,
+          "fracao_anotados": 0.3689383622476168
+        }
+      }
+    }
+  },
+  "definicao": "quadros com pessoa (YOLO11n); anotados = dentro de intervalo do XML"
+}
