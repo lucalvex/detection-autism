@@ -1,0 +1,52 @@
+{
+  "agregado_validacao": {
+    "f1_evento_iou_0.3": 0.02963504400010523,
+    "acuracia_balanceada_presenca": 0.6244936301154314,
+    "macro_f1_quadro_todos": 0.4034025497846611
+  },
+  "por_particao": {
+    "1": {
+      "f1_evento_iou_0.3": 0.02276470018405502,
+      "acuracia_balanceada_presenca": 0.6124557682868741,
+      "macro_f1_quadro_todos": 0.3248907676727801
+    },
+    "2": {
+      "f1_evento_iou_0.3": 0.0223463687150838,
+      "acuracia_balanceada_presenca": 0.6814487925503874,
+      "macro_f1_quadro_todos": 0.3405369540463874
+    },
+    "3": {
+      "f1_evento_iou_0.3": 0.025823264629234777,
+      "acuracia_balanceada_presenca": 0.5563630147137988,
+      "macro_f1_quadro_todos": 0.449261903376559
+    },
+    "4": {
+      "f1_evento_iou_0.3": 0.03596792668957618,
+      "acuracia_balanceada_presenca": 0.6524271547145347,
+      "macro_f1_quadro_todos": 0.4110855770278732
+    },
+    "5": {
+      "f1_evento_iou_0.3": 0.040667523840137144,
+      "acuracia_balanceada_presenca": 0.6012341993025628,
+      "macro_f1_quadro_todos": 0.3943419306944916
+    }
+  },
+  "media_entre_particoes": {
+    "f1_evento_iou_0.3": 0.029513956811617382,
+    "acuracia_balanceada_presenca": 0.6207857859136315,
+    "macro_f1_quadro_todos": 0.38402342656361826
+  },
+  "desvio_entre_particoes": {
+    "f1_evento_iou_0.3": 0.007437792381838137,
+    "acuracia_balanceada_presenca": 0.04308856872894263,
+    "macro_f1_quadro_todos": 0.04578784775814109
+  },
+  "epoca_escolhida_por_particao": {
+    "1": 2,
+    "2": 1,
+    "3": 1,
+    "4": 1,
+    "5": 1
+  },
+  "tempo_s": 556.2301428318024
+}
