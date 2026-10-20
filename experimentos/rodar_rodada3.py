@@ -126,12 +126,18 @@ def preparar_video(vid, cfg):
   fps = et.load_video_fps(vid)
   n_quadros = int(quadros[-1]) + 1
   xy, m, _ = interpolacao_limitada(quadros, xy, conf, fps)
-  fica = m[:, NORMALIZACAO_PONTOS].all(1)  # sem ombros e quadris: quadro sem pessoa
+  if cfg.get("descarte") and (cfg.get("descarte_em") == "todos" or vid in _PAPEL_TREINO):
+    confiavel = conf[:, NORMALIZACAO_PONTOS] >= r.LIMIAR_CONF
+    fica = mantem_quadro(confiavel, cfg["descarte"])
+    m[:, NORMALIZACAO_PONTOS] = confiavel  # I3: ombros e quadris sem interpolação
+  else:
+    fica = m[:, NORMALIZACAO_PONTOS].all(1)  # I1: sem ombros e quadris recuperáveis, quadro sem pessoa
   quadros, xy, m, conf = quadros[fica], xy[fica], m[fica], conf[fica]
   if len(quadros) == 0:
     return None
-  quadril = (xy[:, 11] + xy[:, 12]) / 2
-  escala = np.linalg.norm((xy[:, 5] + xy[:, 6]) / 2 - quadril, axis=1)
+  centro = lambda a, b: (xy[:, a] * m[:, a, None] + xy[:, b] * m[:, b, None]) / (m[:, a, None].astype(float) + m[:, b, None])
+  quadril = centro(11, 12)  # com os dois pontos presentes, é a média simples, como na I1
+  escala = np.linalg.norm(centro(5, 6) - quadril, axis=1)
   ruim = escala < 1
   if ruim.all():
     escala[:] = 1
@@ -143,6 +149,26 @@ def preparar_video(vid, cfg):
   gt, _ = et.ground_truth_frames(vid, n_quadros, fps)
   return {"quadros": quadros, "P": P, "M": m, "C": conf, "fps": fps,
           "rotulo": np.array([r.CLASSES.index(g) for g in gt], np.int64), "com_conf": cfg["entrada"].endswith("_conf")}
+
+
+_PAPEL_TREINO = set()  # vídeos de treino da partição deste processo (I3-treino)
+
+
+def mantem_quadro(confiavel, criterio):
+  """confiavel: (n, 4) para os pontos 5, 6, 11, 12. (a) os quatro; (b) um ombro e um quadril."""
+  return confiavel.all(1) if criterio == "a" else confiavel[:, :2].any(1) & confiavel[:, 2:].any(1)
+
+
+_treinar_original = q.treinar_lstm
+
+
+def treinar_lstm(args):
+  """Marca os vídeos de treino da partição antes de treinar: a I3-treino descarta quadros só neles."""
+  exp_dir, cfg, k, val_videos, com_teste, treino, opc = args
+  q.aplicar_opcoes(*opc)
+  _PAPEL_TREINO.clear()
+  _PAPEL_TREINO.update(treino or [v for v in r.videos() if r.PARTICOES[v] != k and v not in val_videos])
+  return _treinar_original(args)
 
 
 def amostrar(tempos, t, v, seg):
@@ -282,7 +308,7 @@ def transformar(X, cfg):
 
 
 r.preparar_video, r.amostras_e_janelas_treino, r.janelas_avaliacao = preparar_video, amostras_e_janelas_treino, janelas_avaliacao
-q.aumentar, q.ablar, q.n_entrada, q.transformar = aumentar, ablar, n_entrada, transformar
+q.aumentar, q.ablar, q.n_entrada, q.transformar, q.treinar_lstm = aumentar, ablar, n_entrada, transformar, treinar_lstm
 
 
 def autoverificacao():
@@ -332,8 +358,8 @@ def gravado_para(caminho_json, chave, modelo):
 
 def tabela_pontos():
   pdir = pasta("r3_tabela_pontos")
-  if (pdir / "tabela_pontos.json").exists():
-    return r.ler_json(pdir / "tabela_pontos.json")
+  if (pdir / "tabela_por_ponto.json").exists():
+    return r.ler_json(pdir / "tabela_por_ponto.json")
   import evaluate_temporal as et
   n = 0
   cont = {k: np.zeros(17) for k in ("atual_interp", "atual_bruto", "i1_interp", "i1_ausente", "i1_remove")}
@@ -365,7 +391,7 @@ def tabela_pontos():
                         "i1_ausente": "conf < 0,5 sem quadro confiável a até 0,5 s dos dois lados (0 + marca de ausente)",
                         "i1_remove": "quadro removido por este ponto estar ausente (só 5, 6, 11, 12; um quadro pode ter mais de um)",
                         "denominador": "quadros com pessoa detectada pela YOLO11n, antes da remoção"}}
-  r.gravar_json(pdir / "tabela_pontos.json", out)
+  r.gravar_json(pdir / "tabela_por_ponto.json", out)
   f3 = q.f3
   nomes = ["nariz", "olho esq.", "olho dir.", "orelha esq.", "orelha dir.", "ombro esq.", "ombro dir.", "cotovelo esq.",
            "cotovelo dir.", "punho esq.", "punho dir.", "quadril esq.", "quadril dir.", "joelho esq.", "joelho dir.",
@@ -378,7 +404,48 @@ def tabela_pontos():
   linhas += ["", f"Quadros removidos na I1 (algum de 5, 6, 11, 12 ausente): {total_rem} de {n} ({f3(total_rem / n)}); "
              + "; ".join(f"*{c}* {a} de {b} ({f3(a / b)})" for c, (a, b) in por_classe.items()) + ".", "",
              *[f"- {k}: {v}" for k, v in out["definicoes"].items()]]
-  (pdir / "tabela_pontos.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+  (pdir / "tabela_por_ponto.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+  return out
+
+
+def relatorio_descarte():
+  pdir = pasta("r3_I3_descarte")
+  if (pdir / "descarte.json").exists():
+    return r.ler_json(pdir / "descarte.json")
+  import evaluate_temporal as et
+  por_video = {}
+  for vid in r.videos():
+    d = np.load(r.caminho("poses", "yolo11n", f"{vid}.npz"))
+    quadros, conf = d["frames"].astype(np.int64), d["conf"]
+    gt, _ = et.ground_truth_frames(vid, int(quadros[-1]) + 1, et.load_video_fps(vid))
+    anot = np.array([gt[f] != "Background" for f in quadros])
+    confiavel = conf[:, NORMALIZACAO_PONTOS] >= r.LIMIAR_CONF
+    por_video[vid] = {}
+    for c in ("a", "b"):
+      sai = ~mantem_quadro(confiavel, c)
+      por_video[vid][c] = np.array([len(quadros), sai.sum(), anot.sum(), (sai & anot).sum()])
+  val = q.validacao()
+  out = {"criterios": {}, "definicao": "quadros com pessoa (YOLO11n); anotados = dentro de intervalo do XML"}
+  for c in ("a", "b"):
+    out["criterios"][c] = {}
+    for parte, listas in (("treino", [[v for v in r.videos() if r.PARTICOES[v] != k and v not in val[k]] for k in r.particoes()]),
+                          ("teste", [r.videos()])):
+      soma = {}
+      for vids in listas:
+        for v in vids:
+          soma[r.classe_do_video(v)] = soma.get(r.classe_do_video(v), 0) + por_video[v][c]
+      out["criterios"][c][parte] = {cl: {"quadros": int(x[0]), "descartados": int(x[1]), "fracao_quadros": float(x[1] / x[0]),
+                                         "anotados": int(x[2]), "anotados_descartados": int(x[3]), "fracao_anotados": float(x[3] / max(1, x[2]))}
+                                    for cl, x in sorted(soma.items())}
+  r.gravar_json(pdir / "descarte.json", out)
+  linhas = ["# Descarte por qualidade da pose (I3)", "", "(a) os dois ombros e os dois quadris com confiança ≥ 0,5; (b) pelo menos um ombro e um quadril.", "",
+            "| critério | parte | classe | quadros descartados | anotados descartados |", "|---|---|---|---|---|"]
+  for c, x in out["criterios"].items():
+    for parte, y in x.items():
+      for cl, z in y.items():
+        linhas.append(f"| ({c}) | {parte} | *{cl}* | {z['descartados']} de {z['quadros']} ({q.f3(z['fracao_quadros'])}) | "
+                      f"{z['anotados_descartados']} de {z['anotados']} ({q.f3(z['fracao_anotados'])}) |")
+  (pdir / "descarte.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
   return out
 
 
@@ -407,7 +474,7 @@ def comparar_pos(pos, final_dirs, final_cfg):
   return out
 
 
-def escrever_resumo(linhas_val, decisao, final=None, tabela=None):
+def escrever_resumo(linhas_val, decisao, final=None, tabela=None, descarte=None):
   linhas = ["# Resumo da rodada 3", "",
             "Protocolo: `protocolo_rodada3.md`. Cada célula: agregado / média ± desvio entre partições (validação). "
             "Decisão pelo agregado: mantém se melhora ≥ 0,01 em pelo menos 2 das 3 métricas.", "",
@@ -416,7 +483,13 @@ def escrever_resumo(linhas_val, decisao, final=None, tabela=None):
   if tabela:
     t = tabela["quadros_removidos"]
     linhas += ["", f"Quadros removidos na I1 (ombro ou quadril ausente): {t['total']} de {tabela['quadros_com_pessoa']} ({q.f3(t['fracao'])}); "
-               + "; ".join(f"*{c}* {q.f3(x['fracao'])}" for c, x in t["por_classe"].items()) + ". Tabela por ponto: `r3_tabela_pontos/tabela_pontos.md`."]
+               + "; ".join(f"*{c}* {q.f3(x['fracao'])}" for c, x in t["por_classe"].items()) + ". Tabela por ponto: `r3_tabela_pontos/tabela_por_ponto.md`."]
+  if descarte:
+    linhas += ["", "Descarte da I3 (fração dos quadros com pessoa / dos quadros anotados; treino = vídeos de treino das 5 partições, teste = os 56 vídeos):"]
+    for c, x in descarte["criterios"].items():
+      linhas.append(f"- ({c}) " + "; ".join(f"{parte}: " + ", ".join(f"*{cl}* {q.f3(y['fracao_quadros'])} / {q.f3(y['fracao_anotados'])}" for cl, y in x[parte].items())
+                                            for parte in ("treino", "teste")))
+    linhas.append("Detalhes: `r3_I3_descarte/descarte.md`.")
   if final:
     linhas += ["", *final]
   (Path(O3["saida"]) / "resumo_rodada3.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
@@ -486,7 +559,9 @@ def main():
   try:
     autoverificacao()
     tabela = tabela_pontos()
-    commit("experimentos: r3_tabela_pontos", [pasta("r3_tabela_pontos") / "tabela_pontos.json", pasta("r3_tabela_pontos") / "tabela_pontos.md", Path(__file__)])
+    commit("experimentos: r3_tabela_pontos", [pasta("r3_tabela_pontos") / "tabela_por_ponto.json", pasta("r3_tabela_pontos") / "tabela_por_ponto.md", Path(__file__)])
+    descarte = relatorio_descarte()
+    commit("experimentos: r3_I3_descarte", [pasta("r3_I3_descarte") / "descarte.json", pasta("r3_I3_descarte") / "descarte.md", Path(__file__)])
 
     cfg_ref = {**q.NOVOS, **cfg_limpo(r.ler_json(pasta(REF) / "config.json"))}
     if args.teste:
@@ -497,22 +572,28 @@ def main():
     for exp_id, mud, desc in [("r3_I1_interpolacao_limitada", {"normalizacao": "robusta_limitada", "entrada": "xy_dxdy_marcas"},
                                "interpolação até 0,5 s, ausentes = 0 + marca, sem ombro/quadril = sem pessoa"),
                               ("r3_I2_limitada_confianca", {"normalizacao": "robusta_limitada", "entrada": "xy_dxdy_marcas_conf"},
-                               "I1 + confiança de cada ponto")]:
+                               "I1 + confiança de cada ponto")] + [
+        (f"r3_I3_{onde}_{c}", {"normalizacao": "robusta_limitada", "entrada": "xy_dxdy_marcas", "descarte": c, "descarte_em": em},
+         f"I3-{onde}, critério ({c}): descarta quadro sem {'os dois ombros e os dois quadris' if c == 'a' else 'um ombro e um quadril'} confiáveis"
+         + (" só no treino" if em == "treino" else " no treino, na validação e no teste (não concorre)"))
+        for onde, em in (("treino", "treino"), ("teste", "todos")) for c in ("a", "b")]:
       cfg = {**cfg_ref, **mud}
+      concorre = cfg.get("descarte_em") != "todos"
       met = rodar3(exp_id, cfg, desc)
       if met is None:
         linhas.append(f"| {exp_id} | {desc} | -- | -- | -- | erro | -- |")
       else:
         ok, soma = r.supera(met["agregado_validacao"], met_ref["agregado_validacao"])
-        linhas.append(f"| {exp_id} | {desc} | {' | '.join(q.duas(met, m) for m in q.METRICAS)} | {'sim' if ok else 'não'} | "
-                      f"{met['tempo_s'] / 60:.0f} min |")
-        if ok or args.teste:
+        linhas.append(f"| {exp_id} | {desc} | {' | '.join(q.duas(met, m) for m in q.METRICAS)} | "
+                      f"{('sim' if ok else 'não') if concorre else 'não concorre'} | {met['tempo_s'] / 60:.0f} min |")
+        if concorre and (ok or args.teste):
           passou.append((soma, exp_id, cfg))
-      escrever_resumo(linhas, "em andamento", tabela=tabela)
+      escrever_resumo(linhas, "em andamento", tabela=tabela, descarte=descarte)
       commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [Path(O3["saida"]) / "resumo_rodada3.md", Path(__file__)])
 
     if not passou:
-      escrever_resumo(linhas, f"nenhuma variante melhora {REF} pelo critério; o modelo final continua {REF}.", tabela=tabela)
+      escrever_resumo(linhas, f"nenhuma variante (I1, I2, I3-treino a e b) melhora {REF} pelo critério; o modelo final continua {REF}.",
+                      tabela=tabela, descarte=descarte)
       commit("experimentos: resumo da rodada 3", [Path(O3["saida"]) / "resumo_rodada3.md", Path(__file__)])
       log("fim: modelo final continua " + REF)
       return
@@ -533,7 +614,7 @@ def main():
     gravado_para(pasta("r3_avaliacao_final") / "avaliacao_final.json", "modelo_final", final_id)
     av = q.avaliacao_final(final_id, final_cfg, pos, dirs)
     comp = comparar_pos(pos, dirs, final_cfg)
-    escrever_resumo(linhas, f"{final_id} melhora {REF} pelo critério e passa a ser o modelo final.", bloco_final(final_id, av, comp), tabela)
+    escrever_resumo(linhas, f"{final_id} melhora {REF} pelo critério e passa a ser o modelo final.", bloco_final(final_id, av, comp), tabela, descarte)
     commit("experimentos: r3_avaliacao_final e resumo", [pasta("r3_avaliacao_final") / "avaliacao_final.json",
                                                          pasta("r3_avaliacao_final") / "pos_processamento_comparado.json",
                                                          Path(O3["saida"]) / "resumo_rodada3.md", Path(__file__)])
