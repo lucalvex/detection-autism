@@ -16,3 +16,4 @@ Protocolo: `protocolo_rodada2.md`. Cada célula: agregado / média ± desvio ent
 | r2_C2_l2_1e-4 | penalização L2 1e-4 | 0,036 / 0,040 ± 0,020 | 0,675 / 0,667 ± 0,030 | 0,372 / 0,390 ± 0,070 | não | 20 min |
 | r2_C2_l2_1e-3 | penalização L2 1e-3 | 0,030 / 0,040 ± 0,027 | 0,634 / 0,641 ± 0,030 | 0,376 / 0,370 ± 0,051 | não | 20 min |
 | r2_C3_1x64 | 1 camada de 64 unidades | 0,028 / 0,033 ± 0,019 | 0,644 / 0,646 ± 0,047 | 0,352 / 0,358 ± 0,039 | não | 5 min |
+| r2_C4_aumento | aumento de dados | 0,040 / 0,049 ± 0,031 | 0,668 / 0,676 ± 0,021 | 0,414 / 0,432 ± 0,090 | sim | 26 min |
