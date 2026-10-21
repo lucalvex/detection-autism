@@ -1,0 +1,48 @@
+{
+  "criterio": "ombros 5 e 6 e pelo menos um de 0-4 com confiança >= 0,5",
+  "por_classe": {
+    "ArmFlapping": {
+      "quadros": 52345,
+      "excluidos": 4572,
+      "fracao_quadros": 0.08734358582481612,
+      "anotados": 14770,
+      "anotados_excluidos": 637,
+      "fracao_anotados": 0.04312796208530806,
+      "episodios": 49,
+      "episodios_excluidos": 0,
+      "fracao_episodios": 0.0,
+      "episodios_ja_sem_deteccao": 0
+    },
+    "HeadBanging": {
+      "quadros": 25339,
+      "excluidos": 5863,
+      "fracao_quadros": 0.23138245392478,
+      "anotados": 8730,
+      "anotados_excluidos": 2328,
+      "fracao_anotados": 0.26666666666666666,
+      "episodios": 25,
+      "episodios_excluidos": 1,
+      "fracao_episodios": 0.04,
+      "episodios_ja_sem_deteccao": 0
+    },
+    "Spinning": {
+      "quadros": 35987,
+      "excluidos": 5096,
+      "fracao_quadros": 0.14160669130519354,
+      "anotados": 16889,
+      "anotados_excluidos": 2051,
+      "fracao_anotados": 0.12143999052637812,
+      "episodios": 27,
+      "episodios_excluidos": 0,
+      "fracao_episodios": 0.0,
+      "episodios_ja_sem_deteccao": 0
+    }
+  },
+  "total": {
+    "fracao_quadros": 0.13663115482400964,
+    "fracao_anotados": 0.12419223055782515,
+    "episodios_excluidos": 1,
+    "episodios": 101
+  },
+  "videos_sem_quadro_valido": []
+}
