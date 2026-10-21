@@ -113,3 +113,37 @@ Antes de calcular as métricas, confere-se que cada modelo é avaliado exatament
 **Informação, sem peso na decisão.** A comparação no subconjunto: o `r2_C4_aumento` avaliado só nos quadros que a I1 mantém.
 
 Os resultados ficam em `r3_cobertura_*`, e os da primeira avaliação são mantidos como estão.
+
+## Adendo de 2026-10-21 12:19: critério Q de qualidade da pose (decisão do orientador)
+
+Este adendo substitui o adendo de cobertura total como base da decisão. Os resultados daquela correção ficam registrados como informação.
+
+**Por que a primeira avaliação da I3 era inválida.** A regra da I1 tirava os quadros sem ombro ou quadril recuperável só da avaliação dos modelos novos (I1, I2, I3). O `r2_C4_aumento` e o modelo do TCC eram avaliados em todos os quadros. A comparação misturava conjuntos de quadros diferentes.
+
+**Critério Q, um critério de dados aplicado ao processo inteiro e antes da separação entre treino, validação e teste.**
+- Um quadro com pessoa detectada é válido se os dois ombros (5 e 6) e pelo menos um ponto da cabeça (0 a 4) tiverem confiança ≥ 0,5. Os quadris são opcionais.
+- Quadros inválidos saem de todo o processo, como os quadros sem pessoa detectada.
+- Episódios anotados sem nenhum quadro válido saem do gabarito da métrica por evento; os episódios com pelo menos um quadro válido contam inteiros.
+
+**Cobertura.** Por classe, reporta-se a fração de quadros, de quadros anotados e de episódios anotados excluídos por Q, os vídeos sem nenhum quadro válido e os episódios retirados do gabarito.
+
+**Conjunto avaliado.** Cada comparação usa os quadros válidos por Q em que todos os modelos comparados têm predição, ou seja, terminam uma janela. A contagem é registrada. Na prática:
+- o `r2_C4_aumento` e o modelo do TCC têm predição em quase todos os quadros e são avaliados restritos a esse conjunto, sem novo treino;
+- o QF só tem predição nos quadros válidos com 2 s de histórico válido no mesmo trecho.
+
+**Comparação sem treino novo, nos quadros válidos por Q:**
+- teste: o modelo do TCC e o `r2_C4_aumento` (3 sementes);
+- validação: o `r2_C4_aumento`, que é a referência da decisão;
+- só como informação, no subconjunto comum de validação em que I1, I2 e I3-treino têm predição: essas variantes ao lado do `r2_C4_aumento`.
+
+**Novo modelo QF.** É a configuração do `r2_C4_aumento` (15 quadros/s, janela de 2 s, aumento de dados, parada antecipada), treinada e avaliada só com os quadros válidos por Q.
+- **Centro:** o ponto médio dos ombros.
+- **Escala:** a distância entre esse centro e a média dos pontos da cabeça com confiança ≥ 0,5. Uma escala abaixo de 1 pixel repete a última válida.
+- **Limite:** ±10 unidades dessa escala, em vez de ±4. Medido antes do treino nos quadros válidos, ±10 corta 0,5% das coordenadas confiáveis (percentil 99,5), contra 5,8% com ±4. O aumento de dados usa o mesmo limite.
+- **Demais pontos, inclusive quadris e cabeça:** interpolação limitada a 0,5 s sobre os quadros válidos e marca de ausente, como na I1 (85 atributos).
+
+**Decisão.** O QF é comparado com o `r2_C4_aumento` restrito a Q, na validação, pelo critério: pelo menos 2 de 3 métricas, ganho ≥ 0,01, no agregado.
+- **Se passar:** treino com as sementes 1000 e 2000 e avaliação de teste completa no conjunto comum. São as quatro métricas nas duas convenções, com e sem pós-processamento (escolhido na validação restrita, só pelo F1 por evento), por classe, matriz de confusão, ablações, fração da classe do vídeo e *head banging* com F1 zero. A comparação é com o modelo do TCC e o `r2_C4_aumento` restritos a Q.
+- **Se não passar:** o modelo final é o `r2_C4_aumento`, reportado nos quadros válidos por Q: as quatro métricas nas duas convenções, com e sem pós-processamento escolhido na sua validação restrita, ao lado do TCC.
+
+Os resultados ficam em `r3_q_*`. Script: `experimentos/rodar_q.py`.
