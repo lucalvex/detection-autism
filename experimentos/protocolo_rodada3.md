@@ -147,3 +147,11 @@ Este adendo substitui o adendo de cobertura total como base da decisão. Os resu
 - **Se não passar:** o modelo final é o `r2_C4_aumento`, reportado nos quadros válidos por Q: as quatro métricas nas duas convenções, com e sem pós-processamento escolhido na sua validação restrita, ao lado do TCC.
 
 Os resultados ficam em `r3_q_*`. Script: `experimentos/rodar_q.py`.
+
+## Adendo de 2026-10-21 12:22: esclarecimentos ao critério Q
+
+1. **O critério Q complementa a correção de cobertura total (commit `95393a9f`), não a substitui.** Os dois resultados valem. Na cobertura total, nenhuma variante passou contra o `r2_C4_aumento` em todos os quadros. O critério Q decide entre o QF e o `r2_C4_aumento` nos quadros válidos.
+2. **I1, I2 e I3 não são reavaliadas no subconjunto comum.** A comparação no subconjunto já foi feita na correção de cobertura total (`r3_cobertura_decisao.json`, campo `subconjunto_I1`) e é apenas citada.
+3. **A avaliação de teste completa vale para o modelo final em qualquer caso:** o QF, se passar, ou o `r2_C4_aumento`, se não. São as 3 sementes, as quatro métricas nas duas convenções, com e sem pós-processamento, por classe, matriz de confusão, ablações, fração da classe do vídeo e *head banging* com F1 zero, contado entre os vídeos com quadros válidos. Tudo sempre ao lado do modelo do TCC e restrito ao conjunto comum de quadros válidos por Q.
+   - As ablações do modelo do TCC são refeitas sobre as mesmas janelas de 30 linhas de `evaluate_temporal.py`, com a mesma semente de embaralhamento (42).
+   - O limite de ±10 vale só para o QF: o `r2_C4_aumento` continua com ±4 quando suas predições são refeitas para as ablações.
