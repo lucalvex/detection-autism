@@ -42,9 +42,10 @@ while IFS= read -r -d '' file; do
 
   size=$(git cat-file -s ":$file" 2>/dev/null || echo 0)
 
-  # exceção: perdas por época dos experimentos (experimentos/<id>/perdas.csv),
+  # exceção: perdas por época dos experimentos (experimentos/<id>/perdas.csv) e a tabela
+  # de qualidade por vídeo (experimentos/qualidade_dataset/tabela_videos.csv),
   # pequenas e não derivadas de vídeo; os demais CSVs continuam bloqueados
-  if echo "$file" | grep -Eq '^experimentos/[^/]+/perdas\.csv$' && [ "$size" -le "$MAX_BYTES" ]; then
+  if echo "$file" | grep -Eq '^experimentos/([^/]+/perdas|qualidade_dataset/tabela_videos)\.csv$' && [ "$size" -le "$MAX_BYTES" ]; then
     continue
   fi
   if echo "$file" | grep -Eiq "$BLOCKED_EXT_REGEX"; then
