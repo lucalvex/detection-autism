@@ -11,3 +11,5 @@ Protocolo: `protocolo_rodada4.md`. Validação nos 76542 quadros válidos por Q 
 | r4_P3_aumento_postura | P3: + rotação ±30°, escala x/y ±20%, ruído | 0,039 / 0,056 ± 0,039 | 0,666 / 0,678 ± 0,028 | 0,410 / 0,433 ± 0,092 | 0,108 (-0,004 / 0,028 / 0,301) | não | 19 min |
 
 Passo 0 (diagnóstico do `r2_C4_aumento`): `r4_passo0/diagnostico.md`.
+
+Nenhuma variante foi mantida e nenhuma alternativa apareceu: o modelo final continua `r2_C4_aumento`. Dependência do movimento no teste (agregado): TCC 0,238, `r2_C4_aumento` 0,041.
