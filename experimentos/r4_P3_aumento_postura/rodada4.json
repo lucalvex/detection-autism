@@ -1,0 +1,78 @@
+{
+  "metricas_validacao_q": {
+    "agregado_validacao": {
+      "f1_evento_iou_0.3": 0.03931893616104143,
+      "acuracia_balanceada_presenca": 0.6658643715807094,
+      "macro_f1_quadro_todos": 0.4098978068785556
+    },
+    "por_particao": {
+      "1": {
+        "f1_evento_iou_0.3": 0.04869914789612475,
+        "acuracia_balanceada_presenca": 0.6732034116261016,
+        "macro_f1_quadro_todos": 0.40295156412351407
+      },
+      "2": {
+        "f1_evento_iou_0.3": 0.020305620305620307,
+        "acuracia_balanceada_presenca": 0.6530183447284994,
+        "macro_f1_quadro_todos": 0.38354948901227387
+      },
+      "3": {
+        "f1_evento_iou_0.3": 0.04024024024024025,
+        "acuracia_balanceada_presenca": 0.7304379144748046,
+        "macro_f1_quadro_todos": 0.49819689251108207
+      },
+      "4": {
+        "f1_evento_iou_0.3": 0.03798670465337132,
+        "acuracia_balanceada_presenca": 0.6754119510847669,
+        "macro_f1_quadro_todos": 0.3093433711030943
+      },
+      "5": {
+        "f1_evento_iou_0.3": 0.1316318090511639,
+        "acuracia_balanceada_presenca": 0.6578987369504159,
+        "macro_f1_quadro_todos": 0.5728108273753472
+      }
+    },
+    "media_entre_particoes": {
+      "f1_evento_iou_0.3": 0.05577270442930411,
+      "acuracia_balanceada_presenca": 0.6779940717729177,
+      "macro_f1_quadro_todos": 0.43337042882506227
+    },
+    "desvio_entre_particoes": {
+      "f1_evento_iou_0.3": 0.039038832575037,
+      "acuracia_balanceada_presenca": 0.027595593243329487,
+      "macro_f1_quadro_todos": 0.09212626071064221
+    }
+  },
+  "dependencia": {
+    "real": {
+      "agregado": 0.35619912835822215,
+      "media": 0.40746785266993885,
+      "desvio": 0.12968400003312294,
+      "por_classe": {
+        "ArmFlapping": 0.1801094456340709,
+        "HeadBanging": 0.1597222222222222,
+        "Spinning": 0.7287657172183731
+      }
+    },
+    "congelada": {
+      "agregado": 0.2479245236030476,
+      "media": 0.2751728113060654,
+      "desvio": 0.11339267802879567,
+      "por_classe": {
+        "ArmFlapping": 0.18445271196397103,
+        "HeadBanging": 0.1319952774498229,
+        "Spinning": 0.4273255813953488
+      }
+    },
+    "dependencia": 0.10827460475517456,
+    "dependencia_media": 0.13229504136387343,
+    "dependencia_por_classe": {
+      "ArmFlapping": -0.0043432663299001195,
+      "HeadBanging": 0.027726944772399315,
+      "Spinning": 0.3014401358230243
+    }
+  },
+  "passa": false,
+  "alternativa": false,
+  "n_quadros": 76542
+}
