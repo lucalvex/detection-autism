@@ -1,0 +1,115 @@
+{
+  "janela_s": 8,
+  "passo_s": 1,
+  "banda_hz": [
+    0.25,
+    7
+  ],
+  "classes": {
+    "ArmFlapping": {
+      "frequencia_hz": {
+        "mediana": 0.322265625,
+        "p10": 0.263671875,
+        "p90": 2.080078125,
+        "n_janelas": 245
+      },
+      "frequencia_hz_sem_videos_abaixo_de_15_fps": {
+        "mediana": 0.3515625,
+        "p10": 0.263671875,
+        "p90": 2.12109375,
+        "n_janelas": 217
+      },
+      "ciclos_em_2s": {
+        "mediana": 0.0,
+        "p10": 0.0,
+        "p90": 4.0,
+        "n_janelas": 245
+      },
+      "ciclos_em_4s": {
+        "mediana": 1.0,
+        "p10": 1.0,
+        "p90": 8.0,
+        "n_janelas": 245
+      },
+      "episodios": 49,
+      "episodios_com_janela": 25,
+      "videos": 13
+    },
+    "HeadBanging": {
+      "frequencia_hz": {
+        "mediana": 0.46875,
+        "p10": 0.263671875,
+        "p90": 1.025390625,
+        "n_janelas": 182
+      },
+      "frequencia_hz_sem_videos_abaixo_de_15_fps": {
+        "mediana": 0.46875,
+        "p10": 0.263671875,
+        "p90": 1.025390625,
+        "n_janelas": 182
+      },
+      "ciclos_em_2s": {
+        "mediana": 0.0,
+        "p10": 0.0,
+        "p90": 2.0,
+        "n_janelas": 182
+      },
+      "ciclos_em_4s": {
+        "mediana": 1.0,
+        "p10": 1.0,
+        "p90": 4.0,
+        "n_janelas": 182
+      },
+      "episodios": 25,
+      "episodios_com_janela": 14,
+      "videos": 11
+    },
+    "Spinning": {
+      "frequencia_hz": {
+        "mediana": 0.87890625,
+        "p10": 0.263671875,
+        "p90": 1.69921875,
+        "n_janelas": 528
+      },
+      "frequencia_hz_sem_videos_abaixo_de_15_fps": {
+        "mediana": 0.8349609375,
+        "p10": 0.263671875,
+        "p90": 1.787109375,
+        "n_janelas": 356
+      },
+      "ciclos_em_2s": {
+        "mediana": 1.0,
+        "p10": 0.0,
+        "p90": 3.0,
+        "n_janelas": 528
+      },
+      "ciclos_em_4s": {
+        "mediana": 3.0,
+        "p10": 1.0,
+        "p90": 6.0,
+        "n_janelas": 528
+      },
+      "episodios": 27,
+      "episodios_com_janela": 18,
+      "videos": 15,
+      "rotacao_hz": {
+        "mediana": 0.439453125,
+        "p10": 0.1318359375,
+        "p90": 0.849609375,
+        "n_janelas": 528
+      },
+      "ciclos_de_rotacao_em_2s": {
+        "mediana": 0.0,
+        "p10": 0.0,
+        "p90": 1.0,
+        "n_janelas": 528
+      },
+      "ciclos_de_rotacao_em_4s": {
+        "mediana": 1.0,
+        "p10": 0.0,
+        "p90": 3.0,
+        "n_janelas": 528
+      }
+    }
+  }
+}
