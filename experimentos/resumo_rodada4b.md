@@ -1,0 +1,30 @@
+# Resumo da rodada 4b
+
+Protocolo: `protocolo_rodada4b.md`. Quadros válidos por Q; agregado / média entre partições.
+
+## A. Sem os 5 vídeos problemáticos (ArmFlapping_03, HeadBanging_24, Spinning_09, Spinning_12, Spinning_16), teste
+Saem 928 de 94490 quadros e 8 de 100 episódios do gabarito (*ArmFlapping*: 101 quadros, 1 episódios; *HeadBanging*: 140 quadros, 1 episódios; *Spinning*: 687 quadros, 6 episódios). Pós-processamento: mediana_2.0_juncao_1.0.
+
+| | conjunto | F1 evento | acurácia bal. | macro F1 quadros | macro F1 anotados | F1 evento com pós |
+|---|---|---|---|---|---|---|
+| TCC | todos | 0,015 / 0,017 | 0,575 / 0,584 | 0,393 / 0,386 | 0,331 / 0,350 | 0,155 / 0,170 |
+| `r2_C4_aumento` (3 sementes, agregado; média entre partições) | todos | 0,044 ± 0,011; 0,047 | 0,595 ± 0,018; 0,601 | 0,460 ± 0,008; 0,425 | 0,487 ± 0,009; 0,443 | 0,210; 0,202 |
+| TCC | sem problematicos | 0,015 / 0,017 | 0,574 / 0,583 | 0,394 / 0,386 | 0,333 / 0,352 | 0,163 / 0,175 |
+| `r2_C4_aumento` (3 sementes, agregado; média entre partições) | sem problematicos | 0,044 ± 0,011; 0,048 | 0,595 ± 0,018; 0,601 | 0,462 ± 0,008; 0,429 | 0,492 ± 0,010; 0,449 | 0,219; 0,211 |
+
+## B. Frequência dominante nos intervalos anotados (janelas de 8 s)
+
+| classe | frequência (Hz): mediana [p10; p90] | ciclos em 2 s | ciclos em 4 s | janelas / episódios com janela / vídeos |
+|---|---|---|---|---|
+| *ArmFlapping* | 0,322 [0,264; 2,080] | 0,000 [0,000; 4,000] | 1,000 [1,000; 8,000] | 245 / 25 de 49 / 13 |
+| *HeadBanging* | 0,469 [0,264; 1,025] | 0,000 [0,000; 2,000] | 1,000 [1,000; 4,000] | 182 / 14 de 25 / 11 |
+| *Spinning* | 0,879 [0,264; 1,699] | 1,000 [0,000; 3,000] | 3,000 [1,000; 6,000] | 528 / 18 de 27 / 15 |
+
+*Spinning*: a largura dos ombros oscila duas vezes por volta; rotação 0,439 Hz [0,132; 0,850], 0,000 voltas em 2 s e 1,000 em 4 s (medianas).
+
+## C. Variantes contra o `r2_C4_aumento` (validação nos mesmos quadros válidos por Q)
+
+| variante | quadros | F1 evento | acurácia bal. | macro F1 quadros | dependência (AF / HB / SP) | situação | tempo |
+|---|---|---|---|---|---|---|---|
+| C1: janela de 4 s | 73277 | 0,060 vs 0,049 | 0,659 vs 0,670 | 0,448 vs 0,422 | 0,086 vs 0,038 (0,087 / 0,034 / 0,135) | passa | 35 min |
+Cada célula: variante vs `r2_C4_aumento` nos mesmos quadros (agregado).
