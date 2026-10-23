@@ -28,4 +28,7 @@ Saem 928 de 94490 quadros e 8 de 100 episódios do gabarito (*ArmFlapping*: 101 
 |---|---|---|---|---|---|---|---|
 | C1: janela de 4 s | 73277 | 0,060 vs 0,049 | 0,659 vs 0,670 | 0,448 vs 0,422 | 0,086 vs 0,038 (0,087 / 0,034 / 0,135) | passa | 35 min |
 | C2: P2 (periodicidade) com janela de 4 s | 73277 | 0,030 vs 0,049 | 0,676 vs 0,670 | 0,455 vs 0,422 | -0,054 vs 0,038 (0,163 / -0,292 / -0,032) | não | 41 min |
+| C3: janela de 2 s, treino sem os 5 vídeos problemáticos | 76542 | 0,036 vs 0,047 | 0,637 vs 0,667 | 0,368 vs 0,421 | 0,043 vs 0,037 (-0,010 / 0,020 / 0,119) | não | 18 min |
 Cada célula: variante vs `r2_C4_aumento` nos mesmos quadros (agregado).
+
+Nenhuma variante passou no critério nem se qualificou como alternativa; o modelo final continua `r2_C4_aumento`.
