@@ -31,4 +31,26 @@ Saem 928 de 94490 quadros e 8 de 100 episódios do gabarito (*ArmFlapping*: 101 
 | C3: janela de 2 s, treino sem os 5 vídeos problemáticos | 76542 | 0,036 vs 0,047 | 0,637 vs 0,667 | 0,368 vs 0,421 | 0,043 vs 0,037 (-0,010 / 0,020 / 0,119) | não | 18 min |
 Cada célula: variante vs `r2_C4_aumento` nos mesmos quadros (agregado).
 
-Nenhuma variante passou no critério nem se qualificou como alternativa; o modelo final continua `r2_C4_aumento`.
+## Avaliação final: r4b_C1_janela_4s (variante que passou)
+
+Teste nos 90722 quadros válidos por Q comuns a TCC, `r2_C4_aumento` e `r4b_C1_janela_4s`. Pós-processamento escolhido na validação: mediana_2.0_juncao_1.0. As métricas por quadro não dependem dele.
+
+| | F1 evento | acurácia bal. | macro F1 quadros | macro F1 anotados | F1 evento com pós |
+|---|---|---|---|---|---|
+| TCC | 0,017 / 0,018 ± 0,008 | 0,574 / 0,584 ± 0,032 | 0,392 / 0,386 ± 0,055 | 0,328 / 0,348 ± 0,106 | 0,162 / 0,170 |
+| `r2_C4_aumento`, 3 sementes, agregado | 0,046 ± 0,011 | 0,595 ± 0,018 | 0,462 ± 0,008 | 0,490 ± 0,010 | 0,219 ± 0,025 |
+| `r2_C4_aumento`, 3 sementes, média entre partições | 0,050 ± 0,013 | 0,601 ± 0,011 | 0,427 ± 0,004 | 0,446 ± 0,016 | 0,211 ± 0,019 |
+| `r4b_C1_janela_4s`, 3 sementes, agregado | 0,064 ± 0,005 | 0,584 ± 0,015 | 0,458 ± 0,018 | 0,510 ± 0,057 | 0,272 ± 0,014 |
+| `r4b_C1_janela_4s`, 3 sementes, média entre partições | 0,073 ± 0,011 | 0,591 ± 0,015 | 0,428 ± 0,015 | 0,467 ± 0,049 | 0,265 ± 0,013 |
+
+F1 por classe (semente 42, agregado; todos os quadros | anotados) e mudança em relação ao `r2_C4_aumento`:
+- *ArmFlapping*: 0,254 (+0,007) | 0,447 (+0,078)
+- *HeadBanging*: 0,304 (-0,027) | 0,366 (-0,035)
+- *Spinning*: 0,601 (+0,017) | 0,749 (+0,062)
+- *Background*: 0,658 (-0,073) | --
+
+Dependência do movimento no teste (agregado; por classe AF / HB / SP): TCC 0,235 (0,098 / 0,056 / 0,550); r2_C4_aumento 0,056 (-0,013 / -0,023 / 0,203); r4b_C1_janela_4s 0,069 (-0,007 / -0,013 / 0,227) (média das sementes quando há 3).
+Ablações, macro F1 anotados com 3 classes (agregado; sem / ordem / dxdy): r4b_C1_janela_4s: 0,634 / 0,601 / 0,616, 0,699 / 0,651 / 0,685, 0,694 / 0,663 / 0,673; TCC: 0,554 / 0,528 / 0,478.
+Fração da classe do vídeo, dentro / fora (semente 42 e TCC): r4b_C1_janela_4s: ArmFlapping 0,187/0,193, HeadBanging 0,292/0,125, Spinning 0,595/0,292; TCC: ArmFlapping 0,116/0,066, HeadBanging 0,076/0,095, Spinning 0,481/0,212.
+*Head banging* com F1 zero: r4b_C1_janela_4s: 6 de 16, 7 de 16, 9 de 16; r2_C4_aumento: 6 de 16, 7 de 16, 8 de 16; TCC: 8 de 16.
+Matriz de confusão e por classe completos: `r4b_avaliacao_final/avaliacao_final.json`; curva de erro: `r4b_C1_janela_4s/curva_erro.pdf`.
