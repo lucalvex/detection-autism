@@ -54,3 +54,19 @@ Reportam-se os quadros e os episódios do gabarito que saem, por classe.
 **Decisão.** Se mais de uma variante passar, fica a de maior soma de ganhos. A vencedora recebe a avaliação final completa da rodada 4, ao lado do `r2_C4_aumento` e do TCC: 3 sementes, quatro métricas nas duas convenções com e sem pós-processamento, por classe, matriz de confusão, dependência do movimento por classe, ablações, fração da classe do vídeo, *head banging* com F1 zero e `curva_erro.pdf`. Se nenhuma passar, só uma alternativa, se houver, recebe essa avaliação.
 
 **Resumo:** `resumo_rodada4b.md`, no máximo uma página. Commits por etapa, sem push, com o índice limpo em caso de falha.
+
+## Adendo de 2026-10-25 16:00: parte B refeita (frequência dos movimentos)
+
+**Por que refazer.** Na primeira versão, as medianas de *arm flapping* e *head banging* caíram perto do limite inferior da faixa (0,25 Hz). Isso indica que o pico de potência pegava a deriva lenta da postura, e não a oscilação do gesto. Além disso, cerca de metade dos episódios é mais curta que 8 s e ficou de fora. O resultado anterior (`r4b_B_frequencia/`) é mantido como está, só para registro.
+
+**Mudanças**, sem treino. O resto da parte B não muda: mesmos sinais, posições da normalização robusta, 15 quadros/s, passo de 1 s, janela de Hann e espectro com zeros até 512 pontos.
+1. Antes do espectro, remove-se a tendência linear de cada componente do sinal em cada janela (`scipy.signal.detrend`, tipo linear), em vez de só a média.
+2. A frequência dominante é procurada entre 0,5 e 7 Hz.
+3. Duas durações de janela: 8 s (120 amostras) e 4 s (60 amostras). A de 4 s alcança episódios curtos, com resolução espectral de 0,25 Hz contra 0,125 Hz na de 8 s.
+
+**Relatório por classe e por duração de janela:**
+- frequência dominante (mediana, percentis 10 e 90);
+- ciclos completos em 2 s e em 4 s, arredondados para baixo;
+- janelas, episódios com janela e vídeos.
+
+Para *spinning*, também a frequência de rotação (metade da frequência da largura dos ombros). Resultado em `r4b_B2_frequencia/`.
