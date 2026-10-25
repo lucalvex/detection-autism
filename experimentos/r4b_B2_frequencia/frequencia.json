@@ -1,0 +1,172 @@
+{
+  "banda_hz": [
+    0.5,
+    7.0
+  ],
+  "tendencia": "linear removida em cada janela",
+  "passo_s": 1,
+  "classes": {
+    "ArmFlapping": {
+      "janela_8s": {
+        "n_janelas": 245,
+        "episodios_com_janela": 25,
+        "episodios": 49,
+        "videos": 13,
+        "frequencia_hz": {
+          "mediana": 0.673828125,
+          "p10": 0.52734375,
+          "p90": 2.138671875
+        },
+        "ciclos_em_2s": {
+          "mediana": 1.0,
+          "p10": 1.0,
+          "p90": 4.0
+        },
+        "ciclos_em_4s": {
+          "mediana": 2.0,
+          "p10": 2.0,
+          "p90": 8.0
+        }
+      },
+      "janela_4s": {
+        "n_janelas": 387,
+        "episodios_com_janela": 45,
+        "episodios": 49,
+        "videos": 20,
+        "frequencia_hz": {
+          "mediana": 0.52734375,
+          "p10": 0.52734375,
+          "p90": 2.8125
+        },
+        "ciclos_em_2s": {
+          "mediana": 1.0,
+          "p10": 1.0,
+          "p90": 5.0
+        },
+        "ciclos_em_4s": {
+          "mediana": 2.0,
+          "p10": 2.0,
+          "p90": 11.0
+        }
+      }
+    },
+    "HeadBanging": {
+      "janela_8s": {
+        "n_janelas": 183,
+        "episodios_com_janela": 15,
+        "episodios": 25,
+        "videos": 12,
+        "frequencia_hz": {
+          "mediana": 0.8203125,
+          "p10": 0.52734375,
+          "p90": 1.23046875
+        },
+        "ciclos_em_2s": {
+          "mediana": 1.0,
+          "p10": 1.0,
+          "p90": 2.0
+        },
+        "ciclos_em_4s": {
+          "mediana": 3.0,
+          "p10": 2.0,
+          "p90": 4.0
+        }
+      },
+      "janela_4s": {
+        "n_janelas": 271,
+        "episodios_com_janela": 24,
+        "episodios": 25,
+        "videos": 18,
+        "frequencia_hz": {
+          "mediana": 0.8203125,
+          "p10": 0.52734375,
+          "p90": 1.376953125
+        },
+        "ciclos_em_2s": {
+          "mediana": 1.0,
+          "p10": 1.0,
+          "p90": 2.0
+        },
+        "ciclos_em_4s": {
+          "mediana": 3.0,
+          "p10": 2.0,
+          "p90": 5.0
+        }
+      }
+    },
+    "Spinning": {
+      "janela_8s": {
+        "n_janelas": 528,
+        "episodios_com_janela": 18,
+        "episodios": 27,
+        "videos": 15,
+        "frequencia_hz": {
+          "mediana": 1.025390625,
+          "p10": 0.52734375,
+          "p90": 1.728515625
+        },
+        "ciclos_em_2s": {
+          "mediana": 2.0,
+          "p10": 1.0,
+          "p90": 3.0
+        },
+        "ciclos_em_4s": {
+          "mediana": 4.0,
+          "p10": 2.0,
+          "p90": 6.0
+        },
+        "rotacao_hz": {
+          "mediana": 0.5126953125,
+          "p10": 0.263671875,
+          "p90": 0.8642578125
+        },
+        "voltas_em_2s": {
+          "mediana": 1.0,
+          "p10": 0.0,
+          "p90": 1.0
+        },
+        "voltas_em_4s": {
+          "mediana": 2.0,
+          "p10": 1.0,
+          "p90": 3.0
+        }
+      },
+      "janela_4s": {
+        "n_janelas": 642,
+        "episodios_com_janela": 22,
+        "episodios": 27,
+        "videos": 17,
+        "frequencia_hz": {
+          "mediana": 0.99609375,
+          "p10": 0.52734375,
+          "p90": 1.81640625
+        },
+        "ciclos_em_2s": {
+          "mediana": 1.0,
+          "p10": 1.0,
+          "p90": 3.0
+        },
+        "ciclos_em_4s": {
+          "mediana": 3.0,
+          "p10": 2.0,
+          "p90": 7.0
+        },
+        "rotacao_hz": {
+          "mediana": 0.498046875,
+          "p10": 0.263671875,
+          "p90": 0.908203125
+        },
+        "voltas_em_2s": {
+          "mediana": 0.0,
+          "p10": 0.0,
+          "p90": 1.0
+        },
+        "voltas_em_4s": {
+          "mediana": 1.0,
+          "p10": 1.0,
+          "p90": 3.0
+        }
+      }
+    }
+  }
+}
