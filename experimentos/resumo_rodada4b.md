@@ -1,5 +1,13 @@
 # Resumo da rodada 4b
 
+## Decisão (2026-10-25): `r4b_C1_janela_4s` é o novo modelo final
+
+Substitui o `r2_C4_aumento`. Passou no critério da validação (F1 evento +0,011, macro F1 quadros +0,026; acurácia bal. −0,011) e o teste confirmou nos eventos (F1 com pós 0,272 contra 0,219, 3 sementes). Limitações: acurácia balanceada um pouco menor, *head banging* pior (−0,035) e dependência do movimento ainda baixa. Registro: `modelo_final.md` e `modelo_final.json`.
+
+## B refeita (adendo): sem tendência linear, 0,5 a 7 Hz, janelas de 8 s e 4 s
+
+A parte B acima (só a média removida, 0,25 a 7 Hz) fica só como registro; vale `r4b_B2_frequencia/frequencia.md`.
+
 Protocolo: `protocolo_rodada4b.md`. Quadros válidos por Q; agregado / média entre partições.
 
 ## A. Sem os 5 vídeos problemáticos (ArmFlapping_03, HeadBanging_24, Spinning_09, Spinning_12, Spinning_16), teste
