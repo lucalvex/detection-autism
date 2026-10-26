@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Revisão de sessão</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&amp;display=swap">
+<style>
+body{margin:0;font-family:"Atkinson Hyperlegible Next",system-ui,-apple-system,"Segoe UI",sans-serif;background:#E7EBEA;color:#1E2B2F}
+a{color:#1E2B2F}a:hover{color:#1F4F8F}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #1F4F8F;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; box-sizing: border-box; padding: 28px 40px 40px; display: flex; flex-direction: column; background: #E7EBEA; color: #1E2B2F; font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif">
+
+<header style="display: flex; justify-content: space-between; align-items: flex-end; height: 56px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 14px; color: #4A585C">Sessão [identificação], gravada em [data]</span>
+<h1 style="margin: 0; font-size: 30px; line-height: 1.1; font-weight: 700; letter-spacing: -0.01em">Revisão de sessão</h1>
+</div>
+<nav aria-label="Modo" style="display: flex; gap: 4px; padding: 4px; background: #D6DDDB; border-radius: 8px">
+<a href="Apresentacao.dc.html" style="display: flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 6px; font-size: 15px; text-decoration: none; color: #1E2B2F">Apresentação</a>
+<span aria-current="page" style="display: flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 6px; font-size: 15px; font-weight: 700; background: #F6F8F7">Revisão</span>
+</nav>
+</header>
+
+<p style="margin: 14px 0 0; font-size: 15px; line-height: 1.4; color: #4A585C; max-width: 900px">Ferramenta de triagem e acompanhamento. Os trechos marcados são sugestões para revisão profissional e não constituem diagnóstico.</p>
+
+<div style="margin-top: 22px; display: flex; gap: 32px; height: 465px">
+<div style="width: 720px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0">
+<div style="position: relative; width: 720px; height: 405px; background: #CDD5D2; border-radius: 4px; overflow: hidden">
+<span style="position: absolute; left: 16px; top: 14px; font-size: 13px; color: #4A585C">[vídeo da sessão]</span>
+<sc-if value="{{skel}}" hint-placeholder-val="{{true}}">
+<svg width="720" height="405" style="position: absolute; left: 0; top: 0; display: block" aria-hidden="true">
+<path d="{{bonesD}}" fill="none" stroke="#1E2B2F" style="stroke-width: 3; stroke-linecap: round"></path>
+<path d="{{jointsD}}" fill="none" stroke="#1E2B2F" style="stroke-width: 11; stroke-linecap: round"></path>
+<path d="{{jointsD}}" fill="none" stroke="#F6F8F7" style="stroke-width: 6; stroke-linecap: round"></path>
+</svg>
+</sc-if>
+<sc-if value="{{chip}}" hint-placeholder-val="{{true}}">
+<div style="position: absolute; left: 16px; bottom: 16px; display: flex; gap: 10px; align-items: center; padding: 9px 14px; background: #F6F8F7; border-radius: 6px; font-size: 15px">
+<span style="width: 12px; height: 12px; border-radius: 3px; background: {{chipCor}}; flex-shrink: 0"></span>
+<span>Trecho sugerido: <strong>{{chipNome}}</strong>, pontuação {{chipP}}</span>
+</div>
+</sc-if>
+</div>
+<div style="display: flex; align-items: center; gap: 16px; height: 48px">
+<button onClick="{{togglePlay}}" aria-label="{{playLabel}}" style="width: 44px; height: 44px; border: 0; border-radius: 6px; background: #1E2B2F; color: #F6F8F7; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<sc-if value="{{playing}}" hint-placeholder-val="{{false}}">
+<svg width="18" height="18" aria-hidden="true"><path d="M4 3h3.5v12H4zM10.5 3H14v12h-3.5z" fill="currentColor"></path></svg>
+</sc-if>
+<sc-if value="{{paused}}" hint-placeholder-val="{{true}}">
+<svg width="18" height="18" aria-hidden="true"><path d="M5 2.5L15.5 9L5 15.5z" fill="currentColor"></path></svg>
+</sc-if>
+</button>
+<span style="font-size: 17px; font-variant-numeric: tabular-nums"><strong>{{tc}}</strong> / 01:00</span>
+<label style="margin-left: auto; display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 15px; cursor: pointer">
+<input type="checkbox" checked="{{skel}}" onChange="{{toggleSkel}}" style="width: 18px; height: 18px; margin: 0; accent-color: #1E2B2F">
+Mostrar pontos do corpo
+</label>
+</div>
+</div>
+
+<section aria-labelledby="h-trechos" style="flex-grow: 1; display: flex; flex-direction: column; background: #F6F8F7; border-radius: 6px; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding: 18px 20px 14px">
+<h2 id="h-trechos" style="margin: 0; font-size: 19px; font-weight: 700">Trechos para revisão</h2>
+<span style="font-size: 14px; color: #4A585C; font-variant-numeric: tabular-nums">{{nRev}} de {{nEps}} revisados</span>
+</div>
+<div style="flex-grow: 1; overflow-y: auto">
+<sc-for list="{{eps}}" as="e" hint-placeholder-count="6">
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 20px; border-top: 1px solid #D5DCDA; background: {{e.bg}}">
+<span style="width: 12px; height: 12px; border-radius: 3px; background: {{e.cor}}; flex-shrink: 0"></span>
+<button onClick="{{e.seek}}" style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; text-align: left; min-height: 48px; padding: 6px 0; background: none; border: 0; font: inherit; color: inherit; cursor: pointer">
+<span style="font-size: 16px; font-weight: 700">{{e.nome}}</span>
+<span style="font-size: 14px; color: #4A585C; font-variant-numeric: tabular-nums">{{e.faixa}}</span>
+</button>
+<sc-if value="{{e.pendente}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; gap: 8px">
+<button onClick="{{e.ok}}" style="height: 44px; padding: 0 14px; border: 1px solid #1E2B2F; background: #1E2B2F; color: #F6F8F7; border-radius: 6px; font: inherit; font-size: 14px; cursor: pointer">Confirmar</button>
+<button onClick="{{e.no}}" style="height: 44px; padding: 0 14px; border: 1px solid #8C9895; background: transparent; color: #1E2B2F; border-radius: 6px; font: inherit; font-size: 14px; cursor: pointer">Descartar</button>
+</div>
+</sc-if>
+<sc-if value="{{e.decidido}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; gap: 8px; align-items: center">
+<span style="font-size: 14px; font-weight: 700">{{e.statusTxt}}</span>
+<button onClick="{{e.undo}}" style="height: 44px; padding: 0 10px; border: 0; background: none; color: #1F4F8F; text-decoration: underline; font: inherit; font-size: 14px; cursor: pointer">Desfazer</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<sc-if value="{{semEps}}" hint-placeholder-val="{{false}}">
+<p style="margin: 0; padding: 20px; border-top: 1px solid #D5DCDA; font-size: 15px; line-height: 1.5">Nenhum trecho acima do limiar atual. Baixe o limiar na linha do tempo para ver trechos com pontuação menor.</p>
+</sc-if>
+</div>
+<p style="margin: 0; padding: 12px 20px; border-top: 1px solid #D5DCDA; font-size: 13px; color: #4A585C">Selecione um trecho para ir até ele no vídeo.</p>
+</section>
+</div>
+
+<section aria-labelledby="h-linha" style="margin-top: 26px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: center; min-height: 44px">
+<div style="display: flex; gap: 18px; align-items: baseline">
+<h2 id="h-linha" style="margin: 0; font-size: 19px; font-weight: 700">Linha do tempo por classe</h2>
+<span style="font-size: 14px; color: #4A585C">A curva é a pontuação do modelo, a linha tracejada é o limiar e a barra na base marca o trecho sugerido.</span>
+</div>
+<label style="display: flex; gap: 12px; align-items: center; font-size: 15px">
+Limiar de detecção
+<input type="range" min="0.3" max="0.9" step="0.05" value="{{thr}}" onChange="{{onThr}}" style="width: 200px; margin: 0; accent-color: #1E2B2F">
+<span style="width: 36px; font-weight: 700; font-variant-numeric: tabular-nums">{{thrTxt}}</span>
+</label>
+</div>
+<div style="position: relative">
+<div style="display: flex; flex-direction: column; border-bottom: 1px solid #C3CBC8">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; gap: 20px; align-items: center; height: 56px; border-top: 1px solid #C3CBC8">
+<div style="width: 200px; display: flex; gap: 10px; align-items: center; flex-shrink: 0">
+<span style="width: 12px; height: 12px; border-radius: 3px; background: {{r.cor}}; flex-shrink: 0"></span>
+<span style="display: flex; flex-direction: column">
+<span style="font-size: 15px; font-weight: 700">{{r.nome}}</span>
+<span style="font-size: 13px; color: #4A585C">{{r.resumo}}</span>
+</span>
+</div>
+<div style="position: relative; width: 1140px; height: 56px">
+<svg width="1140" height="56" style="position: absolute; left: 0; top: 0; display: block" aria-hidden="true">
+<path d="{{r.area}}" fill="{{r.cor}}" style="fill-opacity: 0.16"></path>
+<path d="{{r.linha}}" fill="none" stroke="{{r.cor}}" style="stroke-width: 1.75; stroke-linejoin: round"></path>
+<line x1="0" x2="1140" y1="{{r.thrY}}" y2="{{r.thrY}}" stroke="#4A585C" style="stroke-width: 1; stroke-dasharray: 4 4"></line>
+</svg>
+<sc-for list="{{r.bands}}" as="b" hint-placeholder-count="1">
+<div style="position: absolute; left: {{b.x}}px; width: {{b.w}}px; bottom: 2px; height: 6px; background: {{r.cor}}; border-radius: 2px"></div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 20px">
+<div style="width: 200px; flex-shrink: 0"></div>
+<div style="position: relative; width: 1140px; height: 22px">
+<sc-for list="{{ticks}}" as="k" hint-placeholder-count="7">
+<span style="position: absolute; top: 4px; left: {{k.x}}px; transform: translateX({{k.tx}}); font-size: 12px; color: #4A585C; font-variant-numeric: tabular-nums">{{k.txt}}</span>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; gap: 20px; align-items: center; min-height: 32px">
+<label for="scrub" style="width: 200px; flex-shrink: 0; font-size: 14px; color: #4A585C">Posição no vídeo</label>
+<input id="scrub" type="range" min="0" max="60" step="0.1" value="{{tNum}}" onChange="{{onScrub}}" style="width: 1140px; margin: 0; accent-color: #1E2B2F">
+</div>
+<div style="position: absolute; top: 0; left: {{playX}}px; width: 2px; height: 170px; background: #1E2B2F; pointer-events: none"></div>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.T = 60; this.DT = 0.1; this.W = 1140; this.RH = 56;
+    this.C = [
+      { nome: 'Balançar os braços', cor: '#1F4F8F', eps: [[8, 14, 0.88], [37, 41, 0.71], [52, 53.8, 0.58]] },
+      { nome: 'Bater a cabeça', cor: '#E0A13A', eps: [[22, 27, 0.83]] },
+      { nome: 'Girar o corpo', cor: '#8E6FC0', eps: [[30, 34, 0.46], [45, 49, 0.79]] }
+    ];
+    this.N = Math.round(this.T / this.DT);
+    this.P = this.C.map((c, i) => {
+      const a = [];
+      for (let k = 0; k <= this.N; k++) a.push(this.prob(c, i, k * this.DT));
+      return a;
+    });
+    this.state = { t: 9.6, playing: false, thr: 0.5, skel: true, rev: {} };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      if (!this.state.playing) return;
+      const t = this.state.t + 0.05;
+      if (t >= this.T) this.setState({ t: this.T, playing: false });
+      else this.setState({ t: t });
+    }, 50);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  sig(x) { return 1 / (1 + Math.exp(-x)); }
+  plateau(c, t) {
+    let v = 0;
+    for (const e of c.eps) v = Math.max(v, e[2] * this.sig((t - e[0]) * 3) * this.sig((e[1] - t) * 3));
+    return v;
+  }
+  prob(c, i, t) {
+    const n = 0.04 + 0.025 * Math.sin(t * 1.7 + i * 2.1) + 0.018 * Math.sin(t * 4.3 + i);
+    return Math.min(0.99, Math.max(0.01, this.plateau(c, t) + n));
+  }
+  fmt(t) {
+    const s = Math.max(0, Math.floor(t + 1e-6));
+    return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }
+  num(x, d) { return x.toFixed(d).replace('.', ','); }
+  episodes(thr) {
+    const out = [];
+    this.C.forEach((c, ci) => {
+      let s = null, pk = 0;
+      for (let k = 0; k <= this.N + 1; k++) {
+        const p = k <= this.N ? this.P[ci][k] : 0;
+        const t = k * this.DT;
+        if (p >= thr) {
+          if (s === null) { s = t; pk = 0; }
+          pk = Math.max(pk, p);
+        } else if (s !== null) {
+          const b = Math.min(t, this.T);
+          if (b - s >= 1) out.push({ ci: ci, a: s, b: b, pk: pk });
+          s = null;
+        }
+      }
+    });
+    return out.sort((x, y) => x.a - y.a);
+  }
+  bones() {
+    return [[5, 6], [5, 7], [7, 9], [6, 8], [8, 10], [5, 11], [6, 12], [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]];
+  }
+  pose(t) {
+    const f = this.plateau(this.C[0], t) / 0.88;
+    const h = this.plateau(this.C[1], t) / 0.83;
+    const s = Math.min(1, this.plateau(this.C[2], t) / 0.79);
+    const osc = Math.sin(2 * Math.PI * 3 * t) * 26 * f;
+    const nod = 16 * h * Math.abs(Math.sin(2 * Math.PI * 1.4 * t));
+    const sx = 1 - s * 0.85 * (0.5 - 0.5 * Math.cos(2 * Math.PI * 0.7 * t));
+    const p = [
+      [360, 92 + nod], [368, 84 + nod], [352, 84 + nod], [378, 90 + nod], [342, 90 + nod],
+      [392, 140], [328, 140],
+      [404 + 14 * f, 196 - 36 * f], [316 - 14 * f, 196 - 36 * f],
+      [410 + 30 * f, 248 - 100 * f + osc], [310 - 30 * f, 248 - 100 * f + osc],
+      [380, 250], [340, 250], [384, 316], [336, 316], [386, 378], [334, 378]
+    ];
+    return p.map((q) => [360 + (q[0] - 360) * sx, q[1]]);
+  }
+  renderVals() {
+    const st = this.state;
+    const t = st.t, thr = st.thr, rev = st.rev;
+    const eps = this.episodes(thr);
+    const pts = this.pose(t);
+    let bonesD = '', jointsD = '';
+    this.bones().forEach((b) => {
+      bonesD += 'M' + pts[b[0]][0].toFixed(1) + ' ' + pts[b[0]][1].toFixed(1) + 'L' + pts[b[1]][0].toFixed(1) + ' ' + pts[b[1]][1].toFixed(1);
+    });
+    pts.forEach((q) => { jointsD += 'M' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + 'l0.01 0'; });
+    const k = Math.min(this.N, Math.round(t / this.DT));
+    const act = eps.find((e) => t >= e.a && t <= e.b);
+    const key = (e) => e.ci + '-' + e.a.toFixed(1);
+    const W = this.W, RH = this.RH, base = RH - 12;
+    const X = (tt) => tt / this.T * W;
+    const Y = (p) => 6 + (1 - p) * (RH - 18);
+    const rows = this.C.map((c, ci) => {
+      let line = '';
+      for (let j = 0; j <= this.N; j++) line += (j ? 'L' : 'M') + X(j * this.DT).toFixed(1) + ' ' + Y(this.P[ci][j]).toFixed(1);
+      const mine = eps.filter((e) => e.ci === ci);
+      const tot = mine.reduce((acc, e) => acc + (e.b - e.a), 0);
+      const qtd = mine.length === 0 ? 'Nenhum trecho' : (mine.length === 1 ? '1 trecho, ' : mine.length + ' trechos, ') + this.num(tot, 1) + ' s';
+      return {
+        nome: c.nome, cor: c.cor, linha: line,
+        area: line + 'L' + W + ' ' + base + 'L0 ' + base + 'Z',
+        thrY: Y(thr).toFixed(1), resumo: qtd,
+        bands: mine.map((e) => ({ x: X(e.a).toFixed(1), w: Math.max(2, X(e.b) - X(e.a)).toFixed(1) }))
+      };
+    });
+    const epsV = eps.map((e) => {
+      const kk = key(e), sv = rev[kk], c = this.C[e.ci];
+      const setRev = (v) => () => {
+        const r = Object.assign({}, this.state.rev);
+        if (v) r[kk] = v; else delete r[kk];
+        this.setState({ rev: r });
+      };
+      return {
+        nome: c.nome, cor: c.cor,
+        faixa: this.fmt(e.a) + ' a ' + this.fmt(e.b) + ', ' + this.num(e.b - e.a, 1) + ' s, pico ' + this.num(e.pk, 2),
+        bg: act === e ? '#E1E7E5' : 'transparent',
+        pendente: !sv, decidido: !!sv, statusTxt: sv === 'ok' ? 'Confirmado' : 'Descartado',
+        seek: () => this.setState({ t: e.a + 0.05, playing: false }),
+        ok: setRev('ok'), no: setRev('no'), undo: setRev(null)
+      };
+    });
+    const ticks = [0, 10, 20, 30, 40, 50, 60].map((s) => ({ x: X(s).toFixed(1), txt: this.fmt(s), tx: s === 0 ? '0' : (s === 60 ? '-100%' : '-50%') }));
+    return {
+      tc: this.fmt(t), tNum: t, playing: st.playing, paused: !st.playing,
+      playLabel: st.playing ? 'Pausar' : 'Reproduzir',
+      togglePlay: () => this.setState({ playing: !this.state.playing, t: this.state.t >= this.T ? 0 : this.state.t }),
+      skel: st.skel, toggleSkel: () => this.setState({ skel: !this.state.skel }),
+      bonesD: bonesD, jointsD: jointsD,
+      chip: !!act, chipNome: act ? this.C[act.ci].nome : '', chipCor: act ? this.C[act.ci].cor : 'transparent',
+      chipP: act ? this.num(this.P[act.ci][k], 2) : '',
+      eps: epsV, nEps: eps.length, nRev: eps.filter((e) => rev[key(e)]).length, semEps: eps.length === 0,
+      rows: rows, ticks: ticks, playX: (220 + X(t)).toFixed(1),
+      thr: thr, thrTxt: this.num(thr, 2),
+      onThr: (e) => this.setState({ thr: parseFloat(e.target.value) }),
+      onScrub: (e) => this.setState({ t: parseFloat(e.target.value), playing: false })
+    };
+  }
+}
+</script>
+</body>
+</html>
