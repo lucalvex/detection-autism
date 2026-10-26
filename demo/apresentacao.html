@@ -34,8 +34,11 @@
 <section class="medianos" aria-labelledby="h-medianos">
   <div class="medianos-topo">
     <h2 id="h-medianos">Vídeos de desempenho mediano</h2>
-    <p class="secundario" id="regra-medianos"></p>
   </div>
+  <details class="regra" id="regra-medianos">
+    <summary>Como os vídeos foram escolhidos</summary>
+    <dl id="regra-lista"></dl>
+  </details>
   <div class="medianos-lista" id="medianos-lista" role="group" aria-labelledby="h-medianos"></div>
   <p class="aviso-particao" id="aviso-particao" hidden></p>
 </section>
@@ -57,10 +60,17 @@
 
 <div class="rodape" id="rodape"></div>
 
+<section class="matrizes" aria-labelledby="h-matrizes">
+  <h3 id="h-matrizes">Onde cada modelo erra, nos quadros anotados</h3>
+  <p class="secundario" id="matrizes-nota"></p>
+  <div class="matrizes-grade" id="matrizes-grade"></div>
+</section>
+
 <section class="posteriores" aria-labelledby="h-posteriores">
   <h3 id="h-posteriores">Achados posteriores</h3>
   <p class="secundario" id="posteriores-aviso"></p>
-  <ul id="posteriores-lista"></ul>
+  <div class="legenda-modelos" id="legenda-modelos"></div>
+  <div class="paineis" id="posteriores-paineis"></div>
 </section>
 
 </div>

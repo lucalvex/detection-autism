@@ -6,8 +6,11 @@ import {
 } from "./comum.js";
 
 const W = 1140;
-const ALT_CLASSE = 48;
+// altura de cada faixa: o rótulo (duas linhas, 8 px de respiro acima e
+// abaixo) cabe com folga e fica centrado na mesma altura da curva
+const ALT_CLASSE = 64;
 const ALT_DETECCAO = 24;
+const ALT_LINHA_DETECCAO = 56;
 const INICIO_PLOT = 220; // 200 do rótulo + 20 de espaço, como no design
 const VIDEO_W = 720;
 const VIDEO_H = 405;
@@ -158,15 +161,16 @@ function montarLinhaDoTempo() {
 
   // trilha de detecção
   {
-    const linha = html("div", { class: "trilha", estilo: `height:${ALT_DETECCAO + 8}px` });
+    const linha = html("div", { class: "trilha", estilo: `height:${ALT_LINHA_DETECCAO}px` });
     linha.appendChild(html("div", { class: "trilha-rotulo" }, [
       html("span", { class: "textos" }, [
         html("span", { class: "nome", texto: "Detecção" }),
         html("span", { class: "resumo num", texto: `${s.quadros_sem_deteccao.length} sem pessoa, ${nLongas} longas` }),
       ]),
     ]));
-    const plot = html("div", { class: "trilha-plot", estilo: `height:${ALT_DETECCAO + 8}px` });
-    const el = svg("svg", { width: W, height: ALT_DETECCAO + 8, "aria-hidden": "true" });
+    const topo = (ALT_LINHA_DETECCAO - ALT_DETECCAO) / 2;
+    const plot = html("div", { class: "trilha-plot", estilo: `height:${ALT_LINHA_DETECCAO}px` });
+    const el = svg("svg", { width: W, height: ALT_LINHA_DETECCAO, "aria-hidden": "true" });
     const defs = svg("defs", {}, [
       svg("pattern", { id: "hachura", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, [
         svg("rect", { width: 6, height: 6, fill: "#F6F8F7" }),
@@ -174,12 +178,12 @@ function montarLinhaDoTempo() {
       ]),
     ]);
     el.appendChild(defs);
-    el.appendChild(svg("rect", { x: 0, y: 4, width: W, height: ALT_DETECCAO, fill: "#DCE2E0" }));
-    for (const r of retangulosSemDeteccao(ALT_DETECCAO / 2, 1, "#9AA5A2")) { r.setAttribute("y", 4); el.appendChild(r); }
+    el.appendChild(svg("rect", { x: 0, y: topo, width: W, height: ALT_DETECCAO, fill: "#DCE2E0" }));
+    for (const r of retangulosSemDeteccao(ALT_DETECCAO / 2, 1, "#9AA5A2")) { r.setAttribute("y", topo); el.appendChild(r); }
     for (const [a, b] of longas) {
       const x = X(a);
       el.appendChild(svg("rect", {
-        x: x.toFixed(1), y: 4 + ALT_DETECCAO / 2, width: Math.max(2, X(b) - x).toFixed(1), height: ALT_DETECCAO / 2,
+        x: x.toFixed(1), y: topo + ALT_DETECCAO / 2, width: Math.max(2, X(b) - x).toFixed(1), height: ALT_DETECCAO / 2,
         fill: "url(#hachura)", stroke: "#1E2B2F", "stroke-width": 0.5,
       }));
     }
@@ -188,8 +192,8 @@ function montarLinhaDoTempo() {
     trilhas.appendChild(linha);
   }
 
-  const Y = (p) => 6 + (1 - p) * (ALT_CLASSE - 18);
-  const base = ALT_CLASSE - 12;
+  const Y = (p) => 8 + (1 - p) * (ALT_CLASSE - 22);
+  const base = Y(0);
 
   const novaTrilha = (classe, neutra) => {
     const cor = CORES[classe.id] || "#7F8C89";
@@ -198,7 +202,7 @@ function montarLinhaDoTempo() {
     linha.appendChild(html("div", { class: "trilha-rotulo" }, [
       html("span", { class: "quadradinho", estilo: `background:${cor}` }),
       html("span", { class: "textos" }, [
-        html("span", { class: "nome" }, [neutra ? `Fundo (${DESCRICAO_FUNDO})` : nomeClasse(classe, { apoio: false })]),
+        html("span", { class: "nome" }, [neutra ? "Fundo" : nomeClasse(classe, { apoio: false })]),
         resumo,
       ]),
     ]));
@@ -227,7 +231,7 @@ function montarLinhaDoTempo() {
   if (estado.indiceFundo >= 0) {
     const fundo = { ...estado.classes[estado.indiceFundo], indice: estado.indiceFundo };
     const ref = novaTrilha(fundo, true);
-    ref.resumo.textContent = "pontuação de fundo";
+    ref.resumo.textContent = DESCRICAO_FUNDO;
   }
 
   // escala de tempo

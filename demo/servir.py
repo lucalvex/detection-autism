@@ -25,6 +25,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 PORTA = 8765
 
 RESULTADOS = {
+  "/data/results/metricas.json",
   "/data/results/comparacao_rodada_a/metricas.json",
   "/data/results/comparacao_base_reseeded/metricas.json",
   "/data/results/analises_posteriores.json",

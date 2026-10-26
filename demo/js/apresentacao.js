@@ -2,8 +2,11 @@ import { buildSegments } from "./timeline.js";
 import {
   CORES, RESULTADOS, OSSOS, carregarJSON, carregarSessao, num, fmtTempo, fmtTempoFino,
   centroJanela, janelaMaisProxima, sequencias, caminhoCurva, svg, html, mostrarErro,
-  nomeClasse, rotuloSessao,
+  nomeClasse, rotuloSessao, NOMES_EN,
 } from "./comum.js";
+import {
+  CORES_MODELO, NOMES_MODELO, CURTO_MODELO, barrasHorizontais, mapaDeCalor, escalaSequencial, inteiro,
+} from "./graficos.js";
 
 // lista "a, b e c" de fragmentos ou textos
 function juntar(itens) {
@@ -23,15 +26,16 @@ const estado = { etapa: 0, dados: null, video: null };
 
 async function iniciar() {
   try {
-    const [medianos, rodadaA, base, posteriores, comparacao, resumo] = await Promise.all([
+    const [medianos, rodadaA, base, posteriores, comparacao, resumo, baseOriginal] = await Promise.all([
       carregarJSON(RESULTADOS.medianos),
       carregarJSON(RESULTADOS.rodadaA),
       carregarJSON(RESULTADOS.base),
       carregarJSON(RESULTADOS.posteriores),
       carregarJSON(RESULTADOS.comparacao),
       carregarJSON(RESULTADOS.resumo),
+      carregarJSON(RESULTADOS.baseOriginal),
     ]);
-    estado.dados = { medianos, rodadaA, base, posteriores, comparacao, resumo };
+    estado.dados = { medianos, rodadaA, base, posteriores, comparacao, resumo, baseOriginal };
 
     const escolhidos = Object.values(medianos.escolhidos);
     const pedido = new URLSearchParams(location.search).get("video");
@@ -40,6 +44,8 @@ async function iniciar() {
     montarRodape();
     montarPosteriores();
     await selecionarVideo(inicial.video_id);
+    montarRegra();
+    montarMatrizes();
   } catch (e) {
     mostrarErro($("conteudo"), e.message + " Rode os scripts de src/ que geram os arquivos de resultado e sirva a interface com python demo/servir.py.");
   }
@@ -59,11 +65,6 @@ async function selecionarVideo(id) {
 
 function montarMedianos() {
   const { medianos } = estado.dados;
-  const r = medianos.regra;
-  $("regra-medianos").textContent =
-    `Um vídeo por classe, o de desempenho mediano. Métrica: ${r.metrica}. Quadros: ${r.quadros}. ` +
-    `Predição ${r.predicao}. Posição na ordem crescente: ${r.posicao_mediana}. Desempate: ${r.desempate.replace(" (aprovado)", "")}.`;
-
   const lista = $("medianos-lista");
   lista.replaceChildren();
   const porId = Object.fromEntries(estado.video.sessao.classes.map((c) => [c.id, c]));
@@ -96,6 +97,23 @@ function montarMedianos() {
     })
   );
   aviso.hidden = false;
+}
+
+// regra de escolha, em linguagem simples (o registro técnico fica em
+// videos_desempenho_mediano.json, campo "regra")
+const SAIDAS_POR_EXTENSO = { 2: "duas", 3: "três", 4: "quatro", 5: "cinco", 6: "seis" };
+
+function montarRegra() {
+  const n = estado.video.sessao.modelo.n_saidas;
+  const itens = [
+    ["Regra", "Um vídeo por classe, o de desempenho mediano."],
+    ["Medida", "F1 por quadro do vídeo, média sobre as classes anotadas nele."],
+    ["Quadros avaliados", "Só os que estão dentro dos intervalos anotados no SSBD e têm predição."],
+    ["Predição", `A classe de maior pontuação entre as ${SAIDAS_POR_EXTENSO[n] || n} saídas do modelo, incluindo fundo. Prever fundo num quadro anotado conta como erro.`],
+    ["Posição", "O vídeo do meio na ordem crescente de F1. Com número par de vídeos, o de posição inferior."],
+    ["Desempate", "Ordem alfabética do nome do arquivo."],
+  ];
+  $("regra-lista").replaceChildren(...itens.map(([k, v]) => html("div", {}, [html("dt", { texto: k }), html("dd", { texto: v })])));
 }
 
 // ---------- etapas ----------
@@ -502,34 +520,141 @@ function capitalizar(t) {
 }
 
 function montarPosteriores() {
-  const { posteriores, medianos } = estado.dados;
+  const { posteriores, medianos, rodadaA } = estado.dados;
   $("posteriores-aviso").textContent =
     "Definidos depois de conhecer o resultado da comparação, para entender por que ele saiu assim. Não fazem parte do critério registrado e não mudam o veredito. Valores em média entre partições.";
 
-  const bin = posteriores.analise_3_binario_estereotipia_vs_fundo.acuracia_balanceada_e_referencia;
-  const acaso = 1 / Object.keys(posteriores.analise_3_binario_estereotipia_vs_fundo.pooled_56_videos.report)
-    .filter((k) => k === "Estereotipia" || k === "Background").length;
+  $("legenda-modelos").replaceChildren(...["base", "intervalos"].map((m) =>
+    html("span", { class: "item" }, [
+      html("span", { class: "amostra", estilo: `background:${CORES_MODELO[m]}` }),
+      NOMES_MODELO[m],
+    ])
+  ));
+
+  // chaves dos dois modelos em analises_posteriores.json
+  const CHAVE = { intervalos: "rodada_a", base: "base_re_seedado" };
+  const MODELOS = ["base", "intervalos"];
+  const titulo = (m) => NOMES_MODELO[m].charAt(0).toUpperCase() + NOMES_MODELO[m].slice(1);
+  const paineis = $("posteriores-paineis");
+  paineis.replaceChildren();
+  const painel = (tituloPainel, legendaPainel, montar, rodape) => {
+    const area = html("div", { class: "grafico" });
+    paineis.appendChild(html("figure", { class: "painel" }, [
+      html("figcaption", {}, [html("span", { class: "titulo" }, tituloPainel), html("span", { class: "sub" }, legendaPainel)]),
+      area,
+      rodape ? html("p", { class: "frase" }, rodape) : null,
+    ]));
+    montar(area);
+  };
+
+  // a) presença de estereotipia: acurácia balanceada binária
+  const bin = posteriores.analise_3_binario_estereotipia_vs_fundo;
+  const acaso = 1 / Object.keys(bin.pooled_56_videos.report).filter((k) => k === "Estereotipia" || k === "Background").length;
+  painel(["a) Presença de estereotipia"], ["Acurácia balanceada por quadro, qualquer estereotipia contra fundo."], (area) =>
+    barrasHorizontais(area, {
+      larguraRotulo: 78,
+      referencia: { valor: acaso, rotulo: "acaso" },
+      grupos: [{
+        linhas: MODELOS.map((m) => {
+          const v = bin.acuracia_balanceada_e_referencia[CHAVE[m]].acuracia_balanceada_media_entre_folds;
+          return { rotulo: CURTO_MODELO[m], modelo: m, valor: v, dica: `${NOMES_MODELO[m]}: acurácia balanceada ${num(v, 3)} (acaso ${num(acaso, 3)})` };
+        }),
+      }],
+    }));
+
+  // b) ablações: F1 por quadro nos quadros anotados
   const ab = posteriores.analise_4_ablacoes_de_inferencia.ablacoes;
-  const f1 = (a, modelo) => a.macro_f1_quadro_anotados_media_entre_folds[modelo];
-  const hb = posteriores.analise_2_fracao_classe_do_video.media_por_classe_de_video.rodada_a.HeadBanging;
+  const CHAVE_AB = { intervalos: "rodada_a_forcado_3_classes", base: "base_re_seedado_natural" };
+  const f1 = (a, m) => a.macro_f1_quadro_anotados_media_entre_folds[CHAVE_AB[m]];
+  const chance = rodadaA.por_quadro.somente_quadros_anotados.f1_chance_3_classes;
+  const mudancaBase = Math.abs(f1(ab.shuffle, "base").com_ablacao - f1(ab.shuffle, "base").sem_ablacao);
+  painel(["b) Ablações"], ["F1 por quadro nos quadros anotados, com a entrada alterada na inferência."], (area) =>
+    barrasHorizontais(area, {
+      larguraRotulo: 140,
+      referencia: { valor: chance, rotulo: "F1 ao acaso" },
+      grupos: MODELOS.map((m) => ({
+        titulo: [titulo(m)],
+        linhas: [
+          ["sem ablação", f1(ab.shuffle, m).sem_ablacao],
+          ["ordem embaralhada", f1(ab.shuffle, m).com_ablacao],
+          ["deslocamentos zerados", f1(ab.zero_dxdy, m).com_ablacao],
+        ].map(([rot, v]) => ({ rotulo: rot, modelo: m, valor: v, dica: `${NOMES_MODELO[m]}, ${rot}: F1 ${num(v, 3)}` })),
+      })),
+    }),
+    [`No modelo base, embaralhar a ordem muda o F1 em ${num(mudancaBase, 3)}. No modelo com rótulos por intervalo, a predição fica restrita às estereotipias, sem fundo.`]);
+
+  // fração dos quadros prevista como a classe do vídeo, dentro e fora dos episódios
+  const fr = posteriores.analise_2_fracao_classe_do_video.media_por_classe_de_video;
+  const linhasDentroFora = (classe, m) => {
+    const x = fr[CHAVE[m]][classe];
+    const nome = NOMES_EN[classe.toLowerCase()];
+    return [
+      { esquerda: CURTO_MODELO[m], rotulo: "dentro", modelo: m, valor: x.media_fracao_anotados, junto: true,
+        dica: `${NOMES_MODELO[m]}: ${num(x.media_fracao_anotados, 3)} dos quadros dentro dos episódios anotados de ${nome} previstos como ${nome}` },
+      { rotulo: "fora", modelo: m, valor: x.media_fracao_fundo, fora: true,
+        dica: `${NOMES_MODELO[m]}: ${num(x.media_fracao_fundo, 3)} dos quadros fora dos episódios, nos vídeos de ${nome}, previstos como ${nome}` },
+    ];
+  };
+
+  // c) head banging
   const rankingHB = medianos.ranking_por_classe.HeadBanging;
   const zerosHB = rankingHB.filter((r) => r.f1 === 0).length;
+  painel(["c) ", en("headbanging")],
+    ["Fração dos quadros dos vídeos de ", en("headbanging"), " prevista como ", en("headbanging"), ", dentro e fora dos episódios anotados."],
+    (area) => barrasHorizontais(area, {
+      larguraRotulo: 78,
+      grupos: MODELOS.map((m) => ({
+        titulo: [titulo(m)],
+        linhas: linhasDentroFora("HeadBanging", m).map((l) => ({ ...l, esquerda: undefined })),
+        nota: m === "intervalos" ? `F1 zero em ${zerosHB} de ${rankingHB.length} vídeos` : null,
+      })),
+    }));
 
-  const INTERVALOS = "no modelo com rótulos por intervalo";
-  const BASE = "no modelo base";
-  const de = (a) => `de ${num(a.sem_ablacao, 3)} para ${num(a.com_ablacao, 3)}`;
-  const itens = [
-    [`Presença de estereotipia (qualquer classe contra fundo): acurácia balanceada de ${num(bin.rodada_a.acuracia_balanceada_media_entre_folds, 3)} ${INTERVALOS} ` +
-      `e de ${num(bin.base_re_seedado.acuracia_balanceada_media_entre_folds, 3)} ${BASE}; o acaso é ${num(acaso, 3)}.`],
-    [`Embaralhar a ordem dos quadros de cada janela: F1 por quadro ${de(f1(ab.shuffle, "rodada_a_forcado_3_classes"))} ${INTERVALOS} (argmax só entre as estereotipias) ` +
-      `e ${de(f1(ab.shuffle, "base_re_seedado_natural"))} ${BASE}.`],
-    [`Zerar o deslocamento dx, dy, mantendo só a posição: ${de(f1(ab.zero_dxdy, "rodada_a_forcado_3_classes"))} ${INTERVALOS} ` +
-      `e ${de(f1(ab.zero_dxdy, "base_re_seedado_natural"))} ${BASE}.`],
-    [en("headbanging"), ` não foi aprendido: nos vídeos dessa classe, a fração de quadros prevista como `, en("headbanging"),
-      ` ${INTERVALOS} é ${num(hb.media_fracao_anotados, 3)} dentro dos intervalos anotados e ${num(hb.media_fracao_fundo, 3)} fora deles; ` +
-      `o F1 por quadro é 0 em ${zerosHB} de ${rankingHB.length} vídeos.`],
+  // d) classe do vídeo, por classe e modelo
+  const classes = Object.keys(fr.rodada_a);
+  painel(["d) Classe do vídeo dentro e fora dos episódios"],
+    ["Fração dos quadros prevista como a classe do próprio vídeo."],
+    (area) => barrasHorizontais(area, {
+      larguraRotulo: 128,
+      grupos: classes.map((c) => ({
+        titulo: [{ t: NOMES_EN[c.toLowerCase()], italico: true }],
+        linhas: MODELOS.flatMap((m) => linhasDentroFora(c, m)),
+      })),
+    }));
+}
+
+// ---------- matrizes de confusão (resultado registrado) ----------
+
+function montarMatrizes() {
+  const { baseOriginal, rodadaA, resumo } = estado.dados;
+  const blocos = [
+    ["Modelo base (treino original)", baseOriginal.por_quadro.somente_quadros_anotados.pooled_56_videos],
+    ["Modelo com rótulos por intervalo", rodadaA.por_quadro.somente_quadros_anotados.pooled_56_videos],
   ];
-  $("posteriores-lista").replaceChildren(...itens.map((partes) => html("li", {}, partes)));
+  const labels = blocos[0][1].labels;
+  if (!blocos.every(([, b]) => b.labels.join() === labels.join())) throw new Error("As matrizes de confusão usam rótulos diferentes.");
+  const anotadas = labels.filter((l) => l !== "Background");
+  const rotulo = (l) => (l === "Background" ? "fundo" : en(l.toLowerCase()));
+  const nomeTexto = (l) => (l === "Background" ? "fundo" : NOMES_EN[l.toLowerCase()]);
+  const grade = $("matrizes-grade");
+  grade.replaceChildren(...blocos.map(([titulo, b]) => mapaDeCalor({
+    titulo,
+    linhas: anotadas.map((l) => ({ rotulo: rotulo(l) })),
+    colunas: labels.map((l) => ({ rotulo: rotulo(l) })),
+    matriz: anotadas.map((l) => b.confusion_matrix[labels.indexOf(l)]),
+    descricaoCelula: (i, j, n, f, total) =>
+      `${titulo}: ${inteiro(n)} de ${inteiro(total)} quadros anotados como ${nomeTexto(anotadas[i])} previstos como ${nomeTexto(labels[j])} (${num(f, 3)} da linha)`,
+  })));
+  grade.appendChild(escalaSequencial());
+
+  const iFundo = labels.indexOf("Background");
+  const baseSemFundo = anotadas.every((l) => blocos[0][1].confusion_matrix[labels.indexOf(l)][iFundo] === 0);
+  $("matrizes-nota").textContent =
+    `Predições fora da partição, quadros somados sobre os ${resumo.n_videos_usados} vídeos, só os que estão dentro dos intervalos anotados. ` +
+    "Linhas: classe anotada; colunas: classe prevista. Cor: fração da linha; em cada célula, o número de quadros e essa fração. " +
+    "No modelo base, fundo é a predição de qualquer uma das classes sem exemplo de treino" +
+    (baseSemFundo ? "; ele não previu fundo em nenhum quadro anotado." : ".") +
+    " Mesmos números da tabela de confusão do texto.";
 }
 
 iniciar();

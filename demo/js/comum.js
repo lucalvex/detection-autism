@@ -53,6 +53,8 @@ export const RESULTADOS = {
   medianos: "/data/results/videos_desempenho_mediano.json",
   comparacao: "/data/results/comparacao_final.json",
   resumo: "/data/results/resumo_dados.json",
+  // modelo base do treino original: só para a matriz de confusão, como na tab:confusao-anotados
+  baseOriginal: "/data/results/metricas.json",
 };
 
 export async function carregarJSON(url) {
