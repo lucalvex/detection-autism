@@ -13,16 +13,37 @@
 # na memória do navegador (URL.createObjectURL): não é copiado,
 # embutido nem enviado.
 #
-# Uso (da raiz do repositório): python demo/servir.py
+# Câmera ao vivo: POST /camera/quadro com um quadro JPEG da webcam;
+# devolve o esqueleto e as pontuações (demo/camera.py). Só aceita
+# conexões de 127.0.0.1, e nada é gravado.
+#
+# Uso (da raiz do repositório): .venv/Scripts/python.exe demo/servir.py
 # ============================================================
 
 import http.server
+import json
 import os
 import re
+import threading
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 PORTA = 8765
+MAX_QUADRO = 4 * 1024 * 1024  # bytes de um quadro enviado pela câmera
+
+_camera, _trava_camera = None, threading.Lock()
+
+
+def camera():
+  """Carrega o YOLO e o modelo completo só no primeiro quadro."""
+  global _camera
+  with _trava_camera:
+    if _camera is None:
+      import sys
+      sys.path.insert(0, str(RAIZ / "demo"))
+      from camera import Camera
+      _camera = Camera()
+  return _camera
 
 RESULTADOS = {
   "/data/results/metricas.json",
@@ -38,7 +59,8 @@ PERMITIDOS = [
   re.compile(r"^/demo/[A-Za-z0-9_\-/]+\.(html|css|js|json)$"),
   # elementos visuais da interface, como a logo; nunca quadros de vídeo
   re.compile(r"^/demo/assets/[A-Za-z0-9_\-]+\.(png|svg)$"),
-  re.compile(r"^/saidas/v_[A-Za-z0-9_]+_(sessao|pontos)\.json$"),
+  re.compile(r"^/saidas/(final/)?v_[A-Za-z0-9_]+_(sessao|pontos)\.json$"),
+  re.compile(r"^/saidas/final/indice\.json$"),
 ]
 
 
@@ -71,13 +93,39 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     caminho = self.path.split("?", 1)[0]
     if caminho in ("/", "/demo", "/demo/"):
       self.send_response(302)
-      self.send_header("Location", "/demo/apresentacao.html")
+      self.send_header("Location", "/demo/index.html")
       self.end_headers()
       return
     if not permitido(caminho):
       self.send_error(404)
       return
     super().do_GET()
+
+  def do_POST(self):
+    if self.path != "/camera/quadro" or self.client_address[0] != "127.0.0.1":
+      self.send_error(404)
+      return
+    try:
+      n = int(self.headers.get("Content-Length", "0"))
+      t = float(self.headers["X-Tempo"])
+      sessao = self.headers["X-Sessao"][:64]
+    except (TypeError, ValueError):
+      self.send_error(400)
+      return
+    if not 0 < n <= MAX_QUADRO or self.headers.get("Content-Type") not in ("image/jpeg", "image/png"):
+      self.send_error(400)
+      return
+    try:
+      resposta = camera().processar(self.rfile.read(n), t, sessao)
+    except ValueError:
+      self.send_error(400)
+      return
+    corpo = json.dumps(resposta).encode("utf-8")
+    self.send_response(200)
+    self.send_header("Content-Type", "application/json; charset=utf-8")
+    self.send_header("Content-Length", str(len(corpo)))
+    self.end_headers()
+    self.wfile.write(corpo)
 
   def do_HEAD(self):
     self.do_GET()
@@ -98,5 +146,5 @@ if __name__ == "__main__":
   # respondendo); lá ele fica desligado, para a porta ocupada dar erro.
   http.server.ThreadingHTTPServer.allow_reuse_address = os.name != "nt"
   with http.server.ThreadingHTTPServer(("127.0.0.1", PORTA), Handler) as httpd:
-    print(f"Interface em http://127.0.0.1:{PORTA}/demo/apresentacao.html", flush=True)
+    print(f"Interface em http://127.0.0.1:{PORTA}/demo/index.html", flush=True)
     httpd.serve_forever()
