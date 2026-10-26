@@ -146,5 +146,5 @@ if __name__ == "__main__":
   # respondendo); lá ele fica desligado, para a porta ocupada dar erro.
   http.server.ThreadingHTTPServer.allow_reuse_address = os.name != "nt"
   with http.server.ThreadingHTTPServer(("127.0.0.1", PORTA), Handler) as httpd:
-    print(f"Interface em http://127.0.0.1:{PORTA}/demo/index.html", flush=True)
+    print(f"Interface em http://127.0.0.1:{PORTA}", flush=True)
     httpd.serve_forever()
