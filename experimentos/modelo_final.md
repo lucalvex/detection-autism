@@ -56,3 +56,11 @@ O critério pede ganho de pelo menos 0,01 em 2 das 3 métricas, e duas passaram.
 4. Rodada 4b: `r4b_C1_janela_4s`.
 
 Detalhes em `resumo_rodada4b.md` e `r4b_avaliacao_final/avaliacao_final.json`. O modelo do TCC, que foi para o texto, não muda: este registro vale para os experimentos.
+
+## Versão para a demonstração ao vivo: `models/final_completo.pt`
+
+Usada só pela câmera ao vivo da interface. **Não entra em nenhuma métrica**: viu todos os 56 vídeos no treino, então qualquer avaliação nesses vídeos seria com dados de treino.
+
+- **Configuração:** a do `r4b_C1_janela_4s`, com semente 42, treinada com os 56 vídeos, sem validação.
+- **Épocas:** a mediana das épocas escolhidas na validação das 5 partições do modelo final. As escolhidas foram 4, 1, 1, 1 e 1, então o treino durou **1 época**. A perda de validação do modelo final já era mínima depois da primeira época na maioria das partições, ou seja, ele sobreajusta cedo.
+- **Arquivos:** o script é `treinar_final_completo.py`; o registro, `modelo_final_completo.json`. O `.pt` fica fora do git.
