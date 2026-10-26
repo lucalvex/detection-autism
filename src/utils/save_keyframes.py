@@ -38,82 +38,82 @@ model = YOLO("models/yolo11n-pose.pt")
 
 
 def draw_skeleton(frame_shape, keypoints_xy, keypoints_conf):
-    """Desenha só os pontos + conexões do esqueleto sobre um fundo
-    preto do mesmo tamanho do frame original -- o frame de vídeo em
-    si (com a pessoa) nunca é usado na imagem salva."""
+  """Desenha só os pontos + conexões do esqueleto sobre um fundo
+  preto do mesmo tamanho do frame original -- o frame de vídeo em
+  si (com a pessoa) nunca é usado na imagem salva."""
 
-    canvas = np.zeros(frame_shape, dtype=np.uint8)
+  canvas = np.zeros(frame_shape, dtype=np.uint8)
 
-    visible = keypoints_conf >= CONF_THRESHOLD
+  visible = keypoints_conf >= CONF_THRESHOLD
 
-    for i, j in SKELETON:
-        if visible[i] and visible[j]:
-            pt1 = tuple(keypoints_xy[i].astype(int))
-            pt2 = tuple(keypoints_xy[j].astype(int))
-            cv2.line(canvas, pt1, pt2, (0, 255, 0), 2)
+  for i, j in SKELETON:
+    if visible[i] and visible[j]:
+      pt1 = tuple(keypoints_xy[i].astype(int))
+      pt2 = tuple(keypoints_xy[j].astype(int))
+      cv2.line(canvas, pt1, pt2, (0, 255, 0), 2)
 
-    for i, (x, y) in enumerate(keypoints_xy):
-        if visible[i]:
-            cv2.circle(canvas, (int(x), int(y)), 4, (0, 0, 255), -1)
+  for i, (x, y) in enumerate(keypoints_xy):
+    if visible[i]:
+      cv2.circle(canvas, (int(x), int(y)), 4, (0, 0, 255), -1)
 
-    return canvas
+  return canvas
 
 
 def save_class_keyframes(class_name: str):
 
-    video_files = sorted(VIDEOS_DIR.glob(f"v_{class_name}_*.mp4"))
+  video_files = sorted(VIDEOS_DIR.glob(f"v_{class_name}_*.mp4"))
 
-    if not video_files:
-        print(f"No videos found for class {class_name}")
-        return
+  if not video_files:
+      print(f"No videos found for class {class_name}")
+      return
 
-    # usa só o primeiro vídeo da classe como exemplo representativo
-    video_path = video_files[0]
+  # usa só o primeiro vídeo da classe como exemplo representativo
+  video_path = video_files[0]
 
-    class_dir = OUTPUT_DIR / class_name
-    class_dir.mkdir(parents=True, exist_ok=True)
+  class_dir = OUTPUT_DIR / class_name
+  class_dir.mkdir(parents=True, exist_ok=True)
 
-    cap = cv2.VideoCapture(str(video_path))
+  cap = cv2.VideoCapture(str(video_path))
 
-    frame_id = 0
+  frame_id = 0
 
-    while cap.isOpened():
+  while cap.isOpened():
 
-        ret, frame = cap.read()
+    ret, frame = cap.read()
 
-        if not ret:
-            break
+    if not ret:
+      break
 
-        # só roda a detecção quando o frame realmente vai ser salvo
-        if frame_id % SAVE_EVERY == 0:
+    # só roda a detecção quando o frame realmente vai ser salvo
+    if frame_id % SAVE_EVERY == 0:
 
-            results = model(frame, verbose=False)
-            result = results[0]
+      results = model(frame, verbose=False)
+      result = results[0]
 
-            if result.keypoints is not None and len(result.keypoints.xy) > 0:
+      if result.keypoints is not None and len(result.keypoints.xy) > 0:
 
-                # assume 1 pessoa por vídeo: usa só a primeira detectada
-                keypoints_xy = result.keypoints.xy[0].cpu().numpy()
-                keypoints_conf = result.keypoints.conf[0].cpu().numpy()
+        # assume 1 pessoa por vídeo: usa só a primeira detectada
+        keypoints_xy = result.keypoints.xy[0].cpu().numpy()
+        keypoints_conf = result.keypoints.conf[0].cpu().numpy()
 
-                skeleton_frame = draw_skeleton(frame.shape, keypoints_xy, keypoints_conf)
+        skeleton_frame = draw_skeleton(frame.shape, keypoints_xy, keypoints_conf)
 
-                filename = class_dir / f"frame_{frame_id:05d}.png"
+        filename = class_dir / f"frame_{frame_id:05d}.png"
 
-                cv2.imwrite(str(filename), skeleton_frame)
+        cv2.imwrite(str(filename), skeleton_frame)
 
-                print(f"Saved {filename}")
+        print(f"Saved {filename}")
 
-        frame_id += 1
+      frame_id += 1
 
-    cap.release()
+  cap.release()
 
-    print(f"Finished {class_name} ({video_path.name})")
+  print(f"Finished {class_name} ({video_path.name})")
 
 
 if __name__ == "__main__":
 
-    for class_name in CLASSES:
-        save_class_keyframes(class_name)
+  for class_name in CLASSES:
+    save_class_keyframes(class_name)
 
-    print("Finished")
+  print("Finished")

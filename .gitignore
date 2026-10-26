@@ -68,3 +68,6 @@ experimentos/progresso.log
 experimentos/rodando.pid
 experimentos/*.log
 experimentos/*.pid
+
+# Imagens de esqueleto gravadas por src/utils/save_keyframes.py (já cobertas por results/)
+data/results/keyframes/
