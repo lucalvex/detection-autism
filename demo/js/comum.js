@@ -1,4 +1,4 @@
-// Funções compartilhadas pelas duas telas. Nenhum número de dado ou
+// Funções compartilhadas pelas telas. Nenhum número de dado ou
 // de resultado é escrito aqui: tudo vem dos JSON carregados.
 
 export const CORES = {
@@ -167,17 +167,26 @@ export function html(tag, atributos = {}, filhos = []) {
 
 // Desenha o esqueleto de um quadro dentro de um <g>. Um quadro sem
 // detecção (null) não desenha nada: sem interpolar nem repetir o
-// quadro anterior.
-export function desenharEsqueleto(g, pontosQuadro, transformar, larguras = { osso: 3, junta: 11, miolo: 6 }) {
+// quadro anterior. Com esmaecer, pontos com confiança abaixo dele (e
+// os ossos que tocam neles) ficam esmaecidos.
+export function desenharEsqueleto(g, pontosQuadro, transformar, larguras = { osso: 3, junta: 11, miolo: 6 }, esmaecer = 0) {
   g.replaceChildren();
   if (!pontosQuadro) return false;
   const p = pontosQuadro.map((q) => transformar(q[0], q[1]));
-  let ossos = "", juntas = "";
-  for (const [a, b] of OSSOS) ossos += `M${p[a][0].toFixed(1)} ${p[a][1].toFixed(1)}L${p[b][0].toFixed(1)} ${p[b][1].toFixed(1)}`;
-  for (const q of p) juntas += `M${q[0].toFixed(1)} ${q[1].toFixed(1)}l0.01 0`;
-  g.appendChild(svg("path", { d: ossos, fill: "none", stroke: "#1E2B2F", "stroke-width": larguras.osso, "stroke-linecap": "round" }));
-  g.appendChild(svg("path", { d: juntas, fill: "none", stroke: "#1E2B2F", "stroke-width": larguras.junta, "stroke-linecap": "round" }));
-  g.appendChild(svg("path", { d: juntas, fill: "none", stroke: "#F6F8F7", "stroke-width": larguras.miolo, "stroke-linecap": "round" }));
+  const fraco = pontosQuadro.map((q) => q[2] < esmaecer);
+  for (const esmaecido of [true, false]) {
+    let ossos = "", juntas = "";
+    for (const [a, b] of OSSOS) {
+      if ((fraco[a] || fraco[b]) === esmaecido) ossos += `M${p[a][0].toFixed(1)} ${p[a][1].toFixed(1)}L${p[b][0].toFixed(1)} ${p[b][1].toFixed(1)}`;
+    }
+    p.forEach((q, i) => { if (fraco[i] === esmaecido) juntas += `M${q[0].toFixed(1)} ${q[1].toFixed(1)}l0.01 0`; });
+    if (!ossos && !juntas) continue;
+    const grupo = svg("g", esmaecido ? { opacity: 0.3 } : {});
+    grupo.appendChild(svg("path", { d: ossos, fill: "none", stroke: "#1E2B2F", "stroke-width": larguras.osso, "stroke-linecap": "round" }));
+    grupo.appendChild(svg("path", { d: juntas, fill: "none", stroke: "#1E2B2F", "stroke-width": larguras.junta, "stroke-linecap": "round" }));
+    grupo.appendChild(svg("path", { d: juntas, fill: "none", stroke: "#F6F8F7", "stroke-width": larguras.miolo, "stroke-linecap": "round" }));
+    g.appendChild(grupo);
+  }
   return true;
 }
 

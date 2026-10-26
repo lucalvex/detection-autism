@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detecção de estereotipias</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="css/estilo.css">
+<link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+<div class="pagina simples">
+
+<header class="topo">
+  <div class="marca">
+    <img src="assets/logo_uem_recorte.png" alt="Universidade Estadual de Maringá">
+    <div class="marca-texto">
+      <span>Detecção de comportamentos estereotipados em vídeo</span>
+      <span class="secundario">Trabalho de Conclusão de Curso, UEM · Lucas Alves de Lima</span>
+    </div>
+  </div>
+  <nav class="modo" aria-label="Modo">
+    <button type="button" data-modo="videos" aria-current="page">Vídeos</button>
+    <button type="button" data-modo="camera">Câmera ao vivo</button>
+    <button type="button" data-modo="como">Como funciona</button>
+  </nav>
+</header>
+
+<p class="aviso">Protótipo de pesquisa. Os trechos são sugestões e não constituem diagnóstico.</p>
+
+<!-- ===================== Vídeos ===================== -->
+<section id="modo-videos" class="modo-conteudo">
+  <div class="barra">
+    <label class="campo">Vídeo
+      <select id="sel-video"></select>
+    </label>
+    <label class="botao botao-secundario arquivo">
+      Abrir o arquivo do vídeo
+      <input type="file" id="arquivo" accept="video/*">
+    </label>
+    <span id="arquivo-info" class="secundario"></span>
+  </div>
+
+  <div class="palco" id="palco-video">
+    <video id="video" playsinline muted></video>
+    <svg id="sobre-video" class="sobreposto" preserveAspectRatio="xMidYMid meet"><g id="esqueleto"></g></svg>
+    <span class="selo" id="sem-pessoa" hidden>Pessoa não detectada</span>
+    <span class="dica" id="sem-arquivo">Sem o arquivo do vídeo, só o esqueleto aparece. O vídeo é aberto do seu computador e não sai dele.</span>
+  </div>
+
+  <div class="controles">
+    <button type="button" class="botao botao-primario" id="tocar">Reproduzir</button>
+    <span class="num" id="tempo">00:00 / 00:00</span>
+    <label class="opcao"><input type="checkbox" id="suavizar" checked> Esqueleto suavizado</label>
+  </div>
+
+  <div class="linha-tempo" id="linha-tempo"></div>
+
+  <p class="legenda">
+    <span><span class="amostra anotado"></span>Anotado no SSBD</span>
+    <span><span class="amostra detectado"></span>Detectado pelo modelo</span>
+    <span><span class="amostra sem-pessoa"></span>Pessoa não detectada</span>
+    <span class="secundario">Clique na linha do tempo para ir até um ponto.</span>
+  </p>
+
+  <details class="detalhes">
+    <summary>Detalhes</summary>
+    <label class="campo-limiar">Limiar da pontuação: <strong class="num" id="limiar-valor"></strong>
+      <input type="range" id="limiar" min="0.3" max="0.9" step="0.05">
+    </label>
+    <ul id="detalhes-lista"></ul>
+  </details>
+</section>
+
+<!-- ===================== Câmera ao vivo ===================== -->
+<section id="modo-camera" class="modo-conteudo" hidden>
+  <p class="aviso aviso-camera">Modelo treinado com vídeos de crianças; em adultos, o desempenho pode ser bem diferente.</p>
+  <div class="barra">
+    <button type="button" class="botao botao-primario" id="ligar">Ligar a câmera</button>
+    <span id="camera-estado" class="secundario">A imagem não é gravada.</span>
+  </div>
+  <div class="camera">
+    <div class="palco" id="palco-camera">
+      <video id="webcam" playsinline muted></video>
+      <svg id="sobre-camera" class="sobreposto" preserveAspectRatio="xMidYMid meet"><g id="esqueleto-camera"></g></svg>
+      <span class="selo" id="camera-sem-pessoa" hidden>Pessoa não detectada</span>
+    </div>
+    <div class="painel-camera">
+      <p class="dominante" id="dominante">—</p>
+      <p class="secundario" id="aguardando" hidden>Aguardando 4 s de movimento</p>
+      <div id="barras"></div>
+      <p class="secundario num" id="taxa"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Como funciona ===================== -->
+<section id="modo-como" class="modo-conteudo" hidden>
+  <svg class="diagrama" viewBox="0 0 1000 150" role="img" aria-label="Vídeo, pontos do corpo, 4 segundos de movimento, modelo, pontuação por comportamento e trechos na linha do tempo">
+    <defs><marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#4A585C"/></marker></defs>
+    <g class="etapa"><rect x="0" y="30" width="140" height="90" rx="10"/><text x="70" y="70">Vídeo ou</text><text x="70" y="94">câmera</text></g>
+    <g class="etapa"><rect x="172" y="30" width="140" height="90" rx="10"/><text x="242" y="70">17 pontos</text><text x="242" y="94">do corpo</text></g>
+    <g class="etapa"><rect x="344" y="30" width="140" height="90" rx="10"/><text x="414" y="70">4 segundos</text><text x="414" y="94">de movimento</text></g>
+    <g class="etapa"><rect x="516" y="30" width="140" height="90" rx="10"/><text x="586" y="70">Modelo</text><text x="586" y="94">(rede LSTM)</text></g>
+    <g class="etapa"><rect x="688" y="30" width="140" height="90" rx="10"/><text x="758" y="70">Pontuação de</text><text x="758" y="94">0 a 1 por classe</text></g>
+    <g class="etapa"><rect x="860" y="30" width="140" height="90" rx="10"/><text x="930" y="70">Trechos na</text><text x="930" y="94">linha do tempo</text></g>
+    <g stroke="#4A585C" stroke-width="2" marker-end="url(#seta)">
+      <path d="M142 75H170"/><path d="M314 75H342"/><path d="M486 75H514"/><path d="M658 75H686"/><path d="M830 75H858"/>
+    </g>
+  </svg>
+  <div class="texto-como">
+    <p>O sistema não interpreta a imagem diretamente: primeiro, um detector de pose marca 17 pontos do corpo em cada quadro.</p>
+    <p>Esses pontos são centralizados no quadril e ajustados ao tamanho do tronco, para que a distância até a câmera não mude o resultado.</p>
+    <p>A cada instante, o modelo observa os últimos 4 segundos de movimento dos pontos.</p>
+    <p>Ele dá uma pontuação de 0 a 1 a cada comportamento: <i>arm flapping</i> (balançar os braços), <i>head banging</i> (bater a cabeça) e <i>spinning</i> (girar o corpo).</p>
+    <p>As pontuações são suavizadas ao longo do tempo, e os trechos em que uma delas passa de 0,5 aparecem na linha do tempo.</p>
+    <p>Os trechos são sugestões para um profissional revisar, e não um diagnóstico.</p>
+  </div>
+</section>
+
+</div>
+<script type="module" src="js/index.js"></script>
+</body>
+</html>

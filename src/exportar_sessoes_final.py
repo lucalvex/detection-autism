@@ -40,7 +40,9 @@ POSES = RAIZ / "experimentos" / "poses" / "yolo11n"
 XMLS = RAIZ.parent / "download-yt" / "xmls"
 SAIDA = RAIZ / "saidas" / "final"
 
-CLASSES = [("armflapping", "Arm flapping"), ("headbanging", "Head banging"), ("spinning", "Spinning"), ("background", "Sem estereotipia")]
+# id, nome no seletor (em inglês, como no TCC) e nome em português (apoio)
+CLASSES = [("armflapping", "Arm flapping", "Balançar os braços"), ("headbanging", "Head banging", "Bater a cabeça"),
+           ("spinning", "Spinning", "Girar o corpo"), ("background", "Sem estereotipia", "Sem estereotipia")]
 PREFIXO = {"ArmFlapping": "armflapping", "HeadBanging": "headbanging", "Spinning": "spinning"}
 
 
@@ -70,7 +72,8 @@ def metadados_do_video(vid):
 
 def main():
   SAIDA.mkdir(parents=True, exist_ok=True)
-  indice = {c: [] for c, _ in CLASSES[:3]}
+  indice = {c[0]: [] for c in CLASSES[:3]}
+  rotulos = {c[0]: c[1] for c in CLASSES}
   particoes = json.loads((RAIZ / "models" / "oof" / "fold_assignments.json").read_text(encoding="utf-8"))["video_to_fold"]
   for k in range(1, 6):
     with open(FINAL / f"janelas_{k}.pkl", "rb") as f:
@@ -93,7 +96,7 @@ def main():
                    "largura": int(d["w"]), "altura": int(d["h"])},
         "modelo": {"nome": "r4b_C1_janela_4s", "semente": 42, "particao": k, "janela_s": 4, "amostras_por_s": 15,
                    "pose": "yolo11n-pose", "predicao_fora_da_particao": True},
-        "classes": [{"id": c, "nome": n} for c, n in CLASSES],
+        "classes": [{"id": c, "nome": pt} for c, _, pt in CLASSES],
         "limiar_padrao": 0.5,
         "posprocessamento": {"mediana_s": MEDIANA_S, "juntar_s": JUNTAR_S},
         "janelas": [{"quadro_inicio": int(a), "quadro_fim": int(b), "pontuacoes": [round(float(v), 6) for v in p]}
@@ -106,11 +109,11 @@ def main():
         quadros[int(f_)] = [[round(float(a), 1), round(float(b), 1), round(float(c), 3)] for (a, b), c in zip(xy, cf)]
       gravar(SAIDA / f"{vid}_pontos.json", {"versao": 1, "formato": "coco17", "ordem": "[x_px, y_px, confianca] por ponto",
                                             "quadros": quadros})
-      indice[classe].append({"id": vid, "rotulo": f"{dict(CLASSES)[classe]} - {numero:02d}"})
+      indice[classe].append({"id": vid, "rotulo": f"{rotulos[classe]} - {numero:02d}"})
       print(f"{vid}: partição {k}, {len(x['quadro_inicio'])} janelas, {total - len(detectados)} quadros sem pessoa")
   for c in indice:
     indice[c].sort(key=lambda v: v["rotulo"])
-  gravar(SAIDA / "indice.json", {"classes": [{"id": c, "nome": n, "videos": indice[c]} for c, n in CLASSES[:3]]})
+  gravar(SAIDA / "indice.json", {"classes": [{"id": c, "nome": n, "videos": indice[c]} for c, n, _ in CLASSES[:3]]})
   n = sum(len(v) for v in indice.values())
   assert n == 56, n
   print(f"{n} vídeos exportados em {SAIDA.relative_to(RAIZ)}")
