@@ -1,0 +1,13 @@
+{
+  "seed_base": 42,
+  "python_random_seed": 42,
+  "numpy_seed": 42,
+  "torch_seed": 42,
+  "dataloader_generator_seed_por_fold": {
+    "1": 43,
+    "2": 44,
+    "3": 45,
+    "4": 46,
+    "5": 47
+  }
+}

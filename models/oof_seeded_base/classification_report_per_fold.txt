@@ -1,0 +1,70 @@
+===== Fold 1/5 (accuracy: 54.78%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.6356    0.6892    0.6613     10193
+ HeadBanging     0.1476    0.1410    0.1442      4617
+     Rocking     0.0000    0.0000    0.0000         0
+HandMovement     0.0000    0.0000    0.0000         0
+    Spinning     0.6473    0.5984    0.6219      8637
+      Normal     0.0000    0.0000    0.0000         0
+
+    accuracy                         0.5478     23447
+   macro avg     0.2384    0.2381    0.2379     23447
+weighted avg     0.5438    0.5478    0.5450     23447
+
+===== Fold 2/5 (accuracy: 48.09%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.6762    0.3928    0.4969     10240
+ HeadBanging     0.2923    0.3870    0.3331      4623
+     Rocking     0.0000    0.0000    0.0000         0
+HandMovement     0.0000    0.0000    0.0000         0
+    Spinning     0.4803    0.6809    0.5632      6684
+      Normal     0.0000    0.0000    0.0000         0
+
+    accuracy                         0.4809     21547
+   macro avg     0.2415    0.2434    0.2322     21547
+weighted avg     0.5331    0.4809    0.4823     21547
+
+===== Fold 3/5 (accuracy: 56.96%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.6688    0.7720    0.7167     10643
+ HeadBanging     0.3225    0.1085    0.1624      6413
+     Rocking     0.0000    0.0000    0.0000         0
+HandMovement     0.0000    0.0000    0.0000         0
+    Spinning     0.4964    0.6889    0.5770      6737
+      Normal     0.0000    0.0000    0.0000         0
+
+    accuracy                         0.5696     23793
+   macro avg     0.2479    0.2616    0.2427     23793
+weighted avg     0.5266    0.5696    0.5277     23793
+
+===== Fold 4/5 (accuracy: 53.32%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.6836    0.5596    0.6154     10316
+ HeadBanging     0.2852    0.3594    0.3180      4691
+     Rocking     0.0000    0.0000    0.0000         0
+HandMovement     0.0000    0.0000    0.0000         0
+    Spinning     0.5604    0.6156    0.5867      6590
+      Normal     0.0000    0.0000    0.0000         0
+
+    accuracy                         0.5332     21597
+   macro avg     0.2549    0.2558    0.2534     21597
+weighted avg     0.5595    0.5332    0.5421     21597
+
+===== Fold 5/5 (accuracy: 55.35%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.7444    0.5337    0.6217     10373
+ HeadBanging     0.3235    0.4916    0.3902      4502
+     Rocking     0.0000    0.0000    0.0000         0
+HandMovement     0.0000    0.0000    0.0000         0
+    Spinning     0.5742    0.6248    0.5984      6788
+      Normal     0.0000    0.0000    0.0000         0
+
+    accuracy                         0.5535     21663
+   macro avg     0.2737    0.2750    0.2684     21663
+weighted avg     0.6036    0.5535    0.5663     21663
+

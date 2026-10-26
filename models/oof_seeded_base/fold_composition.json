@@ -1,0 +1,117 @@
+{
+  "1": {
+    "n_train_videos": 47,
+    "n_test_videos": 9,
+    "n_train_janelas": 88600,
+    "n_test_janelas": 23447,
+    "contagem_treino_por_classe": {
+      "ArmFlapping": 41572,
+      "HeadBanging": 20229,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 26799,
+      "Normal": 0
+    },
+    "contagem_teste_por_classe": {
+      "ArmFlapping": 10193,
+      "HeadBanging": 4617,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 8637,
+      "Normal": 0
+    },
+    "subamostragem_de_fundo": null
+  },
+  "2": {
+    "n_train_videos": 44,
+    "n_test_videos": 12,
+    "n_train_janelas": 90500,
+    "n_test_janelas": 21547,
+    "contagem_treino_por_classe": {
+      "ArmFlapping": 41525,
+      "HeadBanging": 20223,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 28752,
+      "Normal": 0
+    },
+    "contagem_teste_por_classe": {
+      "ArmFlapping": 10240,
+      "HeadBanging": 4623,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 6684,
+      "Normal": 0
+    },
+    "subamostragem_de_fundo": null
+  },
+  "3": {
+    "n_train_videos": 45,
+    "n_test_videos": 11,
+    "n_train_janelas": 88254,
+    "n_test_janelas": 23793,
+    "contagem_treino_por_classe": {
+      "ArmFlapping": 41122,
+      "HeadBanging": 18433,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 28699,
+      "Normal": 0
+    },
+    "contagem_teste_por_classe": {
+      "ArmFlapping": 10643,
+      "HeadBanging": 6413,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 6737,
+      "Normal": 0
+    },
+    "subamostragem_de_fundo": null
+  },
+  "4": {
+    "n_train_videos": 44,
+    "n_test_videos": 12,
+    "n_train_janelas": 90450,
+    "n_test_janelas": 21597,
+    "contagem_treino_por_classe": {
+      "ArmFlapping": 41449,
+      "HeadBanging": 20155,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 28846,
+      "Normal": 0
+    },
+    "contagem_teste_por_classe": {
+      "ArmFlapping": 10316,
+      "HeadBanging": 4691,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 6590,
+      "Normal": 0
+    },
+    "subamostragem_de_fundo": null
+  },
+  "5": {
+    "n_train_videos": 44,
+    "n_test_videos": 12,
+    "n_train_janelas": 90384,
+    "n_test_janelas": 21663,
+    "contagem_treino_por_classe": {
+      "ArmFlapping": 41392,
+      "HeadBanging": 20344,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 28648,
+      "Normal": 0
+    },
+    "contagem_teste_por_classe": {
+      "ArmFlapping": 10373,
+      "HeadBanging": 4502,
+      "Rocking": 0,
+      "HandMovement": 0,
+      "Spinning": 6788,
+      "Normal": 0
+    },
+    "subamostragem_de_fundo": null
+  }
+}

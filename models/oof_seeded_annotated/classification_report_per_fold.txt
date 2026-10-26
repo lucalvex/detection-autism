@@ -1,0 +1,60 @@
+===== Fold 1/5 (accuracy: 48.70%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.3453    0.1099    0.1667      3849
+ HeadBanging     0.0000    0.0000    0.0000      1522
+    Spinning     0.6996    0.2103    0.3234      6866
+  Background     0.4893    0.8733    0.6272     10592
+
+    accuracy                         0.4870     22829
+   macro avg     0.3836    0.2984    0.2793     22829
+weighted avg     0.4957    0.4870    0.4164     22829
+
+===== Fold 2/5 (accuracy: 59.03%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.2482    0.1257    0.1668      1910
+ HeadBanging     0.4735    0.1231    0.1954      3996
+    Spinning     0.6154    0.4375    0.5114      3072
+  Background     0.6142    0.8617    0.7172     11883
+
+    accuracy                         0.5903     20861
+   macro avg     0.4878    0.3870    0.3977     20861
+weighted avg     0.5539    0.5903    0.5365     20861
+
+===== Fold 3/5 (accuracy: 64.82%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.2855    0.1027    0.1510      4705
+ HeadBanging     0.0959    0.2661    0.1409       218
+    Spinning     0.5366    0.7718    0.6330      2366
+  Background     0.7253    0.7989    0.7603     15649
+
+    accuracy                         0.6482     22938
+   macro avg     0.4108    0.4848    0.4213     22938
+weighted avg     0.6096    0.6482    0.6163     22938
+
+===== Fold 4/5 (accuracy: 69.02%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.1397    0.0979    0.1151      1400
+ HeadBanging     0.2928    0.1993    0.2372      2549
+    Spinning     0.6507    0.6394    0.6450      2579
+  Background     0.7749    0.8436    0.8078     14416
+
+    accuracy                         0.6902     20944
+   macro avg     0.4645    0.4450    0.4513     20944
+weighted avg     0.6585    0.6902    0.6720     20944
+
+===== Fold 5/5 (accuracy: 71.97%) =====
+              precision    recall  f1-score   support
+
+ ArmFlapping     0.2077    0.1084    0.1425      1992
+ HeadBanging     0.0672    0.0659    0.0665       683
+    Spinning     0.3958    0.5240    0.4510      1729
+  Background     0.8212    0.8414    0.8312     16449
+
+    accuracy                         0.7197     20853
+   macro avg     0.3730    0.3849    0.3728     20853
+weighted avg     0.7026    0.7197    0.7088     20853
+
