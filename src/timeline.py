@@ -101,3 +101,52 @@ def build_segments(windows, class_names, threshold, min_duration_sec, fps):
         run_start = None
 
   return segments
+
+
+# ---------- pós-processamento do modelo final (r4b_C1_janela_4s) ----------
+# Escolhido na validação: mediana de 2 s sobre as pontuações e junção de
+# trechos da mesma classe separados por menos de 1 s. Mesmas fórmulas de
+# f1_evento_pos() e juntar() em experimentos/rodar_rodada2.py. A interface
+# (demo/js/timeline.js) repete as duas; tests/test_timeline_js.py exige
+# igualdade exata.
+
+MEDIANA_S = 2.0
+JUNTAR_S = 1.0
+
+
+def median_scores(windows, fps, median_sec):
+  """Mediana móvel centrada de median_sec segundos (tamanho ímpar,
+  bordas repetidas) sobre as pontuações de cada classe, na ordem das janelas."""
+
+  if not median_sec or not windows:
+    return windows
+
+  import numpy as np
+  from scipy.ndimage import median_filter
+
+  k = int(round(median_sec * fps)) // 2 * 2 + 1
+  P = median_filter(np.array([w["pontuacoes"] for w in windows]), size=(k, 1), mode="nearest")
+  return [{**w, "pontuacoes": p.tolist()} for w, p in zip(windows, P)]
+
+
+def merge_segments(segments, gap_sec):
+  """Junta trechos da mesma classe separados por menos de gap_sec segundos."""
+
+  out = []
+  for c in dict.fromkeys(s["classe"] for s in segments):
+    atual = None
+    for s in sorted((s for s in segments if s["classe"] == c), key=lambda s: s["inicio_s"]):
+      if atual and s["inicio_s"] - atual["fim_s"] < gap_sec:
+        atual.update(fim_s=max(atual["fim_s"], s["fim_s"]), quadro_fim=max(atual["quadro_fim"], s["quadro_fim"]),
+                     pico=max(atual["pico"], s["pico"]))
+        atual["duracao_s"] = atual["fim_s"] - atual["inicio_s"]
+      else:
+        atual = dict(s)
+        out.append(atual)
+  return out
+
+
+def final_segments(windows, class_names, threshold, fps, median_sec=MEDIANA_S, gap_sec=JUNTAR_S):
+  """Trechos do modelo final: mediana, build_segments sem duração mínima e junção."""
+
+  return merge_segments(build_segments(median_scores(windows, fps, median_sec), class_names, threshold, 0.0, fps), gap_sec)

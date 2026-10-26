@@ -12,9 +12,14 @@
 #   - os 56 vídeos do SSBD, com as pontuações da Rodada A fora da
 #     partição (evaluate_temporal.compute_windows), as 4 classes;
 #   - os _sessao.json exportados em saidas/ (o que a interface lê);
+#   - os _sessao.json do modelo final em saidas/final/ (o modo "Vídeos");
 #   - casos sintéticos de borda.
 #   Limiares: os da grade da avaliação (0,30 a 0,90, passo 0,05).
 #   Durações mínimas: uma janela (regra principal), 0, 1 s e 3 s.
+#   Pós-processamento do modelo final (mediana de 2 s e junção abaixo de
+#   1 s): finalSegments() contra final_segments(), nos mesmos vídeos e
+#   limiares; e final_segments() contra o código dos experimentos
+#   (median_filter + juntar() de experimentos/rodar_rodada2.py).
 #
 # Requer Node.js. Rode da raiz do repositório:
 #   python tests/test_timeline_js.py
@@ -32,7 +37,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ / "src"))
 
 import evaluate_temporal as et  # noqa: E402
-from timeline import build_segments  # noqa: E402
+from timeline import JUNTAR_S, MEDIANA_S, build_segments, final_segments  # noqa: E402
 
 SEQUENCE_LENGTH = 30
 LIMIARES = [float(t) for t in np.round(np.arange(0.30, 0.90 + 1e-9, 0.05), 2)]
@@ -50,6 +55,7 @@ def janelas_sinteticas():
     ("ativa_ate_o_fim", [w(0, [0.2, 0.8]), w(1, [0.7, 0.3]), w(2, [0.8, 0.2])]),
     ("tudo_ativo", [w(i, [0.95, 0.95]) for i in range(5)]),
     ("alternando", [w(i, [0.9 if i % 2 else 0.1, 0.5]) for i in range(9)]),
+    ("junta_e_nao_junta", [w(i, [0.9 if i in (0, 1, 40, 41, 80) else 0.1, 0.5]) for i in range(120)]),
     ("lacuna_de_quadros", [
       {"quadro_inicio": 0, "quadro_fim": 30, "pontuacoes": [0.9, 0.1]},
       {"quadro_inicio": 1, "quadro_fim": 95, "pontuacoes": [0.9, 0.1]},
@@ -69,7 +75,7 @@ def montar_casos():
       "windows": dados[vid]["windows"],
     })
 
-  for path in sorted((RAIZ / "saidas").glob("*_sessao.json")):
+  for path in sorted((RAIZ / "saidas").glob("*_sessao.json")) + sorted((RAIZ / "saidas" / "final").glob("*_sessao.json")):
     s = json.load(open(path, encoding="utf-8"))
     videos.append({
       "nome": path.name, "fps": s["sessao"]["fps"],
@@ -86,8 +92,31 @@ def montar_casos():
     for limiar in LIMIARES:
       for dur in duracoes:
         casos.append({"video": i, "threshold": limiar, "min_duration_sec": dur})
+      casos.append({"video": i, "threshold": limiar, "final": True})
 
   return videos, casos
+
+
+def conferir_com_experimentos(dados):
+  """final_segments() dá os mesmos trechos que o pós-processamento dos experimentos."""
+  import os
+  from scipy.ndimage import median_filter
+  cwd = os.getcwd()
+  sys.path.insert(0, str(RAIZ / "experimentos"))
+  import rodar_rodada2 as q  # faz chdir para a raiz
+  os.chdir(cwd)
+  n = 0
+  for v in dados["videos"]:
+    if not v["nome"].startswith("v_") or not v["windows"]:
+      continue
+    P = median_filter(np.array([w["pontuacoes"] for w in v["windows"]]), size=(int(round(MEDIANA_S * v["fps"])) // 2 * 2 + 1, 1), mode="nearest")
+    ws = [{**w, "pontuacoes": p.tolist()} for w, p in zip(v["windows"], P)]
+    exp = q.juntar(build_segments(ws, v["class_names"], 0.5, 0.0, v["fps"]), JUNTAR_S)
+    py = final_segments(v["windows"], v["class_names"], 0.5, v["fps"])
+    chave = lambda s: (s["classe"], s["inicio_s"])
+    assert sorted(exp, key=chave) == sorted(py, key=chave), v["nome"]
+    n += 1
+  return n
 
 
 def test_js_igual_ao_python():
@@ -115,23 +144,28 @@ def test_js_igual_ao_python():
   n_trechos = 0
   for caso, js in zip(dados["casos"], resultados_js):
     v = dados["videos"][caso["video"]]
-    py = build_segments(v["windows"], v["class_names"], caso["threshold"], caso["min_duration_sec"], v["fps"])
+    if caso.get("final"):
+      py = final_segments(v["windows"], v["class_names"], caso["threshold"], v["fps"])
+    else:
+      py = build_segments(v["windows"], v["class_names"], caso["threshold"], caso["min_duration_sec"], v["fps"])
     assert py == js, (
       f"divergência em {v['nome']}, limiar={caso['threshold']}, duração mínima={caso['min_duration_sec']}:\n"
       f"  python={py[:3]}\n  js={js[:3]}"
     )
     n_trechos += len(py)
 
+  n_exp = conferir_com_experimentos(dados)
   n_videos_reais = sum(1 for v in dados["videos"] if not v["nome"].startswith("sintetico_"))
-  return len(dados["casos"]), n_videos_reais, len(dados["videos"]) - n_videos_reais, n_trechos
+  return len(dados["casos"]), n_videos_reais, len(dados["videos"]) - n_videos_reais, n_trechos, n_exp
 
 
 if __name__ == "__main__":
 
-  n_casos, n_reais, n_sint, n_trechos = test_js_igual_ao_python()
+  n_casos, n_reais, n_sint, n_trechos, n_exp = test_js_igual_ao_python()
   print(
     f"OK: {n_casos} casos ({n_reais} vídeos reais/exportados + {n_sint} sintéticos, "
     f"{len(LIMIARES)} limiares, 4 durações mínimas), {n_trechos} trechos, "
-    "JavaScript idêntico ao Python em todos"
+    "JavaScript idêntico ao Python em todos, com e sem pós-processamento"
   )
+  print(f"OK: pós-processamento igual ao dos experimentos em {n_exp} vídeos (limiar 0,5)")
   print("\nALL TIMELINE JS TESTS PASSED")
