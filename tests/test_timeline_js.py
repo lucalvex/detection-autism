@@ -149,7 +149,7 @@ def test_js_igual_ao_python():
     else:
       py = build_segments(v["windows"], v["class_names"], caso["threshold"], caso["min_duration_sec"], v["fps"])
     assert py == js, (
-      f"divergência em {v['nome']}, limiar={caso['threshold']}, duração mínima={caso['min_duration_sec']}:\n"
+      f"divergência em {v['nome']}, limiar={caso['threshold']}, caso={caso}:\n"
       f"  python={py[:3]}\n  js={js[:3]}"
     )
     n_trechos += len(py)
