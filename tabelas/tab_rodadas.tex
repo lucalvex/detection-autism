@@ -1,0 +1,49 @@
+\begin{table}[htbp]
+\centering
+\scriptsize
+\caption{Ajustes testados por rodada, com as métricas de validação}
+\label{tab:rodadas}
+\begin{tabular}{llrrrl}
+\toprule
+Rodada & Ajuste & F1 evento & Acurácia bal. & Macro F1 quadros & Decisão \\
+\midrule
+1 & YOLO11m-Pose & 0,012 (0,013) & 0,596 (0,598) & 0,347 (0,347) & não \\
+1 & normalização robusta & 0,027 (0,013) & 0,624 (0,598) & 0,328 (0,347) & mantido \\
+1 & interpolação e suavização & 0,044 (0,027) & 0,606 (0,624) & 0,336 (0,328) & não \\
+1 & 15 quadros/s, janela de 1 s & 0,013 (0,027) & 0,620 (0,624) & 0,349 (0,328) & não \\
+1 & 15 quadros/s, janela de 2 s & 0,035 (0,027) & 0,656 (0,624) & 0,389 (0,328) & mantido \\
+1 & janelas sem sobreposição & 0,040 (0,035) & 0,601 (0,656) & 0,327 (0,389) & não \\
+1 & taxa de aprendizado 0,0003 & 0,041 (0,035) & 0,633 (0,656) & 0,346 (0,389) & não \\
+1 & taxa de aprendizado 0,003 & 0,024 (0,035) & 0,634 (0,656) & 0,343 (0,389) & não \\
+\midrule
+2 & só deslocamentos & 0,016 (0,035) & 0,638 (0,656) & 0,344 (0,389) & não \\
+2 & deslocamentos e ângulos & 0,005 (0,035) & 0,611 (0,656) & 0,336 (0,389) & não \\
+2 & periodicidade, 2 s, regressão logística & 0,008 (0,035) & 0,547 (0,656) & 0,336 (0,389) & linha de base \\
+2 & periodicidade, 2 s, \textit{gradient boosting} & 0,009 (0,035) & 0,626 (0,656) & 0,420 (0,389) & linha de base \\
+2 & periodicidade, 4 s, regressão logística & 0,013 (0,035) & 0,597 (0,656) & 0,376 (0,389) & linha de base \\
+2 & periodicidade, 4 s, \textit{gradient boosting} & 0,017 (0,035) & 0,645 (0,656) & 0,410 (0,389) & linha de base \\
+2 & \textit{dropout} 0,3 & 0,027 (0,035) & 0,657 (0,656) & 0,353 (0,389) & não \\
+2 & \textit{dropout} 0,5 & 0,029 (0,035) & 0,650 (0,656) & 0,362 (0,389) & não \\
+2 & penalização L2 $10^{-4}$ & 0,036 (0,035) & 0,675 (0,656) & 0,372 (0,389) & não \\
+2 & penalização L2 $10^{-3}$ & 0,030 (0,035) & 0,634 (0,656) & 0,376 (0,389) & não \\
+2 & 1 camada de 64 unidades & 0,028 (0,035) & 0,644 (0,656) & 0,352 (0,389) & não \\
+2 & aumento de dados & 0,040 (0,035) & 0,668 (0,656) & 0,414 (0,389) & mantido \\
+\midrule
+3 & interpolação limitada a 0,5 s & 0,033 (0,040) & 0,631 (0,668) & 0,356 (0,414) & não \\
+3 & interpolação limitada e confiança & 0,037 (0,040) & 0,628 (0,668) & 0,367 (0,414) & não \\
+3 & descarte por qualidade no treino (a) & 0,028 (0,040) & 0,629 (0,668) & 0,376 (0,414) & não \\
+3 & descarte por qualidade no treino (b) & 0,031 (0,040) & 0,642 (0,668) & 0,394 (0,414) & não \\
+3 & QF: só quadros válidos por Q & 0,034 (0,050) & 0,601 (0,673) & 0,358 (0,430) & não \\
+\midrule
+4 & trajetória centralizada & 0,018 (0,047) & 0,607 (0,667) & 0,360 (0,421) & não \\
+4 & trajetória e postura média & 0,031 (0,047) & 0,646 (0,667) & 0,387 (0,421) & não \\
+4 & periodicidade após o LSTM & 0,025 (0,047) & 0,642 (0,667) & 0,445 (0,421) & não \\
+4 & aumento de postura e ângulo & 0,039 (0,047) & 0,666 (0,667) & 0,410 (0,421) & não \\
+4b & janela de 4 s & 0,060 (0,049) & 0,659 (0,670) & 0,448 (0,422) & \textbf{modelo final} \\
+4b & periodicidade, janela de 4 s & 0,030 (0,049) & 0,676 (0,670) & 0,455 (0,422) & não \\
+4b & treino sem 5 vídeos problemáticos & 0,036 (0,047) & 0,637 (0,667) & 0,368 (0,421) & não \\
+4c & periodicidade corrigida & 0,020 (0,060) & 0,681 (0,659) & 0,435 (0,448) & não \\
+\bottomrule
+\end{tabular}
+\legend{Cada célula: valor do ajuste e, entre parênteses, o da referência da etapa (o melhor modelo até então), no agregado da validação. Mantém-se um ajuste que melhora pelo menos 2 das 3 métricas em 0,01 ou mais. Rodadas 1 e 2: todos os quadros com pessoa; rodada 3: mesmos quadros do modelo de referência (cobertura total) e, no QF, quadros válidos pelo critério Q; rodadas 4 a 4c: quadros válidos pelo critério Q. Na rodada 2, a periodicidade com classificador simples foi linha de base e não concorria a modelo final. Fonte: Elaborado pelo autor.}
+\end{table}

@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Desempenho por classe e matriz de confusão do modelo final}
+\label{tab:final-classes}
+\begin{tabular}{lrrrr|rrrr}
+\toprule
+ & \multicolumn{4}{c}{Todos os quadros (F1 anotados)} & \multicolumn{4}{c}{Matriz nos quadros anotados: prevista} \\
+Classe & Precisão & Revocação & F1 & F1 anot. & \textit{arm flapping} & \textit{head banging} & \textit{spinning} & fundo \\
+\midrule
+\textit{arm flapping} & 0,219 & 0,302 & 0,254 & 0,447 & 4.018 & 257 & 414 & 8.637 \\
+\textit{head banging} & 0,334 & 0,279 & 0,304 & 0,366 & 595 & 1.809 & 200 & 3.887 \\
+\textit{spinning} & 0,579 & 0,626 & 0,601 & 0,749 & 56 & 1.321 & 8.521 & 3.720 \\
+fundo & 0,689 & 0,629 & 0,658 & -- & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\legend{Teste, semente 42, quadros válidos pelo critério Q comuns ao modelo do TCC e ao final da rodada 2. Precisão, revocação e F1 em todos os quadros; F1 anot.: F1 nos quadros anotados. Matriz: linhas, classe anotada; colunas, classe prevista; número de quadros. Fonte: Elaborado pelo autor.}
+\end{table}
