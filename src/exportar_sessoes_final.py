@@ -42,7 +42,7 @@ SAIDA = RAIZ / "saidas" / "final"
 
 # id, nome no seletor (em inglês, como no TCC) e nome em português (apoio)
 CLASSES = [("armflapping", "Arm flapping", "Balançar os braços"), ("headbanging", "Head banging", "Bater a cabeça"),
-           ("spinning", "Spinning", "Girar o corpo"), ("background", "Sem estereotipia", "Sem estereotipia")]
+           ("spinning", "Spinning", "Girar o corpo"), ("background", "Fundo (sem estereotipia)", "Fundo (sem estereotipia)")]
 PREFIXO = {"ArmFlapping": "armflapping", "HeadBanging": "headbanging", "Spinning": "spinning"}
 
 

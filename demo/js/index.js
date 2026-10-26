@@ -248,7 +248,7 @@ function laco() {
 // ---------- Câmera ao vivo ----------
 
 const cam = { ativo: false, stream: null, sessao: "", t0: 0, historico: [], respostas: [] };
-const NOMES_CAMERA = { background: "Sem estereotipia" };
+const NOMES_CAMERA = { background: "Fundo (sem estereotipia)" };
 
 function montarBarras() {
   $("barras").replaceChildren(...[...CLASSES, "background"].map((c) => html("div", { class: "barra-classe" }, [
