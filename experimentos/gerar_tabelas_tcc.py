@@ -142,17 +142,20 @@ def modelo_final():
   a = ler(E / "r4b_avaliacao_final" / "avaliacao_final.json")
   M4 = M3 + ["macro_f1_quadro_anotados"]
   dep = a["dependencia_teste"]
+  v2 = ler(E / "r4b_avaliacao_final" / "versao2.json")  # experimentos/avaliar_versao2.py
   agg = lambda ts, m: pm(np.mean([t["agregado_56_videos"][m] for t in ts]), np.std([t["agregado_56_videos"][m] for t in ts]))
   pos = lambda ts: pm(np.mean([t["f1_evento_com_pos"]["agregado"] for t in ts]), np.std([t["f1_evento_com_pos"]["agregado"] for t in ts]))
   dp = lambda xs: pm(np.mean([x["dependencia"] for x in xs]), np.std([x["dependencia"] for x in xs]))
   corpo = [["Modelo do TCC (rótulos por intervalo)", *[num(a["TCC"]["agregado_56_videos"][m]) for m in M4], num(a["TCC"]["f1_evento_com_pos"]["agregado"]),
             num(dep["TCC"][0]["dependencia"])],
+           ["Final da rodada 1 (janela de 2 s, sem aumento)", *[agg(v2["teste"], m) for m in M4], pos(v2["teste"]), dp(v2["dependencia_teste"])],
            ["Final da rodada 2 (janela de 2 s)", *[agg(a["ref"], m) for m in M4], pos(a["ref"]), dp(dep["r2_C4_aumento"])],
            ["\\textbf{Modelo final} (janela de 4 s)", *[agg(a["final"], m) for m in M4], pos(a["final"]), dp(dep["r4b_C1_janela_4s"])]]
   n_quadros = f"{a['n_quadros_teste']:,}".replace(",", ".")
   cab = [["Modelo", "F1 evento", "Acurácia bal.", "Macro F1 quadros", "Macro F1 anotados", "F1 evento com pós", "Dependência"]]
   tex = tabela("tab:modelo-final", "Teste do modelo final nos quadros válidos pelo critério Q", "lrrrrrr", cab, corpo,
-               f"Predições fora da partição, {n_quadros} quadros válidos pelo critério Q comuns aos três modelos; "
+               f"Predições fora da partição, {n_quadros} quadros válidos pelo critério Q comuns ao modelo do TCC, ao final da rodada 2 e ao modelo final "
+               "(o final da rodada 1 tem predição em todos eles); "
                "agregado sobre os vídeos; média $\\pm$ desvio entre 3 sementes (o modelo do TCC é uma execução). F1 evento: IoU 0,3, regra principal. "
                "Pós-processamento: mediana de 2 s e junção de trechos separados por menos de 1 s, escolhidos na validação. "
                "Dependência: macro F1 nos quadros anotados com as janelas reais menos com as janelas congeladas (postura média, deslocamentos zerados).",
