@@ -25,6 +25,7 @@ import json
 import os
 import re
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -32,6 +33,9 @@ PORTA = 8765
 MAX_QUADRO = 4 * 1024 * 1024  # bytes de um quadro enviado pela câmera
 
 _camera, _trava_camera = None, threading.Lock()
+# toda a inferência numa só thread: o torch/OpenMP cria um conjunto de threads
+# para cada thread que o chama e nunca o libera (cada requisição tem a sua)
+_inferencia = ThreadPoolExecutor(max_workers=1)
 
 
 def camera():
@@ -116,7 +120,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
       self.send_error(400)
       return
     try:
-      resposta = camera().processar(self.rfile.read(n), t, sessao)
+      dados = self.rfile.read(n)
+      resposta = _inferencia.submit(lambda: camera().processar(dados, t, sessao)).result()
     except ValueError:
       self.send_error(400)
       return
@@ -147,4 +152,7 @@ if __name__ == "__main__":
   http.server.ThreadingHTTPServer.allow_reuse_address = os.name != "nt"
   with http.server.ThreadingHTTPServer(("127.0.0.1", PORTA), Handler) as httpd:
     print(f"Interface em http://127.0.0.1:{PORTA}", flush=True)
-    httpd.serve_forever()
+    try:
+      httpd.serve_forever()
+    except KeyboardInterrupt:  # Ctrl+C encerra sem traceback
+      print("Servidor encerrado.")
