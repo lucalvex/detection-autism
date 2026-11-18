@@ -2,11 +2,11 @@
 # ARQUIVO: experimentos/avaliar_versao2.py
 #
 # O QUE FAZ: avalia, sem treinar nada, o modelo final da rodada 1
-# (06_15fps_janela_2s, a "Versão 2" do TCC: normalização robusta,
+# (06-15fps-janela-2s, a "Versão 2" do TCC: normalização robusta,
 # 15 quadros/s, janela de 2 s, parada antecipada, sem aumento de dados)
 # nas 3 sementes (42, 1000 e 2000), no mesmo conjunto de quadros e com o
 # mesmo pós-processamento da avaliação final da rodada 4b
-# (r4b_avaliacao_final/avaliacao_final.json, a tab_modelo_final):
+# (r4b-avaliacao-final/avaliacao-final.json, a tab_modelo_final):
 #   - quadros válidos por Q comuns ao modelo do TCC, ao final da rodada 2
 #     e ao modelo final (semente 42); confere que são os 90.722 de lá;
 #   - as seis medidas: F1 por evento, acurácia balanceada, macro F1 por
@@ -15,7 +15,7 @@
 #     congeladas, com os modelos salvos das partições).
 # Antes, refaz as medidas do modelo do TCC e confere que batem com as
 # gravadas, para garantir que o ambiente é o mesmo.
-# Grava r4b_avaliacao_final/versao2.json; não altera nenhum resultado.
+# Grava r4b-avaliacao-final/versao2.json; não altera nenhum resultado.
 #
 # Uso (da raiz do repositório):
 #   .venv/Scripts/python.exe experimentos/avaliar_versao2.py
@@ -31,9 +31,9 @@ import rodar_rodada4 as r4  # noqa: E402
 
 rq, q, r = r4.rq, r4.q, r4.rq.r
 EXP1 = rq.EXP1
-FINAL = "r4b_C1_janela_4s"
-SEMENTES = {42: "06_15fps_janela_2s", 1000: "09_final_semente_1000", 2000: "09_final_semente_2000"}
-SAIDA = EXP1 / "r4b_avaliacao_final" / "versao2.json"
+FINAL = "r4b-C1-janela-4s"
+SEMENTES = {42: "06-15fps-janela-2s", 1000: "09-final-semente-1000", 2000: "09-final-semente-2000"}
+SAIDA = EXP1 / "r4b-avaliacao-final" / "versao2.json"
 
 
 def cfg_de(d):
@@ -41,7 +41,7 @@ def cfg_de(d):
 
 
 def main():
-  a = r.ler_json(EXP1 / "r4b_avaliacao_final" / "avaliacao_final.json")
+  a = r.ler_json(EXP1 / "r4b-avaliacao-final" / "avaliacao-final.json")
   g = a["grade_pos"][a["pos"]]
   tcc = rq.tcc_vd()
   comum = rq.conjunto_comum(tcc, rq.dados(EXP1 / rq.REF, "teste", cfg_de(rq.REF)), rq.dados(EXP1 / FINAL, "teste", cfg_de(FINAL)))

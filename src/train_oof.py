@@ -6,7 +6,7 @@
 # arquitetura, hiperparâmetros e número de épocas), mas em vez de
 # descartar o modelo de cada fold ao final (como train_classifier.py
 # faz), salva cada um em models/oof/fold_{k}.pt e grava qual vídeo
-# ficou de teste em qual fold (models/oof/fold_assignments.json).
+# ficou de teste em qual fold (models/oof/fold-assignments.json).
 #
 # Isso permite avaliar cada vídeo do dataset pelo modelo do fold em
 # que ele NUNCA entrou no treino ("out-of-fold") -- uma avaliação sem
@@ -23,7 +23,7 @@
 #
 # VERIFICAÇÃO: ao final, compara a acurácia e as métricas por classe
 # de cada fold recém-treinado com as já salvas em
-# data/results/cv_metrics.json. train_classifier.py fixa a seed só do
+# data/results/cv-metrics.json. train_classifier.py fixa a seed só do
 # StratifiedGroupKFold (o split de vídeos por fold) -- os pesos
 # iniciais da LSTM e a ordem dos batches (DataLoader shuffle=True)
 # não são fixados por nenhuma seed lá, então mesmo uma reprodução
@@ -251,14 +251,14 @@ for fold, (train_idx, test_idx) in enumerate(sgkf.split(X, y, groups), start=1):
 
 # vídeo -> fold em que foi teste (usado depois para escolher qual
 # checkpoint usar na avaliação/demo de cada vídeo do dataset)
-with open(OOF_DIR / "fold_assignments.json", "w", encoding="utf-8") as f:
+with open(OOF_DIR / "fold-assignments.json", "w", encoding="utf-8") as f:
   json.dump({
     "n_splits": N_SPLITS,
     "random_state": 42,
     "video_to_fold": fold_assignment,
   }, f, indent=2, ensure_ascii=False)
 
-print(f"\nSaved fold assignments to {OOF_DIR / 'fold_assignments.json'}")
+print(f"\nSaved fold assignments to {OOF_DIR / 'fold-assignments.json'}")
 
 # ==========================
 # AGREGAÇÃO (mesma lógica de train_classifier.py) + SALVAMENTO
@@ -292,20 +292,20 @@ new_cv_metrics = {
   "weighted_avg": metric_block("weighted avg"),
 }
 
-with open(OOF_DIR / "cv_metrics_oof.json", "w", encoding="utf-8") as f:
+with open(OOF_DIR / "cv-metrics-oof.json", "w", encoding="utf-8") as f:
   json.dump(new_cv_metrics, f, indent=2, ensure_ascii=False)
 
-print(f"Saved {OOF_DIR / 'cv_metrics_oof.json'}")
+print(f"Saved {OOF_DIR / 'cv-metrics-oof.json'}")
 
 # ==========================
-# VERIFICAÇÃO CONTRA data/results/cv_metrics.json
+# VERIFICAÇÃO CONTRA data/results/cv-metrics.json
 # ==========================
 
 verification_lines = []
-verification_lines.append("Verificação: train_oof.py vs data/results/cv_metrics.json")
+verification_lines.append("Verificação: train_oof.py vs data/results/cv-metrics.json")
 verification_lines.append("=" * 70)
 
-cv_metrics_path = RESULTS_DIR / "cv_metrics.json"
+cv_metrics_path = RESULTS_DIR / "cv-metrics.json"
 
 if not cv_metrics_path.exists():
 
@@ -320,7 +320,7 @@ else:
     existing = json.load(f)
 
   verification_lines.append("\nAcurácia por fold:")
-  verification_lines.append(f"{'Fold':<6}{'cv_metrics.json':<18}{'train_oof.py':<18}{'diferença':<12}")
+  verification_lines.append(f"{'Fold':<6}{'cv-metrics.json':<18}{'train_oof.py':<18}{'diferença':<12}")
 
   for i in range(N_SPLITS):
     old_acc = existing["fold_accuracies"][i]
@@ -334,7 +334,7 @@ else:
     f"-> {new_cv_metrics['mean_accuracy']:.2f}% (+/- {new_cv_metrics['std_accuracy']:.2f}%)"
   )
 
-  verification_lines.append("\nPrecisão/Recall/F1 médios por classe (cv_metrics.json -> train_oof.py):")
+  verification_lines.append("\nPrecisão/Recall/F1 médios por classe (cv-metrics.json -> train_oof.py):")
 
   for class_name in class_names:
     old_m = existing["per_class"][class_name]

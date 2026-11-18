@@ -1,11 +1,11 @@
 # ============================================================
 # ARQUIVO: experimentos/rodar_rodada2.py
 #
-# O QUE FAZ: rodada 2 dos experimentos (experimentos/protocolo_rodada2.md),
+# O QUE FAZ: rodada 2 dos experimentos (experimentos/protocolo-rodada2.md),
 # sozinha e em sequência: A (entrada só com movimento), B (periodicidade
 # com classificador simples), C (sobreajuste), D (pós-processamento), a
 # avaliação final e E (curva de quantidade de dados). Retomável: pula o
-# que já tem metricas_validacao.json; erro de um experimento vai para
+# que já tem metricas-validacao.json; erro de um experimento vai para
 # r2_<id>/erro.txt e o script segue. Um commit por experimento, sem push.
 # Reaproveita as funções de rodar_tudo.py (importado, não alterado) e só
 # lê os arquivos da rodada 1.
@@ -39,8 +39,8 @@ EXP1 = RAIZ / "experimentos"
 r.OPC.update({"saida": str(EXP1), "teste": False})  # poses e divisão de validação da rodada 1
 O = {"saida": str(EXP1), "teste": False}
 METRICAS = r.METRICAS
-R_ID = "06_15fps_janela_2s"
-R_SEMENTES = {42: R_ID, 1000: "09_final_semente_1000", 2000: "09_final_semente_2000"}
+R_ID = "06-15fps-janela-2s"
+R_SEMENTES = {42: R_ID, 1000: "09-final-semente-1000", 2000: "09-final-semente-2000"}
 NOVOS = {"modelo": "lstm", "entrada": "xy_dxdy", "dropout": 0.0, "peso_l2": 0.0, "aumento": False}
 PARES = [(1, 2), (3, 4), (5, 6), (7, 8), (9, 10), (11, 12), (13, 14), (15, 16)]
 ANGULOS = [(5, 7, 9), (6, 8, 10), (7, 5, 11), (8, 6, 12), (11, 13, 15), (12, 14, 16)]
@@ -49,7 +49,7 @@ GRADE_B = {"logreg": [{"C": c} for c in (0.01, 0.1, 1, 10)],
 
 
 def pasta(i):
-  return (EXP1 if not i.startswith("r2_") else Path(O["saida"])) / i
+  return (EXP1 if not i.startswith("r2-") else Path(O["saida"])) / i
 
 
 def log(msg):
@@ -403,7 +403,7 @@ def met_val(vd):
 
 
 def met_val_lidas(exp_id):
-  m = r.ler_json(pasta(exp_id) / "metricas_validacao.json")
+  m = r.ler_json(pasta(exp_id) / "metricas-validacao.json")
   if "media_entre_particoes" not in m:  # rodada 1: só agregado e por partição
     pp = {int(k): v for k, v in m["por_particao"].items() if int(k) in r.particoes()}
     m["media_entre_particoes"] = {x: float(np.mean([v[x] for v in pp.values()])) for x in METRICAS}
@@ -462,14 +462,14 @@ def duas(m, x):
 # ---------- execução de um experimento ----------
 
 def arquivos(exp_dir):
-  return [exp_dir / n for n in ("config.json", "seeds.json", "metricas_validacao.json", "metricas_teste.json", "perdas.csv",
-                                "curva_erro.pdf", "hiperparametros.json", "erro.txt")]
+  return [exp_dir / n for n in ("config.json", "seeds.json", "metricas-validacao.json", "metricas-teste.json", "perdas.csv",
+                                "curva-erro.pdf", "hiperparametros.json", "erro.txt")]
 
 
 def rodar(exp_id, cfg, descricao, com_teste=False, treino_por_particao=None):
   """Treina (ou retoma) e devolve as métricas de validação, ou None se falhar."""
   exp_dir = pasta(exp_id)
-  feito = exp_dir / "metricas_validacao.json"
+  feito = exp_dir / "metricas-validacao.json"
   if feito.exists():
     return r.ler_json(feito)
   exp_dir.mkdir(parents=True, exist_ok=True)
@@ -482,7 +482,7 @@ def rodar(exp_id, cfg, descricao, com_teste=False, treino_por_particao=None):
     "subamostragem_fundo_treino_por_particao": {k: s + k for k in r.particoes()},
     "subamostragem_fundo_validacao_por_particao": {k: s + k + 1000 for k in r.particoes()},
     "aumento_de_dados_por_particao": {k: s + k + 2000 for k in r.particoes()},
-    "divisao_validacao": "experimentos/divisao_validacao.json (a mesma da rodada 1)"})
+    "divisao_validacao": "experimentos/divisao-validacao.json (a mesma da rodada 1)"})
   t0 = time.time()
   try:
     val = validacao()
@@ -502,7 +502,7 @@ def rodar(exp_id, cfg, descricao, com_teste=False, treino_por_particao=None):
       r.gravar_perdas(exp_dir, info)
       r.curva_erro(exp_dir, info)
     if com_teste and lstm:
-      r.gravar_json(exp_dir / "metricas_teste.json", r.metricas_teste(r.dados_avaliacao(exp_dir, "teste", cfg)))
+      r.gravar_json(exp_dir / "metricas-teste.json", r.metricas_teste(r.dados_avaliacao(exp_dir, "teste", cfg)))
     elif com_teste:
       testar(exp_id, cfg)
     met["tempo_s"] = time.time() - t0
@@ -538,10 +538,10 @@ def escolher_hiper(exp_dir, cfg):
 
 
 def testar(exp_id, cfg):
-  """Predições de teste a partir dos modelos salvos; grava metricas_teste.json."""
+  """Predições de teste a partir dos modelos salvos; grava metricas-teste.json."""
   exp_dir = pasta(exp_id)
-  if (exp_dir / "metricas_teste.json").exists():
-    return r.ler_json(exp_dir / "metricas_teste.json")
+  if (exp_dir / "metricas-teste.json").exists():
+    return r.ler_json(exp_dir / "metricas-teste.json")
   with mp.get_context("spawn").Pool(len(r.particoes())) as pool:
     res = pool.map(prever, [(str(exp_dir), cfg, k, None, opcoes()) for k in r.particoes()])
   erros = [e for _, _, e in res if e]
@@ -555,7 +555,7 @@ def testar(exp_id, cfg):
     with open(p, "wb") as f:
       pickle.dump(saida, f)
   t = r.metricas_teste(r.dados_avaliacao(exp_dir, "teste", cfg))
-  r.gravar_json(exp_dir / "metricas_teste.json", t)
+  r.gravar_json(exp_dir / "metricas-teste.json", t)
   return t
 
 
@@ -578,7 +578,7 @@ def candidatas(hist, base_id, base_cfg, base_met, opcoes_etapa):
       h["situacao"] = "sim" if escolhido and h["id"] == escolhido[1] else "não"
   for exp_id, _, _ in opcoes_etapa:
     escrever_resumo(hist)
-    commit(f"experimentos: {exp_id}", arquivos(pasta(exp_id)) + [Path(O["saida"]) / "resumo_rodada2.md", Path(__file__)])
+    commit(f"experimentos: {exp_id}", arquivos(pasta(exp_id)) + [Path(O["saida"]) / "resumo-rodada2.md", Path(__file__)])
   if escolhido:
     return escolhido[1], escolhido[2], escolhido[3]
   return base_id, base_cfg, base_met
@@ -620,10 +620,10 @@ def f1_evento_pos(vd, mediana_s, juntar_s):
 
 
 def posprocessamento(final_id, final_cfg):
-  p = pasta("r2_D_posprocessamento") / "posprocessamento.json"
+  p = pasta("r2-D-posprocessamento") / "posprocessamento.json"
   if p.exists():
     return r.ler_json(p)
-  log("r2_D_posprocessamento: início")
+  log("r2-D-posprocessamento: início")
   t0 = time.time()
   vd = r.dados_avaliacao(pasta(final_id), "validacao", final_cfg)
   import evaluate_temporal as et
@@ -638,17 +638,17 @@ def posprocessamento(final_id, final_cfg):
          "nota": "só a construção dos trechos muda; as métricas por quadro usam as pontuações sem filtro",
          "escolhido": melhor, "grade": grade, "tempo_s": time.time() - t0}
   r.gravar_json(p, out)
-  log(f"r2_D_posprocessamento: {melhor}, F1 evento validação {grade[melhor]['validacao']['agregado']:.3f}")
+  log(f"r2-D-posprocessamento: {melhor}, F1 evento validação {grade[melhor]['validacao']['agregado']:.3f}")
   return out
 
 
 # ---------- avaliação final ----------
 
 def avaliacao_final(final_id, final_cfg, pos, dirs_sementes):
-  p = pasta("r2_avaliacao_final") / "avaliacao_final.json"
+  p = pasta("r2-avaliacao-final") / "avaliacao-final.json"
   if p.exists():
     return r.ler_json(p)
-  log("r2_avaliacao_final: início")
+  log("r2-avaliacao-final: início")
   t0 = time.time()
   import evaluate_temporal as et
   from selecionar_videos_mediana import f1_do_video
@@ -696,8 +696,8 @@ def avaliacao_final(final_id, final_cfg, pos, dirs_sementes):
 # ---------- E: curva de dados ----------
 
 def curva_dados(final_id, final_cfg):
-  pdir = pasta("r2_E_curva_dados")
-  p = pdir / "curva_dados.json"
+  pdir = pasta("r2-E-curva-dados")
+  p = pdir / "curva-dados.json"
   if p.exists():
     return r.ler_json(p)
   val = validacao()
@@ -715,7 +715,7 @@ def curva_dados(final_id, final_cfg):
             treino[k] += [vs[i] for i in rng.permutation(len(vs))[:max(1, round(frac * len(vs)))]]
         treino[k] = sorted(treino[k])
       cfg = {**final_cfg, "semente": final_cfg["semente"] + 1000 * d}
-      exp_id = f"r2_E_{int(frac * 100)}pct_sorteio{d}"
+      exp_id = f"r2-E-{int(frac * 100)}pct-sorteio{d}"
       met = rodar(exp_id, cfg, f"curva de dados: {int(frac * 100)}% dos vídeos de treino, sorteio {d}", treino_por_particao=treino)
       commit(f"experimentos: {exp_id}", arquivos(pasta(exp_id)) + [Path(__file__)])
       if met:
@@ -757,7 +757,7 @@ def figura_curva_dados(pdir, pontos):
       ax.spines[lado].set_visible(False)
   eixos[0].set_ylabel("validação (agregado)")
   fig.tight_layout()
-  fig.savefig(pdir / "curva_dados.pdf")
+  fig.savefig(pdir / "curva-dados.pdf")
   plt.close(fig)
 
 
@@ -765,7 +765,7 @@ def figura_curva_dados(pdir, pontos):
 
 def escrever_resumo(hist, final=None):
   linhas = ["# Resumo da rodada 2", "",
-            "Protocolo: `protocolo_rodada2.md`. Cada célula: agregado / média ± desvio entre partições (validação). "
+            "Protocolo: `protocolo-rodada2.md`. Cada célula: agregado / média ± desvio entre partições (validação). "
             "Decisão pelo agregado: mantém se melhora ≥ 0,01 em pelo menos 2 das 3 métricas.", "",
             "| etapa | mudança | F1 evento IoU 0,3 | acurácia bal. | macro F1 quadros | mantida | tempo |", "|---|---|---|---|---|---|---|"]
   for h in hist:
@@ -775,14 +775,14 @@ def escrever_resumo(hist, final=None):
     linhas.append(f"| {h['id']} | {h['descricao']} | {' | '.join(cel)} | {h['situacao']} | {f'{t / 60:.0f} min' if t else '--'} |")
   if final:
     linhas += ["", *final]
-  (Path(O["saida"]) / "resumo_rodada2.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+  (Path(O["saida"]) / "resumo-rodada2.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
 
 
 def bloco_final(final_id, final_cfg, pos, av, curva, nao_rodou):
   cfg_txt = {k: v for k, v in final_cfg.items() if k not in ("descricao", "teste_calculado")}
-  tR = r.ler_json(pasta(R_ID) / "metricas_teste.json")
-  tcc_a = r.ler_json(RAIZ / "data/results/comparacao_rodada_a/metricas.json")
-  bal = r.ler_json(RAIZ / "data/results/analises_posteriores.json")["analise_3_binario_estereotipia_vs_fundo"]["acuracia_balanceada_e_referencia"]["rodada_a"]
+  tR = r.ler_json(pasta(R_ID) / "metricas-teste.json")
+  tcc_a = r.ler_json(RAIZ / "data/results/comparacao-rodada-a/metricas.json")
+  bal = r.ler_json(RAIZ / "data/results/analises-posteriores.json")["analise_3_binario_estereotipia_vs_fundo"]["acuracia_balanceada_e_referencia"]["rodada_a"]
   ev = tcc_a["por_evento"]["regra_principal"]["por_iou"]["0.3"]
   todos, anot = tcc_a["por_quadro"]["todos_os_quadros"], tcc_a["por_quadro"]["somente_quadros_anotados"]
   tcc = {"agregado_56_videos": {"f1_evento_iou_0.3": ev["pooled_56_videos"]["macro_f1"], "acuracia_balanceada_presenca": bal["acuracia_balanceada_pooled_56_videos"],
@@ -816,10 +816,10 @@ def bloco_final(final_id, final_cfg, pos, av, curva, nao_rodou):
   linhas.append("Fração da classe do vídeo, dentro / fora dos episódios (semente 42, sem ablação): " + "; ".join(
     f"*{c}* {f3(x['dentro'])} / {f3(x['fora'])}" for c, x in s42["sem_ablacao"]["fracao_classe_do_video"].items()) + ".")
   linhas.append("*Head banging* com F1 zero: " + ", ".join(f"{sem[s]['head_banging_f1_zero']['n_zero']} de {sem[s]['head_banging_f1_zero']['n_videos']}" for s in sem)
-                + " (sementes 42, 1000, 2000). Por classe, matriz de confusão e curva de erro: `r2_avaliacao_final/avaliacao_final.json` e "
-                + f"`{final_id}/curva_erro.pdf`.")
+                + " (sementes 42, 1000, 2000). Por classe, matriz de confusão e curva de erro: `r2-avaliacao-final/avaliacao-final.json` e "
+                + f"`{final_id}/curva-erro.pdf`.")
   if curva and curva.get("pontos"):
-    linhas.append("Curva de dados: `r2_E_curva_dados/curva_dados.pdf`.")
+    linhas.append("Curva de dados: `r2-E-curva-dados/curva-dados.pdf`.")
   if nao_rodou:
     linhas.append("Não rodou: " + "; ".join(nao_rodou) + ".")
   return linhas
@@ -867,15 +867,15 @@ def main():
     melhor_id, melhor_cfg, melhor_met = R_ID, cfg_R, met_R
 
     # A: entrada só com movimento
-    for exp_id, mud, desc in [("r2_A1_dxdy", {"entrada": "dxdy"}, "só dx, dy"),
-                              ("r2_A2_dxdy_angulos", {"entrada": "dxdy_ang"}, "dx, dy + velocidade e aceleração angulares")]:
+    for exp_id, mud, desc in [("r2-A1-dxdy", {"entrada": "dxdy"}, "só dx, dy"),
+                              ("r2-A2-dxdy-angulos", {"entrada": "dxdy_ang"}, "dx, dy + velocidade e aceleração angulares")]:
       melhor_id, melhor_cfg, melhor_met = candidatas(hist, melhor_id, melhor_cfg, melhor_met, [(exp_id, mud, desc)])
 
     # B: periodicidade (linha de base)
     melhor_b = None
     for jan in (30, 60):
       for clf in ("logreg", "gb"):
-        exp_id = f"r2_B_{jan // 15}s_{clf}"
+        exp_id = f"r2-B-{jan // 15}s-{clf}"
         cfg = {**cfg_R, "modelo": "periodicidade", "janela": jan, "classificador": clf}
         met = rodar(exp_id, cfg, f"periodicidade, janela de {jan // 15} s, {'regressão logística' if clf == 'logreg' else 'gradient boosting'}")
         if met is None:
@@ -888,13 +888,13 @@ def main():
           if melhor_b is None or media3 > melhor_b[0]:
             melhor_b = (media3, exp_id, r.ler_json(pasta(exp_id) / "config.json"), met)
         escrever_resumo(hist)
-        commit(f"experimentos: {exp_id}", arquivos(pasta(exp_id)) + [Path(O["saida"]) / "resumo_rodada2.md", Path(__file__)])
+        commit(f"experimentos: {exp_id}", arquivos(pasta(exp_id)) + [Path(O["saida"]) / "resumo-rodada2.md", Path(__file__)])
 
     # C: sobreajuste, acumulativo
-    for etapa in ([("r2_C1_dropout_0.3", {"dropout": 0.3}, "dropout 0,3"), ("r2_C1_dropout_0.5", {"dropout": 0.5}, "dropout 0,5")],
-                  [("r2_C2_l2_1e-4", {"peso_l2": 1e-4}, "penalização L2 1e-4"), ("r2_C2_l2_1e-3", {"peso_l2": 1e-3}, "penalização L2 1e-3")],
-                  [("r2_C3_1x64", {"camadas": 1, "oculto": 64}, "1 camada de 64 unidades")],
-                  [("r2_C4_aumento", {"aumento": True}, "aumento de dados")]):
+    for etapa in ([("r2-C1-dropout-0.3", {"dropout": 0.3}, "dropout 0,3"), ("r2-C1-dropout-0.5", {"dropout": 0.5}, "dropout 0,5")],
+                  [("r2-C2-l2-1e-4", {"peso_l2": 1e-4}, "penalização L2 1e-4"), ("r2-C2-l2-1e-3", {"peso_l2": 1e-3}, "penalização L2 1e-3")],
+                  [("r2-C3-1x64", {"camadas": 1, "oculto": 64}, "1 camada de 64 unidades")],
+                  [("r2-C4-aumento", {"aumento": True}, "aumento de dados")]):
       melhor_id, melhor_cfg, melhor_met = candidatas(hist, melhor_id, melhor_cfg, melhor_met, etapa)
 
     final_id, final_cfg = melhor_id, melhor_cfg
@@ -905,7 +905,7 @@ def main():
 
     # D: pós-processamento
     pos = posprocessamento(final_id, final_cfg)
-    commit("experimentos: r2_D_posprocessamento", [pasta("r2_D_posprocessamento") / "posprocessamento.json", Path(__file__)])
+    commit("experimentos: r2-D-posprocessamento", [pasta("r2-D-posprocessamento") / "posprocessamento.json", Path(__file__)])
 
     # avaliação final: teste e três sementes
     if final_id == R_ID:
@@ -914,27 +914,27 @@ def main():
       testar(final_id, final_cfg)
       dirs = {42: final_id}
       for s in (1000, 2000):
-        exp_id = f"r2_final_semente_{s}"
+        exp_id = f"r2-final-semente-{s}"
         if rodar(exp_id, {**final_cfg, "semente": s}, f"modelo final, semente {s}", com_teste=True) is not None:
           dirs[s] = exp_id
         else:
           nao_rodou.append(f"{exp_id}: erro")
         commit(f"experimentos: {exp_id}", arquivos(pasta(exp_id)) + [Path(__file__)])
-      commit(f"experimentos: teste de {final_id}", [pasta(final_id) / "metricas_teste.json"])
+      commit(f"experimentos: teste de {final_id}", [pasta(final_id) / "metricas-teste.json"])
     av = avaliacao_final(final_id, final_cfg, pos, dirs)
     escrever_resumo(hist, bloco_final(final_id, final_cfg, pos, av, None, nao_rodou))
-    commit("experimentos: r2_avaliacao_final", [pasta("r2_avaliacao_final") / "avaliacao_final.json", Path(O["saida"]) / "resumo_rodada2.md", Path(__file__)])
+    commit("experimentos: r2-avaliacao-final", [pasta("r2-avaliacao-final") / "avaliacao-final.json", Path(O["saida"]) / "resumo-rodada2.md", Path(__file__)])
 
     # E: curva de dados
     curva = None
     try:
       curva = curva_dados(final_id, final_cfg)
     except Exception:
-      log("r2_E_curva_dados: ERRO\n" + traceback.format_exc())
+      log("r2-E-curva-dados: ERRO\n" + traceback.format_exc())
       nao_rodou.append("curva de dados: erro (ver progresso_rodada2.log)")
     escrever_resumo(hist, bloco_final(final_id, final_cfg, pos, av, curva, nao_rodou))
-    commit("experimentos: r2_E_curva_dados e resumo final", [pasta("r2_E_curva_dados") / "curva_dados.json", pasta("r2_E_curva_dados") / "curva_dados.pdf",
-                                                             Path(O["saida"]) / "resumo_rodada2.md", Path(__file__)])
+    commit("experimentos: r2-E-curva-dados e resumo final", [pasta("r2-E-curva-dados") / "curva-dados.json", pasta("r2-E-curva-dados") / "curva-dados.pdf",
+                                                             Path(O["saida"]) / "resumo-rodada2.md", Path(__file__)])
     log("fim")
   except Exception:
     log("ERRO GERAL:\n" + traceback.format_exc())

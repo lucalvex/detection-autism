@@ -4,7 +4,7 @@
 # O QUE FAZ: avaliação temporal do modelo usando SÓ os vídeos em que
 # cada predição é out-of-fold (nunca viu esse vídeo no treino),
 # aproveitando os checkpoints de --oof-dir/fold_{k}.pt e o mapeamento
-# --oof-dir/fold_assignments.json (gerados por train_oof.py ou
+# --oof-dir/fold-assignments.json (gerados por train_oof.py ou
 # train_oof_seeded.py -- --dataset-dir/--oof-dir/--output-dir
 # parametrizam o script para rodar sem mudança de lógica tanto sobre
 # o checkpoint base (6 classes: 3 reais + Rocking/HandMovement/Normal
@@ -77,7 +77,7 @@ from timeline import build_segments
 # comando (--dataset-dir/--oof-dir/--output-dir) para poder rodar a
 # MESMA avaliação, sem nenhuma mudança de lógica, tanto sobre o
 # checkpoint base (models/oof/, data/datasets/, 6 classes) quanto
-# sobre os checkpoints da rodada A (models/oof_seeded_*/,
+# sobre os checkpoints da rodada A (models/oof-seeded-*/,
 # data/datasets*/, 4 ou 6 classes conforme o labels.json de cada
 # dataset -- num_classes/class_names abaixo já são lidos do
 # labels.json, nunca fixados em 6). Os valores default abaixo
@@ -119,7 +119,7 @@ fold_assignments = None
 
 
 def load_config(dataset_dir, oof_dir):
-  """Carrega labels.json (do dataset apontado) e fold_assignments.json
+  """Carrega labels.json (do dataset apontado) e fold-assignments.json
   (do diretório de checkpoints apontado) nas variáveis globais acima.
   num_classes/class_names vêm do labels.json de CADA dataset -- por
   isso funcionam sem mudança tanto para o checkpoint base (6 classes:
@@ -138,7 +138,7 @@ def load_config(dataset_dir, oof_dir):
   id_to_label = {v: k for k, v in labels.items()}
   class_names = [id_to_label[i] for i in range(num_classes)]
 
-  with open(OOF_DIR / "fold_assignments.json", "r", encoding="utf-8") as f:
+  with open(OOF_DIR / "fold-assignments.json", "r", encoding="utf-8") as f:
     fold_assignments = json.load(f)["video_to_fold"]
 
 # ==========================
@@ -670,7 +670,7 @@ if __name__ == "__main__":
 
   parser = argparse.ArgumentParser()
   parser.add_argument("--dataset-dir", default=str(DEFAULT_DATASET_DIR), help="ex.: data/datasets ou data/datasets_annotated")
-  parser.add_argument("--oof-dir", default=str(DEFAULT_OOF_DIR), help="ex.: models/oof, models/oof_seeded_base, models/oof_seeded_annotated")
+  parser.add_argument("--oof-dir", default=str(DEFAULT_OOF_DIR), help="ex.: models/oof, models/oof-seeded-base, models/oof-seeded-annotated")
   parser.add_argument("--output-dir", default=str(DEFAULT_RESULTS_DIR), help="onde gravar metricas.json etc.")
   args = parser.parse_args()
 
@@ -860,11 +860,11 @@ if __name__ == "__main__":
       f"Não gerado para {OOF_DIR} (arquivo específico de train_oof.py, escrito só para "
       "models/oof/ -- este checkpoint foi treinado por train_oof_seeded.py, que reaproveita "
       "o mesmo particionamento por vídeo, mas grava sua própria verificação em "
-      "cv_metrics_oof.json/fold_assignments.json dentro do próprio diretório de saída)."
+      "cv-metrics-oof.json/fold-assignments.json dentro do próprio diretório de saída)."
     )
 
   metricas = {
-    "divisao": f"por vídeo, out-of-fold ({OOF_DIR}/fold_{{1..5}}.pt + {OOF_DIR}/fold_assignments.json; groups.npy)",
+    "divisao": f"por vídeo, out-of-fold ({OOF_DIR}/fold_{{1..5}}.pt + {OOF_DIR}/fold-assignments.json; groups.npy)",
     "n_folds": 5,
     "camada_de_saida": (
       f"{num_classes} unidades neste modelo ({', '.join(class_names)}); "
@@ -872,7 +872,7 @@ if __name__ == "__main__":
       "só a última camada linear muda de tamanho conforme o número de classes do dataset."
     ),
     "verificacao_out_of_fold": {
-      "descricao": "acurácia/precisão/recall/F1 por fold, reproduzindo o split de train_classifier.py, comparadas com data/results/cv_metrics.json antes de usar os checkpoints para qualquer avaliação.",
+      "descricao": "acurácia/precisão/recall/F1 por fold, reproduzindo o split de train_classifier.py, comparadas com data/results/cv-metrics.json antes de usar os checkpoints para qualquer avaliação.",
       "texto_completo": oof_verification_text,
     },
     "por_quadro": {

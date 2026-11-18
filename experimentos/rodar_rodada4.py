@@ -1,7 +1,7 @@
 # ============================================================
 # ARQUIVO: experimentos/rodar_rodada4.py
 #
-# O QUE FAZ: rodada 4 (experimentos/protocolo_rodada4.md), para reduzir a
+# O QUE FAZ: rodada 4 (experimentos/protocolo-rodada4.md), para reduzir a
 # dependência da postura: passo 0 (diagnóstico), P1 (trajetória
 # centralizada, com e sem a postura média), P2 (periodicidade junto com o
 # LSTM), P3 (aumento de postura e ângulo), a medida de dependência do
@@ -42,7 +42,7 @@ CLASSES3 = r.CLASSES[:3]
 # ---------- caminhos e log (commit seguro de rodar_rodada3) ----------
 
 def pasta(i):
-  return Path(t3.O3["saida"]) / i if i.startswith("r4_") else EXP1 / i
+  return Path(t3.O3["saida"]) / i if i.startswith("r4-") else EXP1 / i
 
 
 def log(msg):
@@ -243,10 +243,10 @@ def tcc_congelado():
 # ---------- passo 0 ----------
 
 def passo0(ref_teste):
-  p = pasta("r4_passo0") / "diagnostico.json"
+  p = pasta("r4-passo0") / "diagnostico.json"
   if p.exists():
     return r.ler_json(p)
-  tab = {x["video"]: x for x in csv.DictReader(open(EXP1 / "qualidade_dataset/tabela_videos.csv", encoding="utf-8"))}
+  tab = {x["video"]: x for x in csv.DictReader(open(EXP1 / "qualidade-dataset/tabela-videos.csv", encoding="utf-8"))}
   f1 = lambda v: float(tab[v]["f1"]) if tab[v]["f1"] not in ("", "None") else None
   ruins = sorted(v for v in tab if float(tab[v]["q_pct"]) > 90 and f1(v) is not None and f1(v) < 0.1 and v in r.videos())
   melhores = []
@@ -255,7 +255,7 @@ def passo0(ref_teste):
     melhores += vs[:3]
   comum = rq.conjunto_comum(*ref_teste.values())
   import evaluate_temporal as et
-  out = {"criterio": "Q > 90% e F1 < 0,1 (tabela_videos.csv); 3 de maior F1 por classe", "videos": {}}
+  out = {"criterio": "Q > 90% e F1 < 0,1 (tabela-videos.csv); 3 de maior F1 por classe", "videos": {}}
   for v in ruins + melhores:
     fr = {"dentro": [], "fora": []}
     for vd in ref_teste.values():
@@ -272,7 +272,7 @@ def passo0(ref_teste):
                         "q_pct": float(tab[v]["q_pct"]), "fracoes": media}
   r.gravar_json(p, out)
   f3 = q.f3
-  linhas = ["# Passo 0: o que o `r2_C4_aumento` prevê (teste, quadros válidos por Q, média das 3 sementes)", "",
+  linhas = ["# Passo 0: o que o `r2-C4-aumento` prevê (teste, quadros válidos por Q, média das 3 sementes)", "",
             "| vídeo | grupo | F1 | anotados: AF / HB / SP / fundo | fora dos episódios: AF / HB / SP / fundo |", "|---|---|---|---|---|"]
   for v, x in out["videos"].items():
     cel = lambda parte: " / ".join(f3(x["fracoes"][parte][c]) if parte in x["fracoes"] and x["fracoes"][parte][c] is not None else "--" for c in r.CLASSES)
@@ -287,7 +287,7 @@ def escrever_resumo(hist, dep_ref, n_val, final_txt=None):
   f3 = q.f3
   cel = lambda m, x: f"{f3(m['agregado_validacao'][x])} / {f3(m['media_entre_particoes'][x])} ± {f3(m['desvio_entre_particoes'][x])}"
   linhas = ["# Resumo da rodada 4", "",
-            f"Protocolo: `protocolo_rodada4.md`. Validação nos {n_val} quadros válidos por Q em que todos os modelos têm predição "
+            f"Protocolo: `protocolo-rodada4.md`. Validação nos {n_val} quadros válidos por Q em que todos os modelos têm predição "
             "(agregado / média ± desvio entre partições). Dependência do movimento: macro F1 nos anotados com janelas reais menos com janelas congeladas.", "",
             "| etapa | mudança | F1 evento | acurácia bal. | macro F1 quadros | dependência (AF / HB / SP) | situação | tempo |", "|---|---|---|---|---|---|---|---|",
             f"| `{REF}` | referência | " + " | ".join(cel(dep_ref["met"], x) for x in METRICAS)
@@ -299,10 +299,10 @@ def escrever_resumo(hist, dep_ref, n_val, final_txt=None):
     d = h["dep"]
     linhas.append(f"| {h['id']} | {h['descricao']} | " + " | ".join(cel(h["met"], x) for x in METRICAS)
                   + f" | {f3(d['dependencia'])} ({' / '.join(f3(d['dependencia_por_classe'][c]) for c in CLASSES3)}) | {h['situacao']} | {h['tempo']} |")
-  linhas += ["", "Passo 0 (diagnóstico do `r2_C4_aumento`): `r4_passo0/diagnostico.md`."]
+  linhas += ["", "Passo 0 (diagnóstico do `r2-C4-aumento`): `r4-passo0/diagnostico.md`."]
   if final_txt:
     linhas += ["", *final_txt]
-  (Path(t3.O3["saida"]) / "resumo_rodada4.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+  (Path(t3.O3["saida"]) / "resumo-rodada4.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
 
 
 def texto_final(fin):
@@ -321,7 +321,7 @@ def texto_final(fin):
     for conv, nome_conv, pc in (("agregado_56_videos", "agregado", "agregado"), ("media_entre_particoes", "média entre partições", "media")):
       linhas.append(f"| {rot}, 3 sementes, {nome_conv} | {' | '.join(med(ts, x, conv) for x in M4)} | "
                     f"{f3(np.mean([t['f1_evento_com_pos'][pc] for t in ts]))} ± {f3(np.std([t['f1_evento_com_pos'][pc] for t in ts]))} |")
-  linhas += ["", "F1 por classe (semente 42, agregado; todos os quadros | anotados) e mudança em relação ao `r2_C4_aumento`:"]
+  linhas += ["", "F1 por classe (semente 42, agregado; todos os quadros | anotados) e mudança em relação ao `r2-C4-aumento`:"]
   for c in r.CLASSES:
     a = fin["detalhes"]["final"]["por_classe"]
     b = fin["detalhes"]["ref"]["por_classe"]
@@ -340,7 +340,7 @@ def texto_final(fin):
       for k, v in fin["ablacoes"].items()) + ".",
     "*Head banging* com F1 zero: " + "; ".join(f"{k}: " + ", ".join(f"{h['n_zero']} de {h['n_videos_com_quadros_validos']}" for h in v)
                                               for k, v in fin["hb"].items()) + ".",
-    f"Matriz de confusão e por classe completos: `r4_avaliacao_final/avaliacao_final.json`; curva de erro: `{nome}/curva_erro.pdf`."]
+    f"Matriz de confusão e por classe completos: `r4-avaliacao-final/avaliacao-final.json`; curva de erro: `{nome}/curva-erro.pdf`."]
   if fin.get("nao_rodou"):
     linhas.append("Não rodou: " + "; ".join(fin["nao_rodou"]) + ".")
   return linhas
@@ -372,7 +372,7 @@ def main():
     usa = lambda vd: {k: v for k, v in vd.items() if k.split("|")[-1] in r.videos()}
     ref_teste = {s: usa(rq.dados(EXP1 / d, "teste", cfg_ref if s == 42 else {**cfg_ref, "semente": s})) for s, d in REF_SEMENTES.items()}
     passo0(ref_teste)
-    commit("experimentos: r4_passo0", [pasta("r4_passo0") / "diagnostico.json", pasta("r4_passo0") / "diagnostico.md", Path(__file__)])
+    commit("experimentos: r4-passo0", [pasta("r4-passo0") / "diagnostico.json", pasta("r4-passo0") / "diagnostico.md", Path(__file__)])
 
     ref_val = usa(rq.dados(EXP1 / REF, "validacao", cfg_ref))
     ref_cong_val = vd_congelado(EXP1 / REF, cfg_ref, "validacao")
@@ -385,10 +385,10 @@ def main():
     escrever_resumo(hist, dep_ref, n_val)
 
     etapas = [
-      [("r4_P1a_trajetoria", {"arquitetura": "p4", "trajetoria": True, "concat_postura": False}, "P1a: trajetória centralizada, sem postura"),
-       ("r4_P1b_trajetoria_postura", {"arquitetura": "p4", "trajetoria": True, "concat_postura": True}, "P1b: trajetória centralizada + postura média após o LSTM")],
-      [("r4_P2_periodicidade", {"arquitetura": "p4", "concat_periodicidade": True}, "P2: + periodicidade após o LSTM")],
-      [("r4_P3_aumento_postura", {"aum_rot_graus": 30, "aum_escala_xy": 0.2, "aum_ruido": 0.02}, "P3: + rotação ±30°, escala x/y ±20%, ruído")],
+      [("r4-P1a-trajetoria", {"arquitetura": "p4", "trajetoria": True, "concat_postura": False}, "P1a: trajetória centralizada, sem postura"),
+       ("r4-P1b-trajetoria-postura", {"arquitetura": "p4", "trajetoria": True, "concat_postura": True}, "P1b: trajetória centralizada + postura média após o LSTM")],
+      [("r4-P2-periodicidade", {"arquitetura": "p4", "concat_periodicidade": True}, "P2: + periodicidade após o LSTM")],
+      [("r4-P3-aumento-postura", {"aum_rot_graus": 30, "aum_escala_xy": 0.2, "aum_ruido": 0.02}, "P3: + rotação ±30°, escala x/y ±20%, ruído")],
     ]
     for etapa in etapas:
       base_met = q.met_val(rq.restringir(melhor_val, rq.conjunto_comum(melhor_val, ref_val)))
@@ -419,7 +419,7 @@ def main():
             passou.append((soma, exp_id, cfg, vd))
           if alt:
             alternativas.append((dep["dependencia"], exp_id, cfg, vd))
-          met_tempo = r.ler_json(pasta(exp_id) / "metricas_validacao.json").get("tempo_s") or (time.time() - t0)
+          met_tempo = r.ler_json(pasta(exp_id) / "metricas-validacao.json").get("tempo_s") or (time.time() - t0)
           hist.append({"id": exp_id, "descricao": desc, "met": m, "dep": dep, "situacao": situacao, "tempo": f"{met_tempo / 60:.0f} min", "n": n})
           r.gravar_json(pasta(exp_id) / "rodada4.json", {"metricas_validacao_q": m, "dependencia": dep, "passa": ok, "alternativa": alt, "n_quadros": n})
           log(f"{exp_id}: passa={ok} alternativa={alt} dependência {dep['dependencia']:.3f} | "
@@ -432,7 +432,7 @@ def main():
         _, melhor_id, melhor_cfg, melhor_val = escolhido
       escrever_resumo(hist, dep_ref, n_val)
       for exp_id, _, _ in etapa:
-        commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [pasta(exp_id) / "rodada4.json", saida / "resumo_rodada4.md", Path(__file__)])
+        commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [pasta(exp_id) / "rodada4.json", saida / "resumo-rodada4.md", Path(__file__)])
 
     # avaliação final
     alvo, papel = (melhor_id, "modelo mantido") if melhor_id != REF else (None, None)
@@ -444,7 +444,7 @@ def main():
       melhor_cfg = t3.cfg_limpo(melhor_cfg)
     fin = avaliacao_final(alvo, melhor_cfg, papel, cfg_ref, ref_teste, args)
     escrever_resumo(hist, dep_ref, n_val, texto_final(fin) if alvo else fin["texto"])
-    commit("experimentos: r4_avaliacao_final e resumo", [pasta("r4_avaliacao_final") / "avaliacao_final.json", saida / "resumo_rodada4.md", Path(__file__)])
+    commit("experimentos: r4-avaliacao-final e resumo", [pasta("r4-avaliacao-final") / "avaliacao-final.json", saida / "resumo-rodada4.md", Path(__file__)])
     log("fim")
   except Exception:
     log("ERRO GERAL:\n" + traceback.format_exc())
@@ -452,7 +452,7 @@ def main():
 
 
 def avaliacao_final(alvo, cfg, papel, cfg_ref, ref_teste, args):
-  p = pasta("r4_avaliacao_final") / "avaliacao_final.json"
+  p = pasta("r4-avaliacao-final") / "avaliacao-final.json"
   if p.exists() and r.ler_json(p).get("modelo") == alvo:
     return r.ler_json(p)
   tcc = rq.tcc_vd()
@@ -468,7 +468,7 @@ def avaliacao_final(alvo, cfg, papel, cfg_ref, ref_teste, args):
   dirs = {42: pasta(alvo)}
   nao_rodou = []
   for s in (1000, 2000):
-    e = f"{alvo}_semente_{s}"
+    e = f"{alvo}-semente-{s}"
     if t3.rodar3(e, {**cfg, "semente": s}, f"{alvo}, semente {s}", com_teste=True) is not None:
       dirs[s] = pasta(e)
     else:

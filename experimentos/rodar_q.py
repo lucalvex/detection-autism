@@ -2,14 +2,14 @@
 # ARQUIVO: experimentos/rodar_q.py
 #
 # O QUE FAZ: critério Q de qualidade da pose (adendo de 2026-10-21 em
-# protocolo_rodada3.md). Um quadro com pessoa é válido se os dois ombros
+# protocolo-rodada3.md). Um quadro com pessoa é válido se os dois ombros
 # e pelo menos um ponto da cabeça têm confiança >= 0,5; os inválidos saem
 # de todo o processo. Calcula a cobertura de Q, compara sem treino novo o
-# modelo do TCC e o r2_C4_aumento restritos a Q, treina o QF (configuração
-# do r2_C4_aumento, só com quadros válidos, normalização pela parte de cima
+# modelo do TCC e o r2-C4-aumento restritos a Q, treina o QF (configuração
+# do r2-C4-aumento, só com quadros válidos, normalização pela parte de cima
 # do corpo) e decide pelo critério na validação. Se o QF passar, treina as
 # sementes 1000 e 2000 e faz a avaliação de teste completa; se não, reporta
-# o r2_C4_aumento nos quadros válidos. Retomável, um commit por etapa.
+# o r2-C4-aumento nos quadros válidos. Retomável, um commit por etapa.
 #
 # Uso (da raiz do repositório):
 #   .venv/Scripts/python.exe experimentos/rodar_q.py
@@ -36,8 +36,8 @@ EXP1 = t3.EXP1
 REF, REF_SEMENTES = t3.REF, t3.REF_SEMENTES
 CABECA = [0, 1, 2, 3, 4]
 LIMITE_QF = 10.0
-VARIANTES = ["r3_I1_interpolacao_limitada", "r3_I2_limitada_confianca", "r3_I3_treino_a", "r3_I3_treino_b"]
-QF = "r3_q_QF"
+VARIANTES = ["r3-I1-interpolacao-limitada", "r3-I2-limitada-confianca", "r3-I3-treino-a", "r3-I3-treino-b"]
+QF = "r3-q-QF"
 _aumentar_anterior = q.aumentar
 
 
@@ -161,7 +161,7 @@ def cfg_de(exp_dir):
 # ---------- cobertura de Q ----------
 
 def cobertura():
-  pdir = t3.pasta("r3_q_cobertura")
+  pdir = t3.pasta("r3-q-cobertura")
   if (pdir / "cobertura.json").exists():
     return r.ler_json(pdir / "cobertura.json")
   import evaluate_temporal as et
@@ -236,7 +236,7 @@ def tcc_vd(ablacao=None):
   import evaluate_temporal as et
   import pandas as pd
   import torch
-  et.load_config("data/datasets_annotated", "models/oof_seeded_annotated")
+  et.load_config("data/datasets_annotated", "models/oof-seeded-annotated")
   if ablacao is None:
     return et.load_all_videos()
   original = et.compute_windows
@@ -286,14 +286,14 @@ def ablacoes_de(vd_sem, por_ablacao, comum):
 
 
 def avaliacao_completa(nome, dirs, cfg, val_final, comum_val, tcc, comum, teste_por_modelo):
-  """Avaliação de teste completa do modelo final (3 sementes), ao lado do TCC e do r2_C4_aumento, no conjunto comum."""
+  """Avaliação de teste completa do modelo final (3 sementes), ao lado do TCC e do r2-C4-aumento, no conjunto comum."""
   esc, grade = escolher_pos(restringir(val_final, comum_val))
   g = grade[esc]
   out = {"modelo_final": nome, "pos_processamento": {"escolhido": esc, "grade": grade},
          "n_quadros_teste": n_quadros(restringir(tcc, comum)), "TCC": metricas_teste_restritas(restringir(tcc, comum), g)}
   for rotulo, vds in teste_por_modelo.items():
     for s, vd in vds.items():
-      out[f"{rotulo}_semente_{s}"] = metricas_teste_restritas(restringir(vd, comum), g)
+      out[f"{rotulo}-semente-{s}"] = metricas_teste_restritas(restringir(vd, comum), g)
   out["detalhes"] = {"TCC": detalhes(restringir(tcc, comum)),
                      nome: detalhes(restringir(teste_por_modelo["final"][42], comum))}
   # ablações: modelo final nas 3 sementes (a partir dos modelos salvos) e TCC
@@ -319,7 +319,7 @@ def main():
   ap = argparse.ArgumentParser()
   ap.add_argument("--teste", action="store_true", help="rodada rápida: 1 partição, 2 épocas, 9 vídeos, sem commit; força o caminho do QF")
   ap.add_argument("--saida", default=str(EXP1))
-  ap.add_argument("--forcar-ref", action="store_true", help="só com --teste: segue o caminho em que o r2_C4_aumento continua final")
+  ap.add_argument("--forcar-ref", action="store_true", help="só com --teste: segue o caminho em que o r2-C4-aumento continua final")
   args = ap.parse_args()
   t3.O3.update({"teste": args.teste, "saida": str(Path(args.saida).resolve())})
   saida = Path(t3.O3["saida"])
@@ -334,22 +334,22 @@ def main():
     r.OPC.update({"videos": esc, "particoes": [1]})
   t0 = time.time()
   t3.log(f"critério Q: início (pid {os.getpid()}){' -- TESTE' if args.teste else ''}")
-  res_p = saida / "r3_q_resultados.json"
+  res_p = saida / "r3-q-resultados.json"
   res = {}
   try:
     cob = cobertura()
-    t3.commit("experimentos: r3_q_cobertura", [t3.pasta("r3_q_cobertura") / "cobertura.json", t3.pasta("r3_q_cobertura") / "cobertura.md", Path(__file__)])
+    t3.commit("experimentos: r3-q-cobertura", [t3.pasta("r3-q-cobertura") / "cobertura.json", t3.pasta("r3-q-cobertura") / "cobertura.md", Path(__file__)])
 
     cfg_ref = {**q.NOVOS, **cfg_de(EXP1 / REF)}
     tcc = tcc_vd()
     ref_teste = {s: dados(EXP1 / d, "teste", cfg_ref if s == 42 else {**cfg_ref, "semente": s}) for s, d in REF_SEMENTES.items()}
     ref_val = dados(EXP1 / REF, "validacao", cfg_ref)
 
-    # comparação sem treino novo (teste): TCC e r2_C4_aumento restritos a Q, no conjunto comum
+    # comparação sem treino novo (teste): TCC e r2-C4-aumento restritos a Q, no conjunto comum
     comum0 = conjunto_comum(tcc, ref_teste[42])
     res["sem_treino_teste"] = {"n_quadros": n_quadros(restringir(ref_teste[42], comum0)),
                                "TCC": metricas_teste_restritas(restringir(tcc, comum0)),
-                               **{f"{REF}_semente_{s}": metricas_teste_restritas(restringir(v, comum0)) for s, v in ref_teste.items()}}
+                               **{f"{REF}-semente-{s}": metricas_teste_restritas(restringir(v, comum0)) for s, v in ref_teste.items()}}
     r.gravar_json(res_p, res)
 
     # QF
@@ -359,7 +359,7 @@ def main():
     met = t3.rodar3(QF, cfg_qf, "QF: só quadros válidos por Q, centro nos ombros, escala ombros-cabeça, interpolação até 0,5 s com marcas")
     t3.commit(f"experimentos: {QF}", q.arquivos(t3.pasta(QF)) + [Path(__file__)])
     if met is None:
-      raise RuntimeError("o treino do QF falhou (ver r3_q_QF/erro.txt)")
+      raise RuntimeError("o treino do QF falhou (ver r3-q-QF/erro.txt)")
     qf_val = dados(t3.pasta(QF), "validacao", cfg_qf)
     comum_val = conjunto_comum(ref_val, qf_val)
     m_qf, m_ref = q.met_val(restringir(qf_val, comum_val)), q.met_val(restringir(ref_val, comum_val))
@@ -374,7 +374,7 @@ def main():
     if (ok or args.teste) and not (args.teste and args.forcar_ref):
       dirs = {42: t3.pasta(QF)}
       for s in (1000, 2000):
-        e = f"r3_q_QF_semente_{s}"
+        e = f"r3-q-QF-semente-{s}"
         if t3.rodar3(e, {**cfg_qf, "semente": s}, f"QF, semente {s}", com_teste=True) is not None:
           dirs[s] = t3.pasta(e)
         t3.commit(f"experimentos: {e}", q.arquivos(t3.pasta(e)) + [Path(__file__)])
@@ -388,7 +388,7 @@ def main():
     res["tempo_s"] = time.time() - t0
     r.gravar_json(res_p, res)
     escrever_resumo(res, cob)
-    t3.commit("experimentos: critério Q (decisão, avaliação e resumo)", [res_p, saida / "resumo_rodada3.md", Path(__file__)])
+    t3.commit("experimentos: critério Q (decisão, avaliação e resumo)", [res_p, saida / "resumo-rodada3.md", Path(__file__)])
     t3.log(f"critério Q: fim; modelo final {res['final']['modelo_final']}")
   except Exception:
     t3.log("ERRO GERAL (critério Q):\n" + traceback.format_exc())
@@ -403,15 +403,15 @@ def escrever_resumo(res, cob):
   cel_v = lambda m, x: f"{f3(m['agregado_validacao'][x])} / {f3(m['media_entre_particoes'][x])} ± {f3(m['desvio_entre_particoes'][x])}"
   cel_t = lambda t, x: f"{f3(t['agregado_56_videos'][x])} / {f3(t['media_entre_particoes'][x])} ± {f3(t['desvio_entre_particoes'][x])}"
   fin = res["final"]
-  sementes = lambda pref: [fin[k] for k in fin if k.startswith(pref) and "_semente_" in k]
+  sementes = lambda pref: [fin[k] for k in fin if k.startswith(pref) and "-semente-" in k]
   med = lambda ts, x, conv="agregado_56_videos": f"{f3(np.mean([t[conv][x] for t in ts]))} ± {f3(np.std([t[conv][x] for t in ts]))}"
   d, nome = res["decisao"], fin["modelo_final"]
   linhas = ["# Resumo da rodada 3", "",
             "**A primeira avaliação da I3 foi substituída.** A regra da I1 tirava os quadros sem ombro ou quadril recuperável só da avaliação dos modelos novos "
-            "(cerca de 44% dos quadros), e a comparação com o `r2_C4_aumento` misturava conjuntos de quadros diferentes. Ela foi corrigida de duas formas, que valem juntas: "
+            "(cerca de 44% dos quadros), e a comparação com o `r2-C4-aumento` misturava conjuntos de quadros diferentes. Ela foi corrigida de duas formas, que valem juntas: "
             "a cobertura total (todos os modelos nos mesmos quadros) e o critério Q, decidido pelo orientador, que aplica a qualidade da pose como critério de dados "
-            "a todos os modelos antes da separação entre treino, validação e teste (adendos de 2026-10-20 e 2026-10-21 em `protocolo_rodada3.md`).", ""]
-  cob_dec = Path(t3.O3["saida"]) / "r3_cobertura_decisao.json"
+            "a todos os modelos antes da separação entre treino, validação e teste (adendos de 2026-10-20 e 2026-10-21 em `protocolo-rodada3.md`).", ""]
+  cob_dec = Path(t3.O3["saida"]) / "r3-cobertura-decisao.json"
   if cob_dec.exists():
     c = r.ler_json(cob_dec)
     sub = list(c["variantes"].values())[0]["subconjunto_I1"]["quadros_validacao"]
@@ -426,7 +426,7 @@ def escrever_resumo(res, cob):
              "Quadro válido: os dois ombros e pelo menos um ponto da cabeça com confiança ≥ 0,5. Excluídos (quadros / anotados / episódios): " + "; ".join(
                f"*{c}* {f3(x['fracao_quadros'])} / {f3(x['fracao_anotados'])} / {x['episodios_excluidos']} de {x['episodios']}" for c, x in cob["por_classe"].items())
              + f". {cob['total']['episodios_excluidos']} episódios saem do gabarito; vídeos sem quadro válido: {len(cob['videos_sem_quadro_valido'])}. "
-             "Detalhes: `r3_q_cobertura/cobertura.md`.", "",
+             "Detalhes: `r3-q-cobertura/cobertura.md`.", "",
              f"**Decisão (validação, {d['n_quadros_validacao']} quadros comuns; agregado / média ± desvio):**", "",
              "| | F1 evento | acurácia bal. | macro F1 quadros |", "|---|---|---|---|",
              f"| `{REF}` restrito a Q | {' | '.join(cel_v(d[REF], x) for x in M)} |",
@@ -466,14 +466,14 @@ def escrever_resumo(res, cob):
       for s in ab["final"]) + "; *TCC*: " + ", ".join(f"{c} {f3(x['dentro'])}/{f3(x['fora'])}" for c, x in ab["TCC"]["sem_ablacao"]["fracao_classe_do_video"].items()) + ".",
     f"*Head banging* com F1 zero por semente (*{nome}*): " + ", ".join(
       f"{ab['final'][s]['head_banging_f1_zero']['n_zero']} de {ab['final'][s]['head_banging_f1_zero']['n_videos_com_quadros_validos']}" for s in ab["final"])
-    + ". Tudo em `r3_q_resultados.json`" + (f"; curva de erro: `{QF}/curva_erro.pdf`." if nome == QF else ".")]
-  primeira = Path(t3.O3["saida"]) / "r3_primeira_avaliacao_resumo.md"
+    + ". Tudo em `r3-q-resultados.json`" + (f"; curva de erro: `{QF}/curva-erro.pdf`." if nome == QF else ".")]
+  primeira = Path(t3.O3["saida"]) / "r3-primeira-avaliacao-resumo.md"
   if primeira.exists():
     ant = primeira.read_text(encoding="utf-8").splitlines()
     k = next(j for j, l in enumerate(ant) if l.startswith("| variante"))
     linhas += ["", "## Primeira avaliação (substituída: subconjunto de quadros só nos modelos novos)", "",
-               *ant[k:k + next(j for j, l in enumerate(ant[k:]) if not l.strip())], "", "Detalhes da primeira avaliação: `r3_avaliacao_final/` (não usar)."]
-  (Path(t3.O3["saida"]) / "resumo_rodada3.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+               *ant[k:k + next(j for j, l in enumerate(ant[k:]) if not l.strip())], "", "Detalhes da primeira avaliação: `r3-avaliacao-final/` (não usar)."]
+  (Path(t3.O3["saida"]) / "resumo-rodada3.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

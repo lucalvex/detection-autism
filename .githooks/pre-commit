@@ -3,7 +3,7 @@
 # Hook de pre-commit: bloqueia vídeos, CSVs, arrays de dados
 # (.npy/.npz), arquivos *_pontos.json (keypoints em pixels brutos da
 # demo -- dado de sessão, não código nem resultado agregado), imagens
-# (.png/.jpg/.jpeg) fora de figuras/ e demo/assets/ e qualquer arquivo
+# (.png/.jpg/.jpeg) fora de demo/assets/ e qualquer arquivo
 # acima de 5MB.
 #
 # Motivo: esses arquivos são grandes e derivados (regeneráveis a
@@ -25,10 +25,10 @@ set -euo pipefail
 MAX_BYTES=$((5 * 1024 * 1024))
 BLOCKED_EXT_REGEX='\.(mp4|avi|mov|mkv|npy|npz|csv)$'
 BLOCKED_SUFFIX_REGEX='_pontos\.json$'
-# imagens só em figuras/ (figuras do texto) e demo/assets/ (elementos da
-# interface, como a logo); nunca quadros de vídeo nem imagens de crianças
+# imagens só em demo/assets/ (elementos da interface, como a logo); nunca
+# quadros de vídeo nem imagens de crianças
 BLOCKED_IMAGE_REGEX='\.(png|jpe?g)$'
-ALLOWED_IMAGE_REGEX='^(figuras|demo/assets)/'
+ALLOWED_IMAGE_REGEX='^demo/assets/'
 
 violations=()
 
@@ -43,9 +43,9 @@ while IFS= read -r -d '' file; do
   size=$(git cat-file -s ":$file" 2>/dev/null || echo 0)
 
   # exceção: perdas por época dos experimentos (experimentos/<id>/perdas.csv) e a tabela
-  # de qualidade por vídeo (experimentos/qualidade_dataset/tabela_videos.csv),
+  # de qualidade por vídeo (experimentos/qualidade-dataset/tabela-videos.csv),
   # pequenas e não derivadas de vídeo; os demais CSVs continuam bloqueados
-  if echo "$file" | grep -Eq '^experimentos/([^/]+/perdas|qualidade_dataset/tabela_videos)\.csv$' && [ "$size" -le "$MAX_BYTES" ]; then
+  if echo "$file" | grep -Eq '^experimentos/([^/]+/perdas|qualidade-dataset/tabela-videos)\.csv$' && [ "$size" -le "$MAX_BYTES" ]; then
     continue
   fi
   if echo "$file" | grep -Eiq "$BLOCKED_EXT_REGEX"; then
@@ -53,7 +53,7 @@ while IFS= read -r -d '' file; do
   elif echo "$file" | grep -Eiq "$BLOCKED_SUFFIX_REGEX"; then
     violations+=("$file -- dado de sessão da demo (*_pontos.json), não deve ser versionado")
   elif echo "$file" | grep -Eiq "$BLOCKED_IMAGE_REGEX" && ! echo "$file" | grep -Eq "$ALLOWED_IMAGE_REGEX"; then
-    violations+=("$file -- imagem fora de figuras/ e demo/assets/ (pode ser quadro de vídeo)")
+    violations+=("$file -- imagem fora de demo/assets/ (pode ser quadro de vídeo)")
   elif [ "$size" -gt "$MAX_BYTES" ]; then
     violations+=("$file -- $((size / 1024 / 1024))MB (limite: 5MB)")
   fi
@@ -66,7 +66,7 @@ if [ "${#violations[@]}" -gt 0 ]; then
   printf '  - %s\n' "${violations[@]}" >&2
   echo "" >&2
   echo "Vídeos, CSVs, arrays de dados (.npy/.npz), *_pontos.json e imagens fora" >&2
-  echo "de figuras/ e demo/assets/ não devem ser versionados, e nenhum arquivo deve passar de 5MB. Se isso for" >&2
+  echo "de demo/assets/ não devem ser versionados, e nenhum arquivo deve passar de 5MB. Se isso for" >&2
   echo "realmente intencional, use 'git commit --no-verify' para pular esta checagem." >&2
   exit 1
 fi

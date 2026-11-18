@@ -1,0 +1,32 @@
+{
+  "semente": 2042,
+  "inicializacao_e_ordem_dos_lotes_por_particao": {
+    "1": 2043,
+    "2": 2044,
+    "3": 2045,
+    "4": 2046,
+    "5": 2047
+  },
+  "subamostragem_fundo_treino_por_particao": {
+    "1": 2043,
+    "2": 2044,
+    "3": 2045,
+    "4": 2046,
+    "5": 2047
+  },
+  "subamostragem_fundo_validacao_por_particao": {
+    "1": 3043,
+    "2": 3044,
+    "3": 3045,
+    "4": 3046,
+    "5": 3047
+  },
+  "aumento_de_dados_por_particao": {
+    "1": 4043,
+    "2": 4044,
+    "3": 4045,
+    "4": 4046,
+    "5": 4047
+  },
+  "divisao_validacao": "experimentos/divisao-validacao.json (a mesma da rodada 1)"
+}

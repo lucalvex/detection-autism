@@ -26,7 +26,7 @@ data/videos/
 results/
 
 # Saída do exportador da demo (sessao.json/pontos.json por vídeo --
-# dados de sessão, nunca vão para o git; ver tcc-demo-handoff/HANDOFF.md)
+# dados de sessão, nunca vão para o git)
 saidas/
 *_pontos.json
 
@@ -42,15 +42,11 @@ keyframes/
 # CSVs gerados (inclui data/poses/*.csv), qualquer pasta
 *.csv
 
-# Imagens: bloqueadas em qualquer pasta, exceto figuras/ (só figuras do
-# texto) e demo/assets/ (só elementos da interface, como a logo); nenhuma
-# das duas pode ter quadros de vídeo nem imagens de crianças
+# Imagens: bloqueadas em qualquer pasta, exceto demo/assets/ (só elementos
+# da interface, como a logo); nunca quadros de vídeo nem imagens de crianças
 *.png
 *.jpg
 *.jpeg
-!/figuras/**/*.png
-!/figuras/**/*.jpg
-!/figuras/**/*.jpeg
 !/demo/assets/**/*.png
 !/demo/assets/**/*.jpg
 !/demo/assets/**/*.jpeg
@@ -71,5 +67,5 @@ experimentos/rodando.pid
 experimentos/*.log
 experimentos/*.pid
 
-# Imagens de esqueleto gravadas por src/utils/save_keyframes.py (já cobertas por results/)
+# Imagens de esqueleto gravadas pelo pipeline antigo
 data/results/keyframes/

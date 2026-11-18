@@ -1,9 +1,9 @@
 # ============================================================
 # ARQUIVO: experimentos/rodar_rodada3.py
 #
-# O QUE FAZ: rodada 3 (experimentos/protocolo_rodada3.md): interpolação
+# O QUE FAZ: rodada 3 (experimentos/protocolo-rodada3.md): interpolação
 # com limite de alcance (I1) e com a confiança na entrada (I2), contra
-# o modelo final da rodada 2 (r2_C4_aumento). Se alguma variante passar
+# o modelo final da rodada 2 (r2-C4-aumento). Se alguma variante passar
 # no critério, treina as sementes 1000 e 2000, escolhe o pós-processamento
 # e faz a avaliação final. Em qualquer caso, grava a tabela por ponto.
 #
@@ -38,19 +38,19 @@ import rodar_rodada2 as q  # noqa: E402
 
 EXP1 = RAIZ / "experimentos"
 O3 = {"saida": str(EXP1), "teste": False}
-REF = "r2_C4_aumento"
-REF_SEMENTES = {42: "r2_C4_aumento", 1000: "r2_final_semente_1000", 2000: "r2_final_semente_2000"}
+REF = "r2-C4-aumento"
+REF_SEMENTES = {42: "r2-C4-aumento", 1000: "r2-final-semente-1000", 2000: "r2-final-semente-2000"}
 ALCANCE_S = 0.5
 NORMALIZACAO_PONTOS = [5, 6, 11, 12]
 # o pós-processamento e a avaliação da rodada 2 gravam em pastas de nome fixo
-RENOMEIA = {"r2_D_posprocessamento": "r3_D_posprocessamento", "r2_avaliacao_final": "r3_avaliacao_final"}
+RENOMEIA = {"r2-D-posprocessamento": "r3-D-posprocessamento", "r2-avaliacao-final": "r3-avaliacao-final"}
 
 
 # ---------- caminhos, log e commit ----------
 
 def pasta(i):
   i = RENOMEIA.get(i, i)
-  return Path(O3["saida"]) / i if i.startswith("r3_") else EXP1 / i
+  return Path(O3["saida"]) / i if i.startswith("r3-") else EXP1 / i
 
 
 def log(msg):
@@ -344,7 +344,7 @@ def cfg_limpo(c):
 def rodar3(exp_id, cfg, descricao, com_teste=False):
   """q.rodar, mas só reaproveita resultado gravado com a mesma configuração."""
   p = pasta(exp_id) / "config.json"
-  if (pasta(exp_id) / "metricas_validacao.json").exists() and cfg_limpo(r.ler_json(p)) != cfg_limpo(cfg):
+  if (pasta(exp_id) / "metricas-validacao.json").exists() and cfg_limpo(r.ler_json(p)) != cfg_limpo(cfg):
     log(f"{exp_id}: ERRO: há resultado gravado com outra configuração; não reaproveitado nem sobrescrito")
     return None
   return q.rodar(exp_id, cfg, descricao, com_teste=com_teste)
@@ -357,9 +357,9 @@ def gravado_para(caminho_json, chave, modelo):
 
 
 def tabela_pontos():
-  pdir = pasta("r3_tabela_pontos")
-  if (pdir / "tabela_por_ponto.json").exists():
-    return r.ler_json(pdir / "tabela_por_ponto.json")
+  pdir = pasta("r3-tabela-pontos")
+  if (pdir / "tabela-por-ponto.json").exists():
+    return r.ler_json(pdir / "tabela-por-ponto.json")
   import evaluate_temporal as et
   n = 0
   cont = {k: np.zeros(17) for k in ("atual_interp", "atual_bruto", "i1_interp", "i1_ausente", "i1_remove")}
@@ -391,7 +391,7 @@ def tabela_pontos():
                         "i1_ausente": "conf < 0,5 sem quadro confiável a até 0,5 s dos dois lados (0 + marca de ausente)",
                         "i1_remove": "quadro removido por este ponto estar ausente (só 5, 6, 11, 12; um quadro pode ter mais de um)",
                         "denominador": "quadros com pessoa detectada pela YOLO11n, antes da remoção"}}
-  r.gravar_json(pdir / "tabela_por_ponto.json", out)
+  r.gravar_json(pdir / "tabela-por-ponto.json", out)
   f3 = q.f3
   nomes = ["nariz", "olho esq.", "olho dir.", "orelha esq.", "orelha dir.", "ombro esq.", "ombro dir.", "cotovelo esq.",
            "cotovelo dir.", "punho esq.", "punho dir.", "quadril esq.", "quadril dir.", "joelho esq.", "joelho dir.",
@@ -404,12 +404,12 @@ def tabela_pontos():
   linhas += ["", f"Quadros removidos na I1 (algum de 5, 6, 11, 12 ausente): {total_rem} de {n} ({f3(total_rem / n)}); "
              + "; ".join(f"*{c}* {a} de {b} ({f3(a / b)})" for c, (a, b) in por_classe.items()) + ".", "",
              *[f"- {k}: {v}" for k, v in out["definicoes"].items()]]
-  (pdir / "tabela_por_ponto.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+  (pdir / "tabela-por-ponto.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
   return out
 
 
 def relatorio_descarte():
-  pdir = pasta("r3_I3_descarte")
+  pdir = pasta("r3-I3-descarte")
   if (pdir / "descarte.json").exists():
     return r.ler_json(pdir / "descarte.json")
   import evaluate_temporal as et
@@ -451,13 +451,13 @@ def relatorio_descarte():
 
 def tcc_vd():
   import evaluate_temporal as et
-  et.load_config("data/datasets_annotated", "models/oof_seeded_annotated")
+  et.load_config("data/datasets_annotated", "models/oof-seeded-annotated")
   return et.load_all_videos()
 
 
 def comparar_pos(pos, final_dirs, final_cfg):
-  """F1 por evento com e sem o pós-processamento escolhido: modelo final, r2_C4_aumento (3 sementes) e TCC."""
-  p = pasta("r3_avaliacao_final") / "pos_processamento_comparado.json"
+  """F1 por evento com e sem o pós-processamento escolhido: modelo final, r2-C4-aumento (3 sementes) e TCC."""
+  p = pasta("r3-avaliacao-final") / "pos-processamento-comparado.json"
   gravado_para(p, "modelo_final", pos["modelo"])
   if p.exists():
     return r.ler_json(p)
@@ -467,7 +467,7 @@ def comparar_pos(pos, final_dirs, final_cfg):
   for nome, dirs, cfg in (("modelo_final", final_dirs, final_cfg), (REF, REF_SEMENTES, cfg_ref)):
     for s, d in dirs.items():
       vd = r.dados_avaliacao(pasta(d), "teste", cfg if s == 42 else {**cfg, "semente": s})
-      out["modelos"][f"{nome}_semente_{s}"] = {"sem": q.f1_evento_pos(vd, 0, 0), "com": q.f1_evento_pos(vd, g["mediana_s"], g["juncao_s"])}
+      out["modelos"][f"{nome}-semente-{s}"] = {"sem": q.f1_evento_pos(vd, 0, 0), "com": q.f1_evento_pos(vd, g["mediana_s"], g["juncao_s"])}
   vd = tcc_vd()
   out["modelos"]["TCC"] = {"sem": q.f1_evento_pos(vd, 0, 0), "com": q.f1_evento_pos(vd, g["mediana_s"], g["juncao_s"])}
   r.gravar_json(p, out)
@@ -476,29 +476,29 @@ def comparar_pos(pos, final_dirs, final_cfg):
 
 def escrever_resumo(linhas_val, decisao, final=None, tabela=None, descarte=None):
   linhas = ["# Resumo da rodada 3", "",
-            "Protocolo: `protocolo_rodada3.md`. Cada célula: agregado / média ± desvio entre partições (validação). "
+            "Protocolo: `protocolo-rodada3.md`. Cada célula: agregado / média ± desvio entre partições (validação). "
             "Decisão pelo agregado: mantém se melhora ≥ 0,01 em pelo menos 2 das 3 métricas.", "",
             "| variante | mudança | F1 evento IoU 0,3 | acurácia bal. | macro F1 quadros | passa | tempo |", "|---|---|---|---|---|---|---|",
             *linhas_val, "", f"**Decisão:** {decisao}"]
   if tabela:
     t = tabela["quadros_removidos"]
     linhas += ["", f"Quadros removidos na I1 (ombro ou quadril ausente): {t['total']} de {tabela['quadros_com_pessoa']} ({q.f3(t['fracao'])}); "
-               + "; ".join(f"*{c}* {q.f3(x['fracao'])}" for c, x in t["por_classe"].items()) + ". Tabela por ponto: `r3_tabela_pontos/tabela_por_ponto.md`."]
+               + "; ".join(f"*{c}* {q.f3(x['fracao'])}" for c, x in t["por_classe"].items()) + ". Tabela por ponto: `r3-tabela-pontos/tabela-por-ponto.md`."]
   if descarte:
     linhas += ["", "Descarte da I3 (fração dos quadros com pessoa / dos quadros anotados; treino = vídeos de treino das 5 partições, teste = os 56 vídeos):"]
     for c, x in descarte["criterios"].items():
       linhas.append(f"- ({c}) " + "; ".join(f"{parte}: " + ", ".join(f"*{cl}* {q.f3(y['fracao_quadros'])} / {q.f3(y['fracao_anotados'])}" for cl, y in x[parte].items())
                                             for parte in ("treino", "teste")))
-    linhas.append("Detalhes: `r3_I3_descarte/descarte.md`.")
+    linhas.append("Detalhes: `r3-I3-descarte/descarte.md`.")
   if final:
     linhas += ["", *final]
-  (Path(O3["saida"]) / "resumo_rodada3.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+  (Path(O3["saida"]) / "resumo-rodada3.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
 
 
 def bloco_final(final_id, av, comp):
   M4 = q.METRICAS + ["macro_f1_quadro_anotados"]
   cel = lambda t, m: f"{q.f3(t['agregado_56_videos'][m])} / {q.f3(t['media_entre_particoes'][m])} ± {q.f3(t['desvio_entre_particoes'][m])}"
-  ref = r.ler_json(EXP1 / "r2_avaliacao_final" / "avaliacao_final.json")
+  ref = r.ler_json(EXP1 / "r2-avaliacao-final" / "avaliacao-final.json")
   linhas = [f"## Novo modelo final: {final_id}", "", "Teste (56 vídeos), agregado / média ± desvio entre partições; as métricas por quadro não dependem do pós-processamento.", "",
             "| | F1 evento | acurácia bal. | macro F1 quadros | macro F1 anotados |", "|---|---|---|---|---|"]
   for nome, a in ((REF, ref), (final_id, av)):
@@ -522,7 +522,7 @@ def bloco_final(final_id, av, comp):
   linhas.append("Fração da classe do vídeo, dentro / fora (semente 42): " + "; ".join(
     f"*{c}* {q.f3(x['dentro'])} / {q.f3(x['fora'])}" for c, x in s42["sem_ablacao"]["fracao_classe_do_video"].items()) + ".")
   linhas.append("*Head banging* com F1 zero: " + ", ".join(f"{sem[s]['head_banging_f1_zero']['n_zero']} de {sem[s]['head_banging_f1_zero']['n_videos']}" for s in sem)
-                + f". Por classe e matriz de confusão: `r3_avaliacao_final/avaliacao_final.json`; curva de erro: `{final_id}/curva_erro.pdf`.")
+                + f". Por classe e matriz de confusão: `r3-avaliacao-final/avaliacao-final.json`; curva de erro: `{final_id}/curva-erro.pdf`.")
   return linhas
 
 
@@ -559,9 +559,9 @@ def main():
   try:
     autoverificacao()
     tabela = tabela_pontos()
-    commit("experimentos: r3_tabela_pontos", [pasta("r3_tabela_pontos") / "tabela_por_ponto.json", pasta("r3_tabela_pontos") / "tabela_por_ponto.md", Path(__file__)])
+    commit("experimentos: r3-tabela-pontos", [pasta("r3-tabela-pontos") / "tabela-por-ponto.json", pasta("r3-tabela-pontos") / "tabela-por-ponto.md", Path(__file__)])
     descarte = relatorio_descarte()
-    commit("experimentos: r3_I3_descarte", [pasta("r3_I3_descarte") / "descarte.json", pasta("r3_I3_descarte") / "descarte.md", Path(__file__)])
+    commit("experimentos: r3-I3-descarte", [pasta("r3-I3-descarte") / "descarte.json", pasta("r3-I3-descarte") / "descarte.md", Path(__file__)])
 
     cfg_ref = {**q.NOVOS, **cfg_limpo(r.ler_json(pasta(REF) / "config.json"))}
     if args.teste:
@@ -569,11 +569,11 @@ def main():
     met_ref = q.met_val_lidas(REF)
     linhas = [f"| {REF} | referência (rodada 2) | {' | '.join(q.duas(met_ref, m) for m in q.METRICAS)} | -- | -- |"]
     passou = []
-    for exp_id, mud, desc in [("r3_I1_interpolacao_limitada", {"normalizacao": "robusta_limitada", "entrada": "xy_dxdy_marcas"},
+    for exp_id, mud, desc in [("r3-I1-interpolacao-limitada", {"normalizacao": "robusta_limitada", "entrada": "xy_dxdy_marcas"},
                                "interpolação até 0,5 s, ausentes = 0 + marca, sem ombro/quadril = sem pessoa"),
-                              ("r3_I2_limitada_confianca", {"normalizacao": "robusta_limitada", "entrada": "xy_dxdy_marcas_conf"},
+                              ("r3-I2-limitada-confianca", {"normalizacao": "robusta_limitada", "entrada": "xy_dxdy_marcas_conf"},
                                "I1 + confiança de cada ponto")] + [
-        (f"r3_I3_{onde}_{c}", {"normalizacao": "robusta_limitada", "entrada": "xy_dxdy_marcas", "descarte": c, "descarte_em": em},
+        (f"r3-I3-{onde}-{c}", {"normalizacao": "robusta_limitada", "entrada": "xy_dxdy_marcas", "descarte": c, "descarte_em": em},
          f"I3-{onde}, critério ({c}): descarta quadro sem {'os dois ombros e os dois quadris' if c == 'a' else 'um ombro e um quadril'} confiáveis"
          + (" só no treino" if em == "treino" else " no treino, na validação e no teste (não concorre)"))
         for onde, em in (("treino", "treino"), ("teste", "todos")) for c in ("a", "b")]:
@@ -589,12 +589,12 @@ def main():
         if concorre and (ok or args.teste):
           passou.append((soma, exp_id, cfg))
       escrever_resumo(linhas, "em andamento", tabela=tabela, descarte=descarte)
-      commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [Path(O3["saida"]) / "resumo_rodada3.md", Path(__file__)])
+      commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [Path(O3["saida"]) / "resumo-rodada3.md", Path(__file__)])
 
     if not passou:
       escrever_resumo(linhas, f"nenhuma variante (I1, I2, I3-treino a e b) melhora {REF} pelo critério; o modelo final continua {REF}.",
                       tabela=tabela, descarte=descarte)
-      commit("experimentos: resumo da rodada 3", [Path(O3["saida"]) / "resumo_rodada3.md", Path(__file__)])
+      commit("experimentos: resumo da rodada 3", [Path(O3["saida"]) / "resumo-rodada3.md", Path(__file__)])
       log("fim: modelo final continua " + REF)
       return
 
@@ -603,21 +603,21 @@ def main():
     q.testar(final_id, final_cfg)
     dirs = {42: final_id}
     for s in (1000, 2000):
-      exp_id = f"r3_final_semente_{s}"
+      exp_id = f"r3-final-semente-{s}"
       if rodar3(exp_id, {**final_cfg, "semente": s}, f"modelo final, semente {s}", com_teste=True) is not None:
         dirs[s] = exp_id
       commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [Path(__file__)])
-    commit(f"experimentos: teste de {final_id}", [pasta(final_id) / "metricas_teste.json"])
-    gravado_para(pasta("r3_D_posprocessamento") / "posprocessamento.json", "modelo", final_id)
+    commit(f"experimentos: teste de {final_id}", [pasta(final_id) / "metricas-teste.json"])
+    gravado_para(pasta("r3-D-posprocessamento") / "posprocessamento.json", "modelo", final_id)
     pos = q.posprocessamento(final_id, final_cfg)
-    commit("experimentos: r3_D_posprocessamento", [pasta("r3_D_posprocessamento") / "posprocessamento.json"])
-    gravado_para(pasta("r3_avaliacao_final") / "avaliacao_final.json", "modelo_final", final_id)
+    commit("experimentos: r3-D-posprocessamento", [pasta("r3-D-posprocessamento") / "posprocessamento.json"])
+    gravado_para(pasta("r3-avaliacao-final") / "avaliacao-final.json", "modelo_final", final_id)
     av = q.avaliacao_final(final_id, final_cfg, pos, dirs)
     comp = comparar_pos(pos, dirs, final_cfg)
     escrever_resumo(linhas, f"{final_id} melhora {REF} pelo critério e passa a ser o modelo final.", bloco_final(final_id, av, comp), tabela, descarte)
-    commit("experimentos: r3_avaliacao_final e resumo", [pasta("r3_avaliacao_final") / "avaliacao_final.json",
-                                                         pasta("r3_avaliacao_final") / "pos_processamento_comparado.json",
-                                                         Path(O3["saida"]) / "resumo_rodada3.md", Path(__file__)])
+    commit("experimentos: r3-avaliacao-final e resumo", [pasta("r3-avaliacao-final") / "avaliacao-final.json",
+                                                         pasta("r3-avaliacao-final") / "pos-processamento-comparado.json",
+                                                         Path(O3["saida"]) / "resumo-rodada3.md", Path(__file__)])
     log("fim")
   except Exception:
     log("ERRO GERAL:\n" + traceback.format_exc())

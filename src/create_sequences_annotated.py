@@ -32,7 +32,7 @@
 #     regra de borda e a contagem final por classe, no total e por
 #     vídeo (o cruzamento com o fold de cada vídeo, para o relatório
 #     por fold, é feito por train_oof_seeded.py na hora do treino,
-#     usando models/oof/fold_assignments.json)
+#     usando models/oof/fold-assignments.json)
 # ============================================================
 
 import json

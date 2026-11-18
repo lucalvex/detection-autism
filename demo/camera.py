@@ -31,7 +31,7 @@ sys.path[:0] = [str(RAIZ / "experimentos"), str(RAIZ / "src")]
 BUFFER_S = 8.0  # o dobro da janela; a interpolação ao vivo só vê este passado
 MODELO_POSE = RAIZ / "models" / "yolo11n-pose.pt"
 MODELO = RAIZ / "models" / "final_completo.pt"
-REGISTRO = RAIZ / "experimentos" / "modelo_final_completo.json"
+REGISTRO = RAIZ / "experimentos" / "modelo-final-completo.json"
 
 
 def preparar(quadros, xy, conf, fps):

@@ -5,7 +5,7 @@
 # modelo com rótulos por intervalo descrita em experimentos/protocolo.md:
 # passo 0 (análise dos pontos ausentes), etapas 1 a 8, estabilidade
 # entre sementes e o experimento separado de 3 classes. Retomável: pula
-# todo experimento que já tem metricas_validacao.json. Erro num
+# todo experimento que já tem metricas-validacao.json. Erro num
 # experimento vai para experimentos/<id>/erro.txt e o script segue.
 # Commit (sem push) do código e dos resultados ao fim de cada
 # experimento; modelos, vídeos e dados de pose nunca são versionados.
@@ -36,7 +36,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 os.chdir(RAIZ)  # evaluate_temporal.py usa caminhos relativos à raiz
 sys.path.insert(0, str(RAIZ / "src"))
 
-PARTICOES = json.loads((RAIZ / "models/oof/fold_assignments.json").read_text(encoding="utf-8"))["video_to_fold"]
+PARTICOES = json.loads((RAIZ / "models/oof/fold-assignments.json").read_text(encoding="utf-8"))["video_to_fold"]
 CLASSES = ["ArmFlapping", "HeadBanging", "Spinning", "Background"]
 LIMIAR_CONF = 0.5
 LIMITE_NORM = 4.0          # alturas de tronco (etapa 3)
@@ -53,16 +53,16 @@ BASE = {
   "max_epocas": 500, "paciencia": 20, "rotulos": "intervalos_4_classes", "subamostrar_fundo": True, "semente": SEMENTE,
 }
 ETAPAS = [
-  ("01_ponto_de_partida", {}, "configuração atual do modelo com rótulos por intervalo"),
-  ("02_yolo11m", {"pose": "yolo11m"}, "pose com YOLO11m-Pose"),
-  ("03_normalizacao_robusta", {"normalizacao": "robusta"}, "escala pelo tronco, confiança < 0,5 interpolada, limite ±4"),
-  ("04_interpolacao_suavizacao", {"interp_lacuna_s": MAX_LACUNA_S, "suavizacao_s": 0.2}, "lacunas até 0,5 s interpoladas, média móvel de 0,2 s"),
-  ("05_15fps_janela_1s", {"fps_alvo": 15, "janela": 15}, "15 quadros/s, janela de 1 s"),
-  ("06_15fps_janela_2s", {"fps_alvo": 15, "janela": 30}, "15 quadros/s, janela de 2 s"),
-  ("07_sem_sobreposicao", {"passo_treino": "janela"}, "janelas sem sobreposição no treino"),
+  ("01-ponto-de-partida", {}, "configuração atual do modelo com rótulos por intervalo"),
+  ("02-yolo11m", {"pose": "yolo11m"}, "pose com YOLO11m-Pose"),
+  ("03-normalizacao-robusta", {"normalizacao": "robusta"}, "escala pelo tronco, confiança < 0,5 interpolada, limite ±4"),
+  ("04-interpolacao-suavizacao", {"interp_lacuna_s": MAX_LACUNA_S, "suavizacao_s": 0.2}, "lacunas até 0,5 s interpoladas, média móvel de 0,2 s"),
+  ("05-15fps-janela-1s", {"fps_alvo": 15, "janela": 15}, "15 quadros/s, janela de 1 s"),
+  ("06-15fps-janela-2s", {"fps_alvo": 15, "janela": 30}, "15 quadros/s, janela de 2 s"),
+  ("07-sem-sobreposicao", {"passo_treino": "janela"}, "janelas sem sobreposição no treino"),
 ]
-ETAPA_LR = [("08a_lr_0.0003", {"lr": 0.0003}, "taxa de aprendizado 0,0003"),
-            ("08b_lr_0.003", {"lr": 0.003}, "taxa de aprendizado 0,003")]
+ETAPA_LR = [("08a-lr-0.0003", {"lr": 0.0003}, "taxa de aprendizado 0,0003"),
+            ("08b-lr-0.003", {"lr": 0.003}, "taxa de aprendizado 0,003")]
 
 # preenchidos em main()
 OPC = {}
@@ -115,7 +115,7 @@ def particoes():
 # ---------- divisão de validação ----------
 
 def divisao_validacao():
-  p = caminho("divisao_validacao.json")
+  p = caminho("divisao-validacao.json")
   if p.exists():
     return {int(k): v for k, v in ler_json(p)["validacao_por_particao"].items()}
   div = {}
@@ -609,7 +609,7 @@ def curva_erro(exp_dir, info):
     ax.spines[lado].set_visible(False)
   ax.legend(frameon=False, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2)
   fig.tight_layout()
-  fig.savefig(exp_dir / "curva_erro.pdf")
+  fig.savefig(exp_dir / "curva-erro.pdf")
   plt.close(fig)
 
 
@@ -622,14 +622,14 @@ def gravar_perdas(exp_dir, info):
 
 
 def arquivos_do_experimento(exp_dir):
-  return [exp_dir / n for n in ("config.json", "seeds.json", "metricas_validacao.json", "metricas_teste.json", "perdas.csv",
-                                "curva_erro.pdf", "comparacao_pose.json", "erro.txt")]
+  return [exp_dir / n for n in ("config.json", "seeds.json", "metricas-validacao.json", "metricas-teste.json", "perdas.csv",
+                                "curva-erro.pdf", "comparacao-pose.json", "erro.txt")]
 
 
 def rodar_experimento(exp_id, cfg, com_teste, descricao):
   """Treina (ou retoma) o experimento e devolve as métricas de validação, ou None se falhar."""
   exp_dir = caminho(exp_id)
-  feito = exp_dir / "metricas_validacao.json"
+  feito = exp_dir / "metricas-validacao.json"
   if feito.exists():
     return ler_json(feito)
   exp_dir.mkdir(parents=True, exist_ok=True)
@@ -642,7 +642,7 @@ def rodar_experimento(exp_id, cfg, com_teste, descricao):
     "ordem_dos_lotes_por_particao": {k: s + k for k in particoes()},
     "subamostragem_fundo_treino_por_particao": {k: s + k for k in particoes()},
     "subamostragem_fundo_validacao_por_particao": {k: s + k + 1000 for k in particoes()},
-    "divisao_validacao": "divisao_validacao.json (semente 42 + partição, a mesma em todos os experimentos)"})
+    "divisao_validacao": "divisao-validacao.json (semente 42 + partição, a mesma em todos os experimentos)"})
   t0 = time.time()
   try:
     div = divisao_validacao()
@@ -663,7 +663,7 @@ def rodar_experimento(exp_id, cfg, com_teste, descricao):
       import evaluate_temporal as et
       met["macro_f1_quadro_anotados_validacao"] = et.frame_level_report(vd, ids, True)["macro_f1_sem_background"]
     if com_teste:
-      gravar_json(exp_dir / "metricas_teste.json", metricas_teste(dados_avaliacao(exp_dir, "teste", cfg)))
+      gravar_json(exp_dir / "metricas-teste.json", metricas_teste(dados_avaliacao(exp_dir, "teste", cfg)))
     gravar_perdas(exp_dir, info)
     curva_erro(exp_dir, info)
     # partições em paralelo: tempo = a partição mais lenta + a avaliação
@@ -685,15 +685,15 @@ def fechar(exp_id):
 def testar_depois(exp_id, cfg):
   """Teste de um experimento já treinado sem teste (o modelo final)."""
   exp_dir = caminho(exp_id)
-  if (exp_dir / "metricas_teste.json").exists():
+  if (exp_dir / "metricas-teste.json").exists():
     return
   log(f"{exp_id}: teste do modelo final")
   with mp.get_context("spawn").Pool(len(particoes())) as pool:
     erros = [e for _, e in pool.map(avaliar_teste_particao, [(str(exp_dir), cfg, k, dict(OPC)) for k in particoes()]) if e]
   if erros:
     raise RuntimeError("\n\n".join(erros))
-  gravar_json(exp_dir / "metricas_teste.json", metricas_teste(dados_avaliacao(exp_dir, "teste", cfg)))
-  commit(f"experimentos: teste de {exp_id}", [exp_dir / "metricas_teste.json"])
+  gravar_json(exp_dir / "metricas-teste.json", metricas_teste(dados_avaliacao(exp_dir, "teste", cfg)))
+  commit(f"experimentos: teste de {exp_id}", [exp_dir / "metricas-teste.json"])
 
 
 def supera(cand, melhor):
@@ -704,7 +704,7 @@ def supera(cand, melhor):
 # ---------- passo 0 ----------
 
 def passo0():
-  pasta = caminho("00_analise_pontos")
+  pasta = caminho("00-analise-pontos")
   if (pasta / "decisao.json").exists():
     return ler_json(pasta / "decisao.json")
   log("passo 0: análise dos pontos ausentes")
@@ -801,7 +801,7 @@ def passo0():
 
 
 def comparar_poses():
-  p = caminho("02_yolo11m", "comparacao_pose.json")
+  p = caminho("02-yolo11m", "comparacao-pose.json")
   if p.exists():
     return
   out = {}
@@ -960,12 +960,12 @@ def main():
     execucoes = [(melhor_id, melhor_cfg)]
     for s in SEMENTES_EXTRAS:
       cfg = {**melhor_cfg, "semente": s}
-      exp_id = f"09_final_semente_{s}"
+      exp_id = f"09-final-semente-{s}"
       if rodar_experimento(exp_id, cfg, True, f"modelo final, semente {s}") is not None:
         execucoes.append((exp_id, cfg))
       fechar(exp_id)
     estab = {}
-    for parte, arq in (("validacao", "metricas_validacao.json"), ("teste", "metricas_teste.json")):
+    for parte, arq in (("validacao", "metricas-validacao.json"), ("teste", "metricas-teste.json")):
       vals = [ler_json(caminho(e, arq)) for e, _ in execucoes]
       vals = [v["agregado_validacao"] if parte == "validacao" else v["agregado_56_videos"] for v in vals]
       estab[parte] = {m: {"media": float(np.mean([v[m] for v in vals])), "desvio": float(np.std([v[m] for v in vals]))} for m in METRICAS}
@@ -973,12 +973,12 @@ def main():
     gravar_json(caminho("estabilidade.json"), estab)
 
     cfg3 = {**melhor_cfg, "rotulos": "anotados_3_classes", "subamostrar_fundo": False}
-    met3 = rodar_experimento("10_anotados_3_classes", cfg3, True, "modelo final só com janelas anotadas, 3 classes, sem fundo")
-    fechar("10_anotados_3_classes")
+    met3 = rodar_experimento("10-anotados-3-classes", cfg3, True, "modelo final só com janelas anotadas, 3 classes, sem fundo")
+    fechar("10-anotados-3-classes")
     anot = None
     if met3 is not None:
-      t3 = ler_json(caminho("10_anotados_3_classes", "metricas_teste.json"))
-      tcc = ler_json(RAIZ / "data/results/analises_posteriores.json")["analise_4_ablacoes_de_inferencia"]["ablacoes"]["shuffle"][
+      t3 = ler_json(caminho("10-anotados-3-classes", "metricas-teste.json"))
+      tcc = ler_json(RAIZ / "data/results/analises-posteriores.json")["analise_4_ablacoes_de_inferencia"]["ablacoes"]["shuffle"][
         "macro_f1_quadro_anotados_media_entre_folds"]["rodada_a_forcado_3_classes"]["sem_ablacao"]
       v3 = lambda x: f"{x:.3f}".replace(".", ",")
       anot = (f"Só janelas anotadas, 3 classes (teste): macro F1 por quadro nos quadros anotados "
@@ -986,16 +986,16 @@ def main():
               f"{v3(t3['agregado_56_videos']['macro_f1_quadro_anotados'])} (agregado), contra {v3(tcc)} no TCC "
               "(média entre partições, predição restrita às 3 classes).")
 
-    tcc_a = ler_json(RAIZ / "data/results/comparacao_rodada_a/metricas.json")
-    bal_tcc = ler_json(RAIZ / "data/results/analises_posteriores.json")["analise_3_binario_estereotipia_vs_fundo"][
+    tcc_a = ler_json(RAIZ / "data/results/comparacao-rodada-a/metricas.json")
+    bal_tcc = ler_json(RAIZ / "data/results/analises-posteriores.json")["analise_3_binario_estereotipia_vs_fundo"][
       "acuracia_balanceada_e_referencia"]["rodada_a"]["acuracia_balanceada_pooled_56_videos"]
     tcc_teste = {"f1_evento_iou_0.3": tcc_a["por_evento"]["regra_principal"]["por_iou"]["0.3"]["pooled_56_videos"]["macro_f1"],
                  "acuracia_balanceada_presenca": bal_tcc,
                  "macro_f1_quadro_todos": tcc_a["por_quadro"]["todos_os_quadros"]["pooled_56_videos"]["macro_f1_com_background"],
                  "macro_f1_quadro_anotados": tcc_a["por_quadro"]["somente_quadros_anotados"]["pooled_56_videos"]["macro_f1_sem_background"]}
     testes = [("TCC, rótulos por intervalo", tcc_teste),
-              ("ponto de partida", ler_json(caminho("01_ponto_de_partida", "metricas_teste.json"))["agregado_56_videos"]),
-              (f"modelo final ({melhor_id})", ler_json(caminho(melhor_id, "metricas_teste.json"))["agregado_56_videos"])]
+              ("ponto de partida", ler_json(caminho("01-ponto-de-partida", "metricas-teste.json"))["agregado_56_videos"]),
+              (f"modelo final ({melhor_id})", ler_json(caminho(melhor_id, "metricas-teste.json"))["agregado_56_videos"])]
     nao = [f"{h['id']}: {h['situacao']}" for h in hist if h["situacao"].startswith(("não rodou", "erro"))]
     escrever_resumo(hist, {"cfg": melhor_cfg, "testes": testes, "estabilidade": estab, "anotados": anot, "nao_rodou": nao})
     commit("experimentos: resumo final", [caminho("resumo.md"), caminho("estabilidade.json"), Path(__file__)])

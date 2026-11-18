@@ -67,7 +67,7 @@ def janelas_sinteticas():
 def montar_casos():
   videos = []
 
-  et.load_config("data/datasets_annotated", "models/oof_seeded_annotated")
+  et.load_config("data/datasets_annotated", "models/oof-seeded-annotated")
   dados = et.load_all_videos()
   for vid in sorted(dados):
     videos.append({
@@ -134,7 +134,7 @@ def test_js_igual_ao_python():
     dados = json.load(open(entrada, encoding="utf-8"))
 
     subprocess.run(
-      ["node", str(RAIZ / "tests" / "js" / "segmentos_js.mjs"), str(entrada), str(saida)],
+      ["node", str(RAIZ / "tests" / "js" / "segmentos-js.mjs"), str(entrada), str(saida)],
       check=True,
     )
     resultados_js = json.load(open(saida, encoding="utf-8"))

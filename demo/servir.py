@@ -4,9 +4,8 @@
 # O QUE FAZ: servidor local da interface de demonstração, só em
 # 127.0.0.1. Entrega apenas:
 #   - os arquivos da interface (demo/);
-#   - os JSON de sessão exportados (saidas/*_sessao.json e
-#     saidas/*_pontos.json);
-#   - os JSON de resultado listados em RESULTADOS.
+#   - os JSON exportados por src/exportar_sessoes_final.py
+#     (saidas/final/).
 # Qualquer outro caminho responde 404 -- em particular, nenhum vídeo
 # nem CSV de pose do projeto pode ser pedido pelo navegador. O vídeo
 # é aberto pelo usuário com o seletor de arquivo da página e fica só
@@ -49,21 +48,11 @@ def camera():
       _camera = Camera()
   return _camera
 
-RESULTADOS = {
-  "/data/results/metricas.json",
-  "/data/results/comparacao_rodada_a/metricas.json",
-  "/data/results/comparacao_base_reseeded/metricas.json",
-  "/data/results/analises_posteriores.json",
-  "/data/results/videos_desempenho_mediano.json",
-  "/data/results/comparacao_final.json",
-  "/data/results/resumo_dados.json",
-}
-
 PERMITIDOS = [
   re.compile(r"^/demo/[A-Za-z0-9_\-/]+\.(html|css|js|json)$"),
   # elementos visuais da interface, como a logo; nunca quadros de vídeo
   re.compile(r"^/demo/assets/[A-Za-z0-9_\-]+\.(png|svg)$"),
-  re.compile(r"^/saidas/(final/)?v_[A-Za-z0-9_]+_(sessao|pontos)\.json$"),
+  re.compile(r"^/saidas/final/v_[A-Za-z0-9_]+_(sessao|pontos)\.json$"),
   re.compile(r"^/saidas/final/indice\.json$"),
 ]
 
@@ -71,8 +60,6 @@ PERMITIDOS = [
 def permitido(caminho):
   if ".." in caminho or caminho.startswith("/demo/servir"):
     return False
-  if caminho in RESULTADOS:
-    return True
   return any(p.match(caminho) for p in PERMITIDOS)
 
 

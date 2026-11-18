@@ -1,13 +1,13 @@
 # ============================================================
 # ARQUIVO: experimentos/rodar_rodada4b.py
 #
-# O QUE FAZ: rodada 4b (experimentos/protocolo_rodada4b.md):
-#   A. teste do r2_C4_aumento e do TCC nos quadros válidos por Q, com e
+# O QUE FAZ: rodada 4b (experimentos/protocolo-rodada4b.md):
+#   A. teste do r2-C4-aumento e do TCC nos quadros válidos por Q, com e
 #      sem os 5 vídeos problemáticos (sem treino);
 #   B. frequência dominante dos movimentos dentro dos intervalos anotados,
 #      com janelas de 8 s (sem treino);
 #   C. C1 (janela de 4 s), C2 (P2 com janela de 4 s) e C3 (treino sem os
-#      5 vídeos problemáticos), cada uma contra o r2_C4_aumento, com o
+#      5 vídeos problemáticos), cada uma contra o r2-C4-aumento, com o
 #      protocolo da rodada 4; avaliação final completa se alguma passar.
 # Reaproveita rodar_rodada4.py e anteriores (importados, não alterados).
 # Retomável; um commit por etapa; commit que falha não deixa nada no índice.
@@ -36,12 +36,12 @@ rq, t3, r, q = r4.rq, r4.t3, r4.r, r4.q
 EXP1, REF, REF_SEMENTES, METRICAS = r4.EXP1, r4.REF, r4.REF_SEMENTES, r4.METRICAS
 PROBLEMATICOS = ["v_ArmFlapping_03", "v_HeadBanging_24", "v_Spinning_09", "v_Spinning_12", "v_Spinning_16"]
 FS = 15
-RENOMEIA = {"r4_avaliacao_final": "r4b_avaliacao_final"}
+RENOMEIA = {"r4-avaliacao-final": "r4b-avaliacao-final"}
 
 
 def pasta(i):
   i = RENOMEIA.get(i, i)
-  return Path(t3.O3["saida"]) / i if i.startswith("r4b_") else EXP1 / i
+  return Path(t3.O3["saida"]) / i if i.startswith("r4b-") else EXP1 / i
 
 
 def log(msg):
@@ -74,10 +74,10 @@ q.treinar_lstm = treinar_lstm
 # ---------- A ----------
 
 def parte_a(cfg_ref, ref_teste, tcc):
-  p = pasta("r4b_A_problematicos") / "resultado.json"
+  p = pasta("r4b-A-problematicos") / "resultado.json"
   if p.exists():
     return r.ler_json(p)
-  pos = r.ler_json(EXP1 / "r3_q_resultados.json")["final"]["pos_processamento"]
+  pos = r.ler_json(EXP1 / "r3-q-resultados.json")["final"]["pos_processamento"]
   g = pos["grade"][pos["escolhido"]]
   comum = rq.conjunto_comum(tcc, ref_teste[42])
   sem = {k: v for k, v in comum.items() if k.split("|")[-1] not in PROBLEMATICOS}
@@ -119,7 +119,7 @@ def dominante(W):
 
 
 def parte_b(cfg_ref):
-  p = pasta("r4b_B_frequencia") / "frequencia.json"
+  p = pasta("r4b-B-frequencia") / "frequencia.json"
   if p.exists():
     return r.ler_json(p)
   import evaluate_temporal as et
@@ -194,18 +194,18 @@ def main():
     ref_teste = {s: usa(rq.dados(EXP1 / d, "teste", cfg_ref if s == 42 else {**cfg_ref, "semente": s})) for s, d in REF_SEMENTES.items()}
     tcc = rq.tcc_vd()
     a = parte_a(cfg_ref, ref_teste, tcc)
-    commit("experimentos: r4b_A_problematicos", [pasta("r4b_A_problematicos") / "resultado.json", Path(__file__)])
+    commit("experimentos: r4b-A-problematicos", [pasta("r4b-A-problematicos") / "resultado.json", Path(__file__)])
     b = parte_b(cfg_ref)
-    commit("experimentos: r4b_B_frequencia", [pasta("r4b_B_frequencia") / "frequencia.json", Path(__file__)])
+    commit("experimentos: r4b-B-frequencia", [pasta("r4b-B-frequencia") / "frequencia.json", Path(__file__)])
     escrever_resumo(a, b, [], None)
 
     ref_val = usa(rq.dados(EXP1 / REF, "validacao", cfg_ref))
     ref_cong = r4.vd_congelado(EXP1 / REF, cfg_ref, "validacao")
     hist, passou, alternativas = [], [], []
-    variantes = [("r4b_C1_janela_4s", {"janela": 60}, "C1: janela de 4 s"),
-                 ("r4b_C2_periodicidade_4s", {"janela": 60, "arquitetura": "p4", "trajetoria": False, "concat_postura": False,
+    variantes = [("r4b-C1-janela-4s", {"janela": 60}, "C1: janela de 4 s"),
+                 ("r4b-C2-periodicidade-4s", {"janela": 60, "arquitetura": "p4", "trajetoria": False, "concat_postura": False,
                                               "concat_periodicidade": True}, "C2: P2 (periodicidade) com janela de 4 s"),
-                 ("r4b_C3_sem_problematicos", {"excluir_treino": PROBLEMATICOS}, "C3: janela de 2 s, treino sem os 5 vídeos problemáticos")]
+                 ("r4b-C3-sem-problematicos", {"excluir_treino": PROBLEMATICOS}, "C3: janela de 2 s, treino sem os 5 vídeos problemáticos")]
     for exp_id, mud, desc in variantes:
       cfg = {**cfg_ref, **mud}
       if args.teste:
@@ -232,7 +232,7 @@ def main():
         log(f"{exp_id}: {hist[-1]['n']} quadros, passa={ok}, alternativa={alt}, dependência {dep['dependencia']:.3f} (ref {dep_ref['dependencia']:.3f}) | "
             + " ".join(f"{x}: {m['agregado_validacao'][x]:.3f} vs {m_ref['agregado_validacao'][x]:.3f}" for x in METRICAS))
       escrever_resumo(a, b, hist, None)
-      commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [pasta(exp_id) / "rodada4b.json", saida / "resumo_rodada4b.md", Path(__file__)])
+      commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [pasta(exp_id) / "rodada4b.json", saida / "resumo-rodada4b.md", Path(__file__)])
 
     alvo = max(passou, key=lambda x: x[0]) if passou else (max(alternativas, key=lambda x: x[0]) if alternativas else None)
     papel = "variante que passou" if passou else ("alternativa" if alternativas else None)
@@ -241,10 +241,10 @@ def main():
     final_txt = None
     if alvo:
       fin = r4.avaliacao_final(alvo[1], alvo[2], papel, cfg_ref, ref_teste, args)
-      final_txt = [l.replace("r4_avaliacao_final", "r4b_avaliacao_final") for l in r4.texto_final(fin)]
-      commit("experimentos: r4b_avaliacao_final", [pasta("r4b_avaliacao_final") / "avaliacao_final.json", Path(__file__)])
+      final_txt = [l.replace("r4-avaliacao-final", "r4b-avaliacao-final") for l in r4.texto_final(fin)]
+      commit("experimentos: r4b-avaliacao-final", [pasta("r4b-avaliacao-final") / "avaliacao-final.json", Path(__file__)])
     escrever_resumo(a, b, hist, final_txt)
-    commit("experimentos: resumo da rodada 4b", [saida / "resumo_rodada4b.md", Path(__file__)])
+    commit("experimentos: resumo da rodada 4b", [saida / "resumo-rodada4b.md", Path(__file__)])
     log("fim")
   except Exception:
     log("ERRO GERAL:\n" + traceback.format_exc())
@@ -258,7 +258,7 @@ def escrever_resumo(a, b, hist, final_txt):
   M4 = METRICAS + ["macro_f1_quadro_anotados"]
   med = lambda ts, x, conv: f"{f3(np.mean([t[conv][x] for t in ts]))} ± {f3(np.std([t[conv][x] for t in ts]))}"
   cel_t = lambda t, x: f"{f3(t['agregado_56_videos'][x])} / {f3(t['media_entre_particoes'][x])}"
-  linhas = ["# Resumo da rodada 4b", "", "Protocolo: `protocolo_rodada4b.md`. Quadros válidos por Q; agregado / média entre partições.", "",
+  linhas = ["# Resumo da rodada 4b", "", "Protocolo: `protocolo-rodada4b.md`. Quadros válidos por Q; agregado / média entre partições.", "",
             f"## A. Sem os 5 vídeos problemáticos ({', '.join(v.replace('v_', '') for v in PROBLEMATICOS)}), teste",
             f"Saem {a['todos']['n_quadros'] - a['sem_problematicos']['n_quadros']} de {a['todos']['n_quadros']} quadros e "
             f"{a['todos']['n_episodios'] - a['sem_problematicos']['n_episodios']} de {a['todos']['n_episodios']} episódios do gabarito ("
@@ -287,7 +287,7 @@ def escrever_resumo(a, b, hist, final_txt):
                   f"[{f3(sp['rotacao_hz']['p10'])}; {f3(sp['rotacao_hz']['p90'])}], {f3(sp['ciclos_de_rotacao_em_2s']['mediana'])} voltas em 2 s e "
                   f"{f3(sp['ciclos_de_rotacao_em_4s']['mediana'])} em 4 s (medianas).")
   if hist:
-    linhas += ["", "## C. Variantes contra o `r2_C4_aumento` (validação nos mesmos quadros válidos por Q)", "",
+    linhas += ["", "## C. Variantes contra o `r2-C4-aumento` (validação nos mesmos quadros válidos por Q)", "",
                "| variante | quadros | F1 evento | acurácia bal. | macro F1 quadros | dependência (AF / HB / SP) | situação | tempo |", "|---|---|---|---|---|---|---|---|"]
     for h in hist:
       if "met" not in h:
@@ -297,12 +297,12 @@ def escrever_resumo(a, b, hist, final_txt):
       d, dr = h["dep"], h["dep_ref"]
       linhas.append(f"| {h['descricao']} | {h['n']} | {' | '.join(cel(x) for x in METRICAS)} | {f3(d['dependencia'])} vs {f3(dr['dependencia'])} "
                     f"({' / '.join(f3(d['dependencia_por_classe'][c]) for c in r4.CLASSES3)}) | {h['situacao']} | {h['tempo']} |")
-    linhas.append("Cada célula: variante vs `r2_C4_aumento` nos mesmos quadros (agregado).")
+    linhas.append("Cada célula: variante vs `r2-C4-aumento` nos mesmos quadros (agregado).")
   if final_txt:
     linhas += ["", *final_txt]
   elif hist and len(hist) == 3:
-    linhas += ["", "Nenhuma variante passou no critério nem se qualificou como alternativa; o modelo final continua `r2_C4_aumento`."]
-  (Path(t3.O3["saida"]) / "resumo_rodada4b.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+    linhas += ["", "Nenhuma variante passou no critério nem se qualificou como alternativa; o modelo final continua `r2-C4-aumento`."]
+  (Path(t3.O3["saida"]) / "resumo-rodada4b.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

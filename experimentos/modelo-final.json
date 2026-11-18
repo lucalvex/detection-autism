@@ -1,0 +1,39 @@
+{
+  "modelo_final": "r4b-C1-janela-4s",
+  "desde": "2026-10-25",
+  "substitui": "r2-C4-aumento",
+  "sementes": {
+    "42": "r4b-C1-janela-4s",
+    "1000": "r4b-C1-janela-4s-semente-1000",
+    "2000": "r4b-C1-janela-4s-semente-2000"
+  },
+  "configuracao": {
+    "modelo": "lstm",
+    "entrada": "xy_dxdy",
+    "dropout": 0.0,
+    "peso_l2": 0.0,
+    "aumento": true,
+    "pose": "yolo11n",
+    "normalizacao": "robusta",
+    "interp_lacuna_s": 0.0,
+    "suavizacao_s": 0.0,
+    "fps_alvo": 15,
+    "janela": 60,
+    "passo_treino": 1,
+    "lr": 0.001,
+    "lote": 32,
+    "oculto": 128,
+    "camadas": 2,
+    "max_epocas": 500,
+    "paciencia": 20,
+    "rotulos": "intervalos_4_classes",
+    "subamostrar_fundo": true,
+    "semente": 42
+  },
+  "pos_processamento": {
+    "mediana_s": 2.0,
+    "juncao_s": 1.0
+  },
+  "avaliacao": "quadros válidos pelo critério Q; ver modelo-final.md e r4b-avaliacao-final/avaliacao-final.json",
+  "motivo": "passou no critério da validação (F1 evento +0,011, macro F1 quadros +0,026, acurácia bal. -0,011) e o teste confirmou nos eventos (F1 com pós 0,272 contra 0,219)"
+}

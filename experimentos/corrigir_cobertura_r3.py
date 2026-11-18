@@ -2,11 +2,11 @@
 # ARQUIVO: experimentos/corrigir_cobertura_r3.py
 #
 # O QUE FAZ: corrige a comparação da rodada 3 (adendo "cobertura total"
-# em protocolo_rodada3.md), sem treinar nada. Os modelos já treinados de
+# em protocolo-rodada3.md), sem treinar nada. Os modelos já treinados de
 # I1, I2, I3-treino (a) e (b) geram predições em todos os quadros que o
-# r2_C4_aumento avalia: nos quadros em que ombros ou quadris não podem ser
+# r2-C4-aumento avalia: nos quadros em que ombros ou quadris não podem ser
 # recuperados em 0,5 s, centro e escala vêm da normalização do
-# r2_C4_aumento e esses pontos ficam marcados como ausentes. Confere que
+# r2-C4-aumento e esses pontos ficam marcados como ausentes. Confere que
 # os quadros avaliados são exatamente os mesmos, refaz a decisão na
 # validação e, se alguma variante passar, refaz a avaliação de teste.
 # Retomável: pula o que já foi gravado para o mesmo modelo.
@@ -32,15 +32,15 @@ import rodar_rodada3 as t3  # noqa: E402  (aplica as substituições das rodadas
 
 r, q = t3.r, t3.q
 REF = t3.REF
-VARIANTES = ["r3_I1_interpolacao_limitada", "r3_I2_limitada_confianca", "r3_I3_treino_a", "r3_I3_treino_b"]
-SEMENTES_I3B = {1000: "r3_final_semente_1000", 2000: "r3_final_semente_2000"}
-t3.RENOMEIA.update({"r2_D_posprocessamento": "r3_cobertura_posprocessamento", "r2_avaliacao_final": "r3_cobertura_avaliacao_final"})
+VARIANTES = ["r3-I1-interpolacao-limitada", "r3-I2-limitada-confianca", "r3-I3-treino-a", "r3-I3-treino-b"]
+SEMENTES_I3B = {1000: "r3-final-semente-1000", 2000: "r3-final-semente-2000"}
+t3.RENOMEIA.update({"r2-D-posprocessamento": "r3-cobertura-posprocessamento", "r2-avaliacao-final": "r3-cobertura-avaliacao-final"})
 _preparar_r3 = r.preparar_video
 
 
 def preparar_video(vid, cfg):
   """Cobertura total: todos os quadros com pessoa; ombros e quadris não recuperáveis em 0,5 s
-  usam a normalização do r2_C4_aumento (interpolação sem limite) e ficam ausentes."""
+  usam a normalização do r2-C4-aumento (interpolação sem limite) e ficam ausentes."""
   if not cfg.get("cobertura_total"):
     return _preparar_r3(vid, cfg)
   import evaluate_temporal as et
@@ -133,7 +133,7 @@ def conferir_mesmos_quadros(exp_id, parte):
 
 
 def subconjunto_ref(var_original):
-  """Só informação: o r2_C4_aumento avaliado nos quadros que a I1 manteve (validação)."""
+  """Só informação: o r2-C4-aumento avaliado nos quadros que a I1 manteve (validação)."""
   mantidos = quadros_avaliados(t3.pasta(var_original), "validacao")
   vd = r.dados_avaliacao(t3.pasta(REF), "validacao", t3.cfg_limpo(r.ler_json(t3.pasta(REF) / "config.json")))
   for chave, x in vd.items():
@@ -145,7 +145,7 @@ def subconjunto_ref(var_original):
 
 
 def comparar_pos(pos, dirs, cfg):
-  p = t3.pasta("r3_cobertura_avaliacao_final") / "pos_processamento_comparado.json"
+  p = t3.pasta("r3-cobertura-avaliacao-final") / "pos-processamento-comparado.json"
   t3.gravado_para(p, "modelo_final", pos["modelo"])
   if p.exists():
     return r.ler_json(p)
@@ -155,7 +155,7 @@ def comparar_pos(pos, dirs, cfg):
   for nome, ds, c in (("modelo_final", dirs, cfg), (REF, t3.REF_SEMENTES, cfg_ref)):
     for s, d in ds.items():
       vd = r.dados_avaliacao(t3.pasta(d), "teste", c if s == 42 else {**c, "semente": s})
-      out["modelos"][f"{nome}_semente_{s}"] = {"sem": q.f1_evento_pos(vd, 0, 0), "com": q.f1_evento_pos(vd, g["mediana_s"], g["juncao_s"])}
+      out["modelos"][f"{nome}-semente-{s}"] = {"sem": q.f1_evento_pos(vd, 0, 0), "com": q.f1_evento_pos(vd, g["mediana_s"], g["juncao_s"])}
   vd = t3.tcc_vd()
   out["modelos"]["TCC"] = {"sem": q.f1_evento_pos(vd, 0, 0), "com": q.f1_evento_pos(vd, g["mediana_s"], g["juncao_s"])}
   r.gravar_json(p, out)
@@ -170,16 +170,16 @@ def main():
   decisao = {"referencia": REF, "metricas_referencia": met_ref["agregado_validacao"], "variantes": {}}
   passou = []
   for exp_id in VARIANTES:
-    destino_id = f"r3_cobertura_{exp_id[3:]}"
+    destino_id = f"r3-cobertura-{exp_id[3:]}"
     cfg = cfg_de(exp_id)
     predizer(exp_id, destino_id, cfg, ["validacao"])
     n = conferir_mesmos_quadros(destino_id, "validacao")
-    p = t3.pasta(destino_id) / "metricas_validacao.json"
+    p = t3.pasta(destino_id) / "metricas-validacao.json"
     met = r.ler_json(p) if p.exists() else q.met_val(r.dados_avaliacao(t3.pasta(destino_id), "validacao", cfg))
     r.gravar_json(p, met)
     ok, soma = r.supera(met["agregado_validacao"], met_ref["agregado_validacao"])
     sub, n_sub = subconjunto_ref(exp_id)
-    original = r.ler_json(t3.pasta(exp_id) / "metricas_validacao.json")
+    original = r.ler_json(t3.pasta(exp_id) / "metricas-validacao.json")
     decisao["variantes"][exp_id] = {"quadros_validacao": n, "passa": ok, "soma_dos_ganhos": soma, "cobertura_total": met,
                                     "subconjunto_I1": {"quadros_validacao": n_sub, "variante": original["agregado_validacao"],
                                                        "referencia_no_subconjunto": sub["agregado_validacao"]}}
@@ -190,39 +190,39 @@ def main():
     t3.commit(f"experimentos: {destino_id}", [t3.pasta(destino_id) / "config.json", p, Path(__file__)])
 
   decisao["vencedora"] = max(passou)[1] if passou else None
-  r.gravar_json(saida / "r3_cobertura_decisao.json", decisao)
+  r.gravar_json(saida / "r3-cobertura-decisao.json", decisao)
   bloco = None
   if passou:
     _, exp_id, final_id, cfg = max(passou)
-    if exp_id != "r3_I3_treino_b":
+    if exp_id != "r3-I3-treino-b":
       decisao["observacao"] = f"{exp_id} não tem as sementes 1000 e 2000 treinadas; treiná-las exige nova autorização"
-      r.gravar_json(saida / "r3_cobertura_decisao.json", decisao)
+      r.gravar_json(saida / "r3-cobertura-decisao.json", decisao)
       dirs = {42: final_id}
     else:
       dirs = {42: final_id}
       for s, d in SEMENTES_I3B.items():
-        dirs[s] = f"r3_cobertura_final_semente_{s}"
+        dirs[s] = f"r3-cobertura-final-semente-{s}"
         predizer(d, dirs[s], {**cfg, "semente": s}, ["validacao", "teste"])
     predizer(exp_id, final_id, cfg, ["validacao", "teste"])
     n_teste = {s: conferir_mesmos_quadros(d, "teste") for s, d in dirs.items()}
     for s, d in dirs.items():
-      pt = t3.pasta(d) / "metricas_teste.json"
+      pt = t3.pasta(d) / "metricas-teste.json"
       if not pt.exists():
         r.gravar_json(pt, r.metricas_teste(r.dados_avaliacao(t3.pasta(d), "teste", cfg if s == 42 else {**cfg, "semente": s})))
-    t3.gravado_para(t3.pasta("r3_cobertura_posprocessamento") / "posprocessamento.json", "modelo", final_id)
+    t3.gravado_para(t3.pasta("r3-cobertura-posprocessamento") / "posprocessamento.json", "modelo", final_id)
     pos = q.posprocessamento(final_id, cfg)
-    t3.gravado_para(t3.pasta("r3_cobertura_avaliacao_final") / "avaliacao_final.json", "modelo_final", final_id)
+    t3.gravado_para(t3.pasta("r3-cobertura-avaliacao-final") / "avaliacao-final.json", "modelo_final", final_id)
     av = q.avaliacao_final(final_id, cfg, pos, dirs)
     comp = comparar_pos(pos, dirs, cfg)
     decisao["quadros_teste"] = n_teste
-    r.gravar_json(saida / "r3_cobertura_decisao.json", decisao)
+    r.gravar_json(saida / "r3-cobertura-decisao.json", decisao)
     bloco = t3.bloco_final(final_id, av, comp)
   escrever_resumo(decisao, bloco)
-  arquivos = [saida / "r3_cobertura_decisao.json", saida / "resumo_rodada3.md", saida / "r3_primeira_avaliacao_resumo.md", Path(__file__)]
-  for d in set(["r3_cobertura_posprocessamento", "r3_cobertura_avaliacao_final"] + [f"r3_cobertura_final_semente_{s}" for s in SEMENTES_I3B]
-               + [f"r3_cobertura_{v[3:]}" for v in VARIANTES]):
-    for nome in ("config.json", "metricas_validacao.json", "metricas_teste.json", "posprocessamento.json", "avaliacao_final.json",
-                 "pos_processamento_comparado.json"):
+  arquivos = [saida / "r3-cobertura-decisao.json", saida / "resumo-rodada3.md", saida / "r3-primeira-avaliacao-resumo.md", Path(__file__)]
+  for d in set(["r3-cobertura-posprocessamento", "r3-cobertura-avaliacao-final"] + [f"r3-cobertura-final-semente-{s}" for s in SEMENTES_I3B]
+               + [f"r3-cobertura-{v[3:]}" for v in VARIANTES]):
+    for nome in ("config.json", "metricas-validacao.json", "metricas-teste.json", "posprocessamento.json", "avaliacao-final.json",
+                 "pos-processamento-comparado.json"):
       arquivos.append(t3.pasta(d) / nome)
   t3.commit("experimentos: rodada 3 com cobertura total e resumo", arquivos)
   t3.log(f"cobertura total: fim em {(time.time() - t0) / 60:.0f} min; vencedora: {decisao['vencedora']}")
@@ -232,18 +232,18 @@ def escrever_resumo(dec, bloco):
   f3, duas = q.f3, q.duas
   ref = q.met_val_lidas(REF)
   # o resumo da primeira avaliação é guardado uma vez, antes de ser reescrito
-  primeira = Path(t3.O3["saida"]) / "r3_primeira_avaliacao_resumo.md"
+  primeira = Path(t3.O3["saida"]) / "r3-primeira-avaliacao-resumo.md"
   if not primeira.exists():
-    shutil.copy(Path(t3.O3["saida"]) / "resumo_rodada3.md", primeira)
+    shutil.copy(Path(t3.O3["saida"]) / "resumo-rodada3.md", primeira)
   antigo = primeira.read_text(encoding="utf-8").splitlines()
   i = next(j for j, l in enumerate(antigo) if l.startswith("| variante"))
   tabela_antiga = antigo[i:i + next(j for j, l in enumerate(antigo[i:]) if not l.strip())]
   extras = [l for l in antigo if l.startswith(("Quadros removidos", "Descarte da I3", "- (", "Detalhes:"))]
   linhas = ["# Resumo da rodada 3", "",
             "**A primeira avaliação foi substituída.** A regra da I1 tirava da validação e do teste os quadros sem ombro ou quadril recuperável "
-            "(cerca de 44% dos quadros), e I1, I2 e I3-treino eram comparadas ao `r2_C4_aumento` em conjuntos de quadros diferentes. "
+            "(cerca de 44% dos quadros), e I1, I2 e I3-treino eram comparadas ao `r2-C4-aumento` em conjuntos de quadros diferentes. "
             "A decisão agora vale pela cobertura total: os mesmos modelos, sem novo treino, avaliados exatamente nos mesmos quadros do "
-            "`r2_C4_aumento` (adendo de cobertura total em `protocolo_rodada3.md`).", "",
+            "`r2-C4-aumento` (adendo de cobertura total em `protocolo-rodada3.md`).", "",
             "## Cobertura total (validação; agregado / média ± desvio entre partições)", "",
             "| variante | quadros de validação | F1 evento IoU 0,3 | acurácia bal. | macro F1 quadros | passa |", "|---|---|---|---|---|---|",
             f"| {REF} (referência) | {dec['variantes'][VARIANTES[0]]['quadros_validacao']} | {' | '.join(duas(ref, m) for m in q.METRICAS)} | -- |"]
@@ -260,8 +260,8 @@ def escrever_resumo(dec, bloco):
   if bloco:
     linhas += ["", *[l.replace("## Novo modelo final", "## Modelo final, avaliação com cobertura total") for l in bloco]]
   linhas += ["", "## Primeira avaliação (substituída: subconjunto de quadros)", "", *tabela_antiga, "",
-             "Detalhes da primeira avaliação: `r3_avaliacao_final/` (não usar)."]
-  (Path(t3.O3["saida"]) / "resumo_rodada3.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+             "Detalhes da primeira avaliação: `r3-avaliacao-final/` (não usar)."]
+  (Path(t3.O3["saida"]) / "resumo-rodada3.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

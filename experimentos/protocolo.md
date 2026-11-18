@@ -4,8 +4,8 @@ Registrado antes do primeiro treino. Executado por `experimentos/rodar_tudo.py`.
 
 ## Dados e partições
 
-- Mesmas 5 partições de `models/oof/fold_assignments.json` (56 vídeos).
-- Validação: em cada partição, cerca de 20% dos vídeos de treino, por classe do vídeo (`round(0,2 × n)`, no mínimo 1), sorteados com `numpy.random.default_rng(42 + partição)`. A divisão fica em `experimentos/divisao_validacao.json` e é a mesma em todos os experimentos e sementes.
+- Mesmas 5 partições de `models/oof/fold-assignments.json` (56 vídeos).
+- Validação: em cada partição, cerca de 20% dos vídeos de treino, por classe do vídeo (`round(0,2 × n)`, no mínimo 1), sorteados com `numpy.random.default_rng(42 + partição)`. A divisão fica em `experimentos/divisao-validacao.json` e é a mesma em todos os experimentos e sementes.
 - Rótulo de cada janela, como em `create_sequences_annotated.py`: recebe a classe de um intervalo anotado se pelo menos 2/3 da janela estão dentro dele; recebe fundo se nenhum quadro está anotado; nos outros casos, é descartada.
 - No treino, o fundo é subamostrado até igualar as janelas de estereotipia, como em `train_oof_seeded.py`. A perda de validação usa as janelas de validação com a mesma subamostragem e uma semente própria.
 
@@ -50,4 +50,4 @@ Registrado antes do primeiro treino. Executado por `experimentos/rodar_tudo.py`.
 Depois das etapas:
 
 - **Estabilidade:** o modelo final é treinado com as sementes 1000 e 2000, e se reportam média e desvio das três execuções na validação e no teste.
-- **Experimento separado:** modelo final só com janelas dentro dos intervalos anotados, 3 classes e sem fundo. Reporta-se o macro F1 por quadro nos quadros anotados, comparado com o do TCC, lido de `data/results/analises_posteriores.json`.
+- **Experimento separado:** modelo final só com janelas dentro dos intervalos anotados, 3 classes e sem fundo. Reporta-se o macro F1 por quadro nos quadros anotados, comparado com o do TCC, lido de `data/results/analises-posteriores.json`.

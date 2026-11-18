@@ -1,0 +1,54 @@
+{
+  "uso": "só a demonstração ao vivo da câmera; não entra em nenhuma métrica",
+  "base": "r4b-C1-janela-4s",
+  "configuracao": {
+    "modelo": "lstm",
+    "entrada": "xy_dxdy",
+    "dropout": 0.0,
+    "peso_l2": 0.0,
+    "aumento": true,
+    "pose": "yolo11n",
+    "normalizacao": "robusta",
+    "interp_lacuna_s": 0.0,
+    "suavizacao_s": 0.0,
+    "fps_alvo": 15,
+    "janela": 60,
+    "passo_treino": 1,
+    "lr": 0.001,
+    "lote": 32,
+    "oculto": 128,
+    "camadas": 2,
+    "max_epocas": 500,
+    "paciencia": 20,
+    "rotulos": "intervalos_4_classes",
+    "subamostrar_fundo": true,
+    "semente": 42
+  },
+  "videos": 56,
+  "janelas_treino": 44184,
+  "janelas_por_classe": {
+    "ArmFlapping": 7243,
+    "HeadBanging": 4728,
+    "Spinning": 10121,
+    "Background": 22092
+  },
+  "epocas_escolhidas_na_validacao": [
+    4,
+    1,
+    1,
+    1,
+    1
+  ],
+  "epocas": 1,
+  "perdas_treino": [
+    0.6774931446548651
+  ],
+  "sementes": {
+    "inicializacao": 42,
+    "ordem_dos_lotes": 42,
+    "subamostragem_fundo": 42,
+    "aumento": 2042
+  },
+  "arquivo": "models/final_completo.pt (fora do git)",
+  "tempo_s": 40.49407124519348
+}

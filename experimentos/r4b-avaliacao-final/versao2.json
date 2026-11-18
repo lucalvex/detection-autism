@@ -1,0 +1,186 @@
+{
+  "modelo": "06-15fps-janela-2s",
+  "papel": "Versão 2 do TCC (final da rodada 1)",
+  "pos": "mediana_2.0_juncao_1.0",
+  "n_quadros_teste": 90722,
+  "sementes": [
+    42,
+    1000,
+    2000
+  ],
+  "teste": [
+    {
+      "agregado_56_videos": {
+        "f1_evento_iou_0.3": 0.035633209939185895,
+        "acuracia_balanceada_presenca": 0.594149745453127,
+        "macro_f1_quadro_todos": 0.4203318835667001,
+        "macro_f1_quadro_anotados": 0.4347844186507481
+      },
+      "media_entre_particoes": {
+        "f1_evento_iou_0.3": 0.032528581704808074,
+        "acuracia_balanceada_presenca": 0.5770448663859835,
+        "macro_f1_quadro_todos": 0.3785499479271332,
+        "macro_f1_quadro_anotados": 0.3698354402526566
+      },
+      "desvio_entre_particoes": {
+        "f1_evento_iou_0.3": 0.01757196552801314,
+        "acuracia_balanceada_presenca": 0.030070403331923845,
+        "macro_f1_quadro_todos": 0.06660113122071011,
+        "macro_f1_quadro_anotados": 0.13337763896532823
+      },
+      "n_videos": 55,
+      "n_quadros": 90722,
+      "n_episodios_gabarito": 99,
+      "f1_evento_com_pos": {
+        "agregado": 0.1180952380952381,
+        "media": 0.11441415078243722,
+        "desvio": 0.0643975009126768
+      }
+    },
+    {
+      "agregado_56_videos": {
+        "f1_evento_iou_0.3": 0.04007087914300673,
+        "acuracia_balanceada_presenca": 0.5719883507639925,
+        "macro_f1_quadro_todos": 0.3958157415663872,
+        "macro_f1_quadro_anotados": 0.42708523850667895
+      },
+      "media_entre_particoes": {
+        "f1_evento_iou_0.3": 0.04051112000721989,
+        "acuracia_balanceada_presenca": 0.556871803316483,
+        "macro_f1_quadro_todos": 0.36863527270909435,
+        "macro_f1_quadro_anotados": 0.3891243714165897
+      },
+      "desvio_entre_particoes": {
+        "f1_evento_iou_0.3": 0.01343406278136178,
+        "acuracia_balanceada_presenca": 0.045674891267229185,
+        "macro_f1_quadro_todos": 0.05081211179166436,
+        "macro_f1_quadro_anotados": 0.1464937379780769
+      },
+      "n_videos": 55,
+      "n_quadros": 90722,
+      "n_episodios_gabarito": 99,
+      "f1_evento_com_pos": {
+        "agregado": 0.16377347799276704,
+        "media": 0.14915383888405273,
+        "desvio": 0.08041216218862167
+      }
+    },
+    {
+      "agregado_56_videos": {
+        "f1_evento_iou_0.3": 0.0424175092129678,
+        "acuracia_balanceada_presenca": 0.5824867702132095,
+        "macro_f1_quadro_todos": 0.4119945165648561,
+        "macro_f1_quadro_anotados": 0.4376891629699055
+      },
+      "media_entre_particoes": {
+        "f1_evento_iou_0.3": 0.04466199383537723,
+        "acuracia_balanceada_presenca": 0.5728564306302995,
+        "macro_f1_quadro_todos": 0.3820726092578285,
+        "macro_f1_quadro_anotados": 0.39697163105537003
+      },
+      "desvio_entre_particoes": {
+        "f1_evento_iou_0.3": 0.023947478410682548,
+        "acuracia_balanceada_presenca": 0.04633783927119891,
+        "macro_f1_quadro_todos": 0.08303311442418493,
+        "macro_f1_quadro_anotados": 0.19492633034052953
+      },
+      "n_videos": 55,
+      "n_quadros": 90722,
+      "n_episodios_gabarito": 99,
+      "f1_evento_com_pos": {
+        "agregado": 0.1494795131563108,
+        "media": 0.13773330275961854,
+        "desvio": 0.08016267823483544
+      }
+    }
+  ],
+  "dependencia_teste": [
+    {
+      "real": {
+        "agregado": 0.4347844186507481,
+        "media": 0.3698354402526566,
+        "desvio": 0.13337763896532823,
+        "por_classe": {
+          "ArmFlapping": 0.4356186834198306,
+          "HeadBanging": 0.30097178979148975,
+          "Spinning": 0.5677627827409237
+        }
+      },
+      "congelada": {
+        "agregado": 0.4433010206928685,
+        "media": 0.357207295982134,
+        "desvio": 0.13352158305513467,
+        "por_classe": {
+          "ArmFlapping": 0.4342323985200279,
+          "HeadBanging": 0.305192666593479,
+          "Spinning": 0.5904779969650986
+        }
+      },
+      "dependencia": -0.008516602042120403,
+      "dependencia_media": 0.012628144270522557,
+      "dependencia_por_classe": {
+        "ArmFlapping": 0.0013862848998027477,
+        "HeadBanging": -0.004220876801989237,
+        "Spinning": -0.022715214224174884
+      }
+    },
+    {
+      "real": {
+        "agregado": 0.42708523850667895,
+        "media": 0.3891243714165897,
+        "desvio": 0.1464937379780769,
+        "por_classe": {
+          "ArmFlapping": 0.4419335927090551,
+          "HeadBanging": 0.26816160118606375,
+          "Spinning": 0.5711605216249179
+        }
+      },
+      "congelada": {
+        "agregado": 0.40556036753454866,
+        "media": 0.35461837127948226,
+        "desvio": 0.1557627788863799,
+        "por_classe": {
+          "ArmFlapping": 0.4418953133881052,
+          "HeadBanging": 0.27568042142230026,
+          "Spinning": 0.49910536779324055
+        }
+      },
+      "dependencia": 0.021524870972130294,
+      "dependencia_media": 0.03450600013710742,
+      "dependencia_por_classe": {
+        "ArmFlapping": 3.82793209498522e-05,
+        "HeadBanging": -0.007518820236236512,
+        "Spinning": 0.07205515383167738
+      }
+    },
+    {
+      "real": {
+        "agregado": 0.4376891629699055,
+        "media": 0.39697163105537003,
+        "desvio": 0.19492633034052953,
+        "por_classe": {
+          "ArmFlapping": 0.44257436223139623,
+          "HeadBanging": 0.2662473794549266,
+          "Spinning": 0.6042457472233937
+        }
+      },
+      "congelada": {
+        "agregado": 0.4275458865857691,
+        "media": 0.37503645393409357,
+        "desvio": 0.1919093328735117,
+        "por_classe": {
+          "ArmFlapping": 0.4417811757412956,
+          "HeadBanging": 0.29120063347520536,
+          "Spinning": 0.5496558505408063
+        }
+      },
+      "dependencia": 0.010143276384136424,
+      "dependencia_media": 0.02193517712127646,
+      "dependencia_por_classe": {
+        "ArmFlapping": 0.000793186490100628,
+        "HeadBanging": -0.02495325402027876,
+        "Spinning": 0.0545898966825874
+      }
+    }
+  ]
+}

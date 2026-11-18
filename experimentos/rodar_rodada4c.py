@@ -1,8 +1,8 @@
 # ============================================================
 # ARQUIVO: experimentos/rodar_rodada4c.py
 #
-# O QUE FAZ: rodada 4c (experimentos/protocolo_rodada4c.md): P2c, o modelo
-# final atual (r4b_C1_janela_4s) com atributos de periodicidade corrigidos
+# O QUE FAZ: rodada 4c (experimentos/protocolo-rodada4c.md): P2c, o modelo
+# final atual (r4b-C1-janela-4s) com atributos de periodicidade corrigidos
 # (tendência linear removida, amplitude de 1,5 a 5 Hz, frequência e
 # potência de 1,5 a 7 Hz, e a largura dos ombros de 0,5 a 2 Hz para
 # spinning) concatenados à saída do LSTM. Compara com a referência nos
@@ -32,17 +32,17 @@ import rodar_rodada4b as r4b  # noqa: E402
 r4, rq, t3, r, q = r4b.r4, r4b.rq, r4b.t3, r4b.r, r4b.q
 EXP1, METRICAS = r4.EXP1, r4.METRICAS
 FS = 15
-REF = "r4b_C1_janela_4s"
-REF_SEMENTES = {42: REF, 1000: f"{REF}_semente_1000", 2000: f"{REF}_semente_2000"}
+REF = "r4b-C1-janela-4s"
+REF_SEMENTES = {42: REF, 1000: f"{REF}-semente-1000", 2000: f"{REF}-semente-2000"}
 r4.REF, r4.REF_SEMENTES = REF, REF_SEMENTES  # a avaliação final da rodada 4 compara com a referência destes nomes
-RENOMEIA = {"r4_avaliacao_final": "r4c_avaliacao_final"}
+RENOMEIA = {"r4-avaliacao-final": "r4c-avaliacao-final"}
 FILTRO = butter(4, [1.5, 5], btype="bandpass", fs=FS)
 FILTRO_GIRO = butter(4, [0.5, 2], btype="bandpass", fs=FS)
 
 
 def pasta(i):
   i = RENOMEIA.get(i, i)
-  return Path(t3.O3["saida"]) / i if i.startswith("r4c_") else EXP1 / i
+  return Path(t3.O3["saida"]) / i if i.startswith("r4c-") else EXP1 / i
 
 
 def log(msg):
@@ -149,7 +149,7 @@ def main():
     ref_val = usa(rq.dados(EXP1 / REF, "validacao", cfg_ref))
     ref_cong = r4.vd_congelado(EXP1 / REF, cfg_ref, "validacao")
 
-    exp_id, desc = "r4c_P2c_periodicidade_corrigida", "P2c: C1 + periodicidade corrigida (1,5-5 Hz; 1,5-7 Hz; giro 0,5-2 Hz) após o LSTM"
+    exp_id, desc = "r4c-P2c-periodicidade-corrigida", "P2c: C1 + periodicidade corrigida (1,5-5 Hz; 1,5-7 Hz; giro 0,5-2 Hz) após o LSTM"
     cfg = {**cfg_ref, "arquitetura": "p2c"}
     if args.teste:
       cfg["max_epocas"] = 2
@@ -172,15 +172,15 @@ def main():
       if ok or alt or args.teste:
         alvo = (exp_id, cfg, "variante que passou" if ok else ("alternativa" if alt else "forçado no teste"))
     escrever_resumo(h, None)
-    commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [pasta(exp_id) / "rodada4c.json", saida / "resumo_rodada4c.md", Path(__file__)])
+    commit(f"experimentos: {exp_id}", q.arquivos(pasta(exp_id)) + [pasta(exp_id) / "rodada4c.json", saida / "resumo-rodada4c.md", Path(__file__)])
 
     final_txt = None
     if alvo:
       fin = r4.avaliacao_final(alvo[0], alvo[1], alvo[2], cfg_ref, ref_teste, args)
-      final_txt = [l.replace("r4_avaliacao_final", "r4c_avaliacao_final") for l in r4.texto_final(fin)]
-      commit("experimentos: r4c_avaliacao_final", [pasta("r4c_avaliacao_final") / "avaliacao_final.json", Path(__file__)])
+      final_txt = [l.replace("r4-avaliacao-final", "r4c-avaliacao-final") for l in r4.texto_final(fin)]
+      commit("experimentos: r4c-avaliacao-final", [pasta("r4c-avaliacao-final") / "avaliacao-final.json", Path(__file__)])
     escrever_resumo(h, final_txt)
-    commit("experimentos: resumo da rodada 4c", [saida / "resumo_rodada4c.md", Path(__file__)])
+    commit("experimentos: resumo da rodada 4c", [saida / "resumo-rodada4c.md", Path(__file__)])
     log("fim")
   except Exception:
     log("ERRO GERAL:\n" + traceback.format_exc())
@@ -189,7 +189,7 @@ def main():
 
 def escrever_resumo(h, final_txt):
   f3 = q.f3
-  linhas = ["# Resumo da rodada 4c", "", f"Protocolo: `protocolo_rodada4c.md`. Referência: `{REF}` (modelo final atual). Validação nos quadros válidos por Q.", ""]
+  linhas = ["# Resumo da rodada 4c", "", f"Protocolo: `protocolo-rodada4c.md`. Referência: `{REF}` (modelo final atual). Validação nos quadros válidos por Q.", ""]
   if "met" in h:
     cel = lambda x: (f"{f3(h['met']['agregado_validacao'][x])} vs {f3(h['met_ref']['agregado_validacao'][x])} "
                      f"(média {f3(h['met']['media_entre_particoes'][x])} vs {f3(h['met_ref']['media_entre_particoes'][x])})")
@@ -205,7 +205,7 @@ def escrever_resumo(h, final_txt):
     linhas += ["", *final_txt]
   elif h.get("situacao") == "não":
     linhas += ["", f"A P2c não passou no critério nem se qualificou como alternativa; o modelo final continua `{REF}`."]
-  (Path(t3.O3["saida"]) / "resumo_rodada4c.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
+  (Path(t3.O3["saida"]) / "resumo-rodada4c.md").write_text("\n".join(linhas) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

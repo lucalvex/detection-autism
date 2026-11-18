@@ -103,7 +103,7 @@ def build_segments(windows, class_names, threshold, min_duration_sec, fps):
   return segments
 
 
-# ---------- pós-processamento do modelo final (r4b_C1_janela_4s) ----------
+# ---------- pós-processamento do modelo final (r4b-C1-janela-4s) ----------
 # Escolhido na validação: mediana de 2 s sobre as pontuações e junção de
 # trechos da mesma classe separados por menos de 1 s. Mesmas fórmulas de
 # f1_evento_pos() e juntar() em experimentos/rodar_rodada2.py. A interface

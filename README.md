@@ -1,182 +1,126 @@
-# Detecção de Comportamentos Motores Estereotipados em TEA
+# Detecção de comportamentos estereotipados em vídeo
 
-Pipeline de detecção de comportamentos motores estereotipados associados ao
-Transtorno do Espectro Autista (TEA) a partir de vídeo, usando estimativa de
-pose (YOLO11n-Pose) + classificação temporal (LSTM).
+Trabalho de Conclusão de Curso (UEM) sobre a detecção automática de
+comportamentos motores estereotipados associados ao Transtorno do Espectro
+Autista (TEA) em vídeo: *arm flapping* (balançar os braços), *head banging*
+(bater a cabeça) e *spinning* (girar o corpo).
 
-Dataset: SSBD, 75 vídeos, 6 classes — `ArmFlapping`, `HeadBanging`, `Rocking`,
-`HandMovement`, `Spinning`, `Normal`.
+O método tem duas etapas:
 
-## Requisitos
+1. **Pose**: o YOLO11n-Pose extrai, quadro a quadro, 17 pontos do corpo da
+   pessoa no vídeo.
+2. **Classificação temporal**: uma LSTM recebe janelas de 4 s desses pontos
+   (normalizados e reamostrados a 15 quadros/s) e dá uma pontuação para cada
+   classe e para o fundo (sem estereotipia). Os trechos detectados passam por
+   um pós-processamento (mediana de 2 s e junção de trechos separados por
+   menos de 1 s).
+
+Os dados vêm do SSBD
+(*Self-Stimulatory Behaviours Dataset*). São usados 56 vídeos, com rótulos por
+intervalo de tempo, e a avaliação é feita com validação cruzada por vídeo em
+5 partições. A escolha do modelo final e os números estão em
+[`experimentos/modelo-final.md`](experimentos/modelo-final.md).
+
+> **Privacidade.** Os vídeos do SSBD mostram crianças. Nenhum vídeo, quadro
+> de vídeo, imagem, dado de pose ou modelo treinado é versionado: o
+> `.gitignore` e o hook de pre-commit (`.githooks/`) bloqueiam esses
+> arquivos. A demo só atende em `127.0.0.1`, e o vídeo aberto nela fica só na
+> memória do navegador.
+
+## Estrutura
+
+```
+src/                     código base: extração de pose, atributos, anotações do SSBD,
+                         segmentação em trechos, avaliação temporal e exportação para a demo
+experimentos/            rodadas de experimentos, protocolos, resumos e métricas de cada um
+  rodar_tudo.py          rodada 1 (etapas 01 a 10) e funções de preparo e treino usadas por todas
+  rodar_rodada2.py ...   rodadas 2, 3, critério Q, 4, 4b e 4c (cada uma importa a anterior)
+  treinar_final_completo.py   treina o modelo da câmera ao vivo com os 56 vídeos
+  <id>/                  um experimento: config.json, métricas, perdas e curva de erro
+  protocolo*.md, resumo*.md   o que foi decidido antes de rodar e o resultado de cada rodada
+demo/                    interface local (modos Vídeos e Câmera ao vivo)
+tests/                   testes
+data/results/            métricas do modelo de partida (rodada A e base)
+models/oof*/             partições por vídeo e métricas dos modelos de partida
+```
+
+## Instalação
+
+Python 3.11 e, para um dos testes, Node.js.
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
-pip install ultralytics opencv-python pandas numpy torch scikit-learn matplotlib seaborn
+.venv\Scripts\activate          # Linux/macOS: source .venv/bin/activate
+pip install -r requirements.txt
+git config core.hooksPath .githooks   # ativa o hook que bloqueia vídeos, imagens e dados
 ```
 
-Coloque o modelo de pose em `models/yolo11n-pose.pt` e os vídeos em
-`data/videos/`.
+Os dados não estão no repositório:
 
-## Hook de pre-commit (bloqueia vídeos/CSVs/arrays grandes)
+- **Vídeos do SSBD** em `data/videos/<id>.mp4` (ex.: `v_ArmFlapping_12.mp4`).
+- **Anotações do SSBD** (XML) em `../download-yt/xmls/`, uma pasta ao lado
+  deste repositório.
+- **Pesos do YOLO11n-Pose** em `models/yolo11n-pose.pt`, baixados da
+  [Ultralytics](https://docs.ultralytics.com/tasks/pose/).
 
-O repositório versiona um hook de pre-commit em `.githooks/pre-commit`
-que bloqueia o commit se algum arquivo de vídeo (`.mp4`/`.avi`/`.mov`/
-`.mkv`), CSV, array de dados (`.npy`/`.npz`) ou qualquer arquivo acima
-de 5MB estiver sendo adicionado — esses arquivos são grandes e
-regeneráveis pelo pipeline, e não devem ir para o GitHub. Git não ativa
-hooks versionados sozinho; rode isto uma vez depois de clonar:
+## Como rodar
 
-```bash
-git config core.hooksPath .githooks
-```
+Todos os comandos são rodados a partir da raiz do repositório. Os
+experimentos são retomáveis: um experimento que já tem
+`metricas-validacao.json` é pulado.
 
-Para pular a checagem em um commit específico (uso consciente):
-`git commit --no-verify`.
-
-## Rodar tudo de uma vez
-
-```bash
-python src/run_pipeline.py
-```
-
-Roda as 5 etapas abaixo em sequência (cada uma como o mesmo comando que você
-rodaria manualmente) e termina gerando o relatório final consolidado em
-`data/results/report.pdf`. Use isso sempre que quiser regenerar tudo do zero
-(ex. depois de adicionar vídeos novos). A etapa de análise de episódios é
-opcional — se falhar (ex. nenhuma pessoa detectada no vídeo configurado), o
-pipeline continua e o relatório só marca essa seção como indisponível.
-
-## Ordem de execução
-
-Se preferir rodar (ou depurar) uma etapa por vez, execute os scripts abaixo
-nessa ordem, a partir da raiz do projeto.
-
-### 1. Extração de pose
+**1. Modelo de partida** (gera `data/poses/`, `data/datasets_annotated/` e os
+checkpoints que a avaliação temporal usa):
 
 ```bash
 python src/extract_pose.py
+python src/create_sequences_annotated.py
+python src/train_oof_seeded.py --dataset-dir data/datasets_annotated --output-dir models/oof-seeded-annotated --subsample-background
 ```
 
-Processa todos os `.mp4` em `data/videos/` e gera um CSV de keypoints por
-vídeo em `data/poses/` (nomeado pelo `video_id`, ex. `v_HeadBanging_18.csv`).
-É o passo mais lento, pois roda o YOLO frame a frame em cada vídeo.
-
-### 2. Criação das sequências
+**2. Experimentos**, em ordem (cada rodada parte da anterior):
 
 ```bash
-python src/create_sequences.py
+python experimentos/rodar_tudo.py
+python experimentos/rodar_rodada2.py
+python experimentos/rodar_rodada3.py
+python experimentos/rodar_q.py
+python experimentos/rodar_rodada4.py
+python experimentos/rodar_rodada4b.py
+python experimentos/rodar_rodada4c.py
 ```
 
-Lê todos os CSVs de `data/poses/`, aplica a janela deslizante (30 frames) e
-gera em `data/datasets/`:
-- `X.npy`, `y.npy` — sequências e labels
-- `groups.npy` — vídeo de origem de cada sequência (usado no split treino/teste)
-- `labels.json` — mapeamento classe → id
+A rodada 4 lê `experimentos/qualidade-dataset/tabela-videos.csv`, gerada
+por `experimentos/qualidade-dataset/qualidade_dataset.py` (precisa do `ffprobe`).
 
-### 3. Treinamento e avaliação (k-fold cross-validation)
+**3. Modelo da câmera ao vivo** (`models/final_completo.pt`, o modelo final
+`r4b-C1-janela-4s` treinado com os 56 vídeos):
 
 ```bash
-python src/train_classifier.py
+python experimentos/treinar_final_completo.py
 ```
 
-Faz validação cruzada **`StratifiedGroupKFold` (k=5)**: em cada um dos 5
-folds, todas as sequências de um mesmo vídeo ficam sempre do mesmo lado
-(evitando vazamento de dados entre janelas sobrepostas), treinando uma LSTM
-nova por fold. Ao final, treina um modelo final com todos os dados e gera:
-- `models/classifier.pt` — modelo final treinado (usado pelas ferramentas de
-  predição)
-- `data/results/classification_report.txt` — precisão, recall e F1 por
-  classe (média ± desvio padrão entre os 5 folds), com médias macro e
-  weighted
-- `data/results/classification_report_per_fold.txt` — relatório detalhado de
-  cada fold individualmente
-- `data/results/cv_metrics.json` — os mesmos números agregados, em JSON
-  (usado por `generate_report.py`)
-- `data/results/confusion_matrix.png` — matriz de confusão 6x6 (heatmap),
-  acumulada sobre os 5 folds
-
-### 4. Análise de episódios (opcional)
+**4. Demo**:
 
 ```bash
-python src/utils/episode_analysis.py
+python src/exportar_sessoes_final.py   # pontuações e pontos de cada vídeo em saidas/final/
+python demo/servir.py                  # http://127.0.0.1:8765
 ```
 
-Roda pose + LSTM sobre um vídeo (configurado em `VIDEO_PATH` no topo do
-arquivo) e agrupa a sequência de predições em episódios (frequência e
-duração por classe). Veja `src/utils/episode_analysis.py` para detalhes do
-método (suavização temporal + filtro de duração mínima). Gera:
-- `data/results/episodes.csv` — 1 linha por episódio detectado
-- `data/results/episode_summary.txt` / `episode_summary.json` — frequência e
-  duração agregadas por classe
+- No modo **Vídeos**, você escolhe um vídeo do SSBD e abre o arquivo dele
+  com o seletor da página. A interface mostra o esqueleto, as pontuações e
+  os trechos detectados, comparados com a anotação.
+- No modo **Câmera ao vivo**, a webcam manda um quadro por vez ao servidor,
+  que roda o YOLO e o modelo completo. Nada é gravado.
 
-### 5. Relatório final
+## Testes
 
 ```bash
-python src/generate_report.py
+python tests/test_pose_features.py
+python tests/test_ssbd_annotations.py
+python tests/test_timeline.py
+python tests/test_timeline_js.py   # a segmentação em JavaScript tem de dar o mesmo que a em Python (requer Node.js)
+python tests/test_camera.py        # o preparo ao vivo da câmera tem de dar o mesmo que o do treino
 ```
 
-Consolida os resultados das etapas acima em `data/results/report.pdf`, com
-1 seção por página: capa, resumo do dataset, validação cruzada, matriz de
-confusão, frequência/duração de episódios e timeline gráfica dos episódios.
-Se alguma etapa anterior não tiver rodado ainda, a seção correspondente
-aparece no PDF avisando qual comando rodar, em vez de quebrar o relatório.
-
-## Regras práticas
-
-- Ao adicionar ou trocar vídeos em `data/videos/`, rode `python
-  src/run_pipeline.py` (ou os passos 1-3 manualmente) do zero — cada etapa
-  sobrescreve totalmente a saída da anterior.
-- Rodar só o `train_classifier.py` de novo (sem repetir os passos 1-2)
-  é seguro apenas se você quiser re-treinar com os mesmos dados (ex. mudar
-  hiperparâmetros).
-- Rodar só o `generate_report.py` de novo é sempre seguro — ele só lê os
-  arquivos já gerados, não recalcula nada.
-
-## Interface de demonstração (`demo/`)
-
-Duas telas, Apresentação e Revisão, a partir do design em
-`tcc-demo-handoff/`. Usam o modelo da Rodada A
-(`models/oof_seeded_annotated/`), com cada vídeo do SSBD avaliado pelo
-checkpoint da partição em que ele é teste. Nenhum número da tela é
-escrito à mão: tudo vem dos arquivos gerados abaixo.
-
-```bash
-python src/selecionar_videos_mediana.py   # vídeos de desempenho mediano (um por classe)
-python src/comparar_modelos.py            # veredito pelo critério de data/results/criterio_comparacao.md
-python src/resumo_dados.py                # contagens do SSBD e das partições
-python src/exportar_sessao.py v_ArmFlapping_12 --saida saidas   # repita para cada vídeo escolhido
-python src/exportar_pontos.py v_ArmFlapping_12 --saida saidas   # roda o YOLO só para os pixels brutos
-python demo/servir.py                     # http://127.0.0.1:8765
-```
-
-O servidor só atende em `127.0.0.1` e só entrega a interface, os
-`saidas/*_sessao.json`/`*_pontos.json` e os JSON de resultado usados;
-vídeos e CSVs de pose respondem 404. Na revisão, o vídeo é aberto com o
-seletor de arquivo e fica só na memória do navegador: não é copiado,
-embutido nem enviado. `saidas/` e `*_pontos.json` estão no `.gitignore`
-e o hook de pre-commit bloqueia `*_pontos.json`.
-
-A regra de segmentação em JavaScript (`demo/js/timeline.js`) tem que dar
-o mesmo resultado que `src/timeline.py`. `python
-tests/test_timeline_js.py` compara as duas (requer Node.js).
-
-## Ferramentas auxiliares (`src/utils/`)
-
-Scripts que **não** fazem parte do pipeline principal de treino — servem
-para inspeção visual, ilustrações para o TCC ou para usar o modelo já
-treinado. Rode só quando precisar de algo específico:
-
-```bash
-python src/utils/predict_video.py        # classifica o comportamento em um vídeo, exibindo o rótulo previsto ao vivo
-python src/utils/episode_analysis.py     # agrupa as predições em episódios (frequência/duração) -- veja passo 4 acima
-python src/utils/realtime_pose.py        # mostra os keypoints/esqueleto da YOLO desenhados ao vivo em um vídeo (sem classificação)
-python src/utils/save_annotated_video.py # salva um vídeo com os keypoints/esqueleto desenhados em cada frame
-python src/utils/save_keyframes.py       # salva PNGs de frames das 3 classes (ArmFlapping/HeadBanging/Spinning) com só o esqueleto, sem a pessoa do vídeo
-python src/utils/save_pose_image.py      # salva um PNG de uma imagem única, anotada com os keypoints (é um quadro real do vídeo: nunca vai para o git)
-python src/utils/keypoints.py            # imprime no console os keypoints brutos de um vídeo (script de teste rápido)
-```
-
-`figuras/` é só para figuras do texto e nunca deve conter quadros de vídeo ou imagens de crianças; o `.gitignore` e o hook bloqueiam `.png`, `.jpg` e `.jpeg` em qualquer outra pasta, exceto `demo/assets/`.
-
-`demo/assets/` é só para elementos da interface, como a logo da UEM, e nunca para quadros de vídeo ou imagens de crianças. `logo_uem_recorte.png` é a `logo_uem.png` recortada ao desenho, com o fundo branco tornado transparente.
+Os dois últimos usam os dados locais (poses, vídeos, `saidas/` e modelos).

@@ -28,8 +28,8 @@
     }
   },
   "execucoes": [
-    "06_15fps_janela_2s",
-    "09_final_semente_1000",
-    "09_final_semente_2000"
+    "06-15fps-janela-2s",
+    "09-final-semente-1000",
+    "09-final-semente-2000"
   ]
 }

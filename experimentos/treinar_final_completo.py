@@ -2,11 +2,11 @@
 # ARQUIVO: experimentos/treinar_final_completo.py
 #
 # O QUE FAZ: treina, só para a demonstração ao vivo da câmera, uma versão
-# do modelo final (r4b_C1_janela_4s) com os 56 vídeos: mesma configuração,
+# do modelo final (r4b-C1-janela-4s) com os 56 vídeos: mesma configuração,
 # semente 42, número de épocas igual à mediana das épocas escolhidas na
 # validação das 5 partições do modelo final. Não entra em nenhuma métrica.
 # Grava models/final_completo.pt (fora do git) e
-# experimentos/modelo_final_completo.json (registro).
+# experimentos/modelo-final-completo.json (registro).
 #
 # Uso (da raiz do repositório):
 #   .venv/Scripts/python.exe experimentos/treinar_final_completo.py
@@ -25,7 +25,7 @@ sys.path[:0] = [str(RAIZ / "experimentos"), str(RAIZ / "src")]
 import rodar_q as rq  # noqa: E402  (faz chdir para a raiz; aplica as mesmas substituições usadas no treino)
 
 r, q = rq.r, rq.q
-FINAL = RAIZ / "experimentos" / "r4b_C1_janela_4s"
+FINAL = RAIZ / "experimentos" / "r4b-C1-janela-4s"
 SAIDA_PT = RAIZ / "models" / "final_completo.pt"
 
 
@@ -70,9 +70,9 @@ def main():
     perdas.append(soma / nb)
     print(f"época {ep}: perda de treino {soma / nb:.4f}", flush=True)
   torch.save(modelo.state_dict(), SAIDA_PT)
-  r.gravar_json(RAIZ / "experimentos" / "modelo_final_completo.json", {
+  r.gravar_json(RAIZ / "experimentos" / "modelo-final-completo.json", {
     "uso": "só a demonstração ao vivo da câmera; não entra em nenhuma métrica",
-    "base": "r4b_C1_janela_4s", "configuracao": cfg, "videos": len(videos), "janelas_treino": int(len(ini)),
+    "base": "r4b-C1-janela-4s", "configuracao": cfg, "videos": len(videos), "janelas_treino": int(len(ini)),
     "janelas_por_classe": {r.CLASSES[c]: int((rot == c).sum()) for c in range(4)},
     "epocas_escolhidas_na_validacao": epocas, "epocas": n_epocas, "perdas_treino": perdas,
     "sementes": {"inicializacao": s, "ordem_dos_lotes": s, "subamostragem_fundo": s, "aumento": s + 2000},

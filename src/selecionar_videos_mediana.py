@@ -7,7 +7,7 @@
 # em data/results/videos_desempenho_mediano.json. Não treina nada.
 #
 # REGRA:
-#   - modelo: Rodada A (models/oof_seeded_annotated/), cada vídeo
+#   - modelo: Rodada A (models/oof-seeded-annotated/), cada vídeo
 #     avaliado pelo checkpoint do fold em que ele é teste;
 #   - predição por quadro: argmax das 4 saídas (o que a interface
 #     mostra), via evaluate_temporal.compute_windows/predicted_frames;
@@ -32,7 +32,7 @@ from sklearn.metrics import f1_score
 import evaluate_temporal as et
 
 DATASET_DIR = "data/datasets_annotated"
-OOF_DIR = "models/oof_seeded_annotated"
+OOF_DIR = "models/oof-seeded-annotated"
 SAIDA = Path("data/results/videos_desempenho_mediano.json")
 
 CLASSES = et.REAL_CLASSES

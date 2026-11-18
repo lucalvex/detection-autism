@@ -3,7 +3,7 @@
 #
 # O QUE FAZ: exporta, para os 56 vídeos do SSBD, o que a interface de
 # demonstração mostra no modo "Vídeos", com o modelo final
-# r4b_C1_janela_4s (semente 42):
+# r4b-C1-janela-4s (semente 42):
 #   - saidas/final/<id>_sessao.json: as pontuações por janela fora da
 #     partição (as de teste gravadas em janelas_<k>.pkl, da partição em
 #     que o vídeo é teste), a anotação do SSBD e o pós-processamento
@@ -35,7 +35,7 @@ sys.path.insert(0, str(RAIZ / "src"))
 from ssbd_annotations import find_annotation_file, load_annotations  # noqa: E402
 from timeline import JUNTAR_S, MEDIANA_S  # noqa: E402
 
-FINAL = RAIZ / "experimentos" / "r4b_C1_janela_4s"
+FINAL = RAIZ / "experimentos" / "r4b-C1-janela-4s"
 POSES = RAIZ / "experimentos" / "poses" / "yolo11n"
 XMLS = RAIZ.parent / "download-yt" / "xmls"
 SAIDA = RAIZ / "saidas" / "final"
@@ -74,7 +74,7 @@ def main():
   SAIDA.mkdir(parents=True, exist_ok=True)
   indice = {c[0]: [] for c in CLASSES[:3]}
   rotulos = {c[0]: c[1] for c in CLASSES}
-  particoes = json.loads((RAIZ / "models" / "oof" / "fold_assignments.json").read_text(encoding="utf-8"))["video_to_fold"]
+  particoes = json.loads((RAIZ / "models" / "oof" / "fold-assignments.json").read_text(encoding="utf-8"))["video_to_fold"]
   for k in range(1, 6):
     with open(FINAL / f"janelas_{k}.pkl", "rb") as f:
       teste = pickle.load(f)["teste"]
@@ -94,7 +94,7 @@ def main():
         "versao": 2,
         "sessao": {"id": vid, "classe": classe, "numero": numero, "fps": fps, "total_quadros": total,
                    "largura": int(d["w"]), "altura": int(d["h"])},
-        "modelo": {"nome": "r4b_C1_janela_4s", "semente": 42, "particao": k, "janela_s": 4, "amostras_por_s": 15,
+        "modelo": {"nome": "r4b-C1-janela-4s", "semente": 42, "particao": k, "janela_s": 4, "amostras_por_s": 15,
                    "pose": "yolo11n-pose", "predicao_fora_da_particao": True},
         "classes": [{"id": c, "nome": pt} for c, _, pt in CLASSES],
         "limiar_padrao": 0.5,

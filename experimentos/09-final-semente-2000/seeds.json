@@ -1,0 +1,32 @@
+{
+  "semente": 2000,
+  "inicializacao_pytorch_por_particao": {
+    "1": 2001,
+    "2": 2002,
+    "3": 2003,
+    "4": 2004,
+    "5": 2005
+  },
+  "ordem_dos_lotes_por_particao": {
+    "1": 2001,
+    "2": 2002,
+    "3": 2003,
+    "4": 2004,
+    "5": 2005
+  },
+  "subamostragem_fundo_treino_por_particao": {
+    "1": 2001,
+    "2": 2002,
+    "3": 2003,
+    "4": 2004,
+    "5": 2005
+  },
+  "subamostragem_fundo_validacao_por_particao": {
+    "1": 3001,
+    "2": 3002,
+    "3": 3003,
+    "4": 3004,
+    "5": 3005
+  },
+  "divisao_validacao": "divisao-validacao.json (semente 42 + partição, a mesma em todos os experimentos)"
+}

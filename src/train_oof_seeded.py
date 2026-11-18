@@ -10,7 +10,7 @@
 # efeito da mudança de rótulo.
 #
 # REAPROVEITA O PARTICIONAMENTO DE VÍDEO -> FOLD JÁ CALCULADO em
-# models/oof/fold_assignments.json (StratifiedGroupKFold, seed=42,
+# models/oof/fold-assignments.json (StratifiedGroupKFold, seed=42,
 # sobre o dataset ORIGINAL) em vez de recalcular. Isso é essencial:
 # recalcular o split diretamente no dataset da rodada A daria um
 # particionamento DIFERENTE, porque lá um mesmo vídeo (um "group")
@@ -36,8 +36,8 @@
 #     já treinado por train_oof.py)
 #
 # Uso:
-#   python src/train_oof_seeded.py --dataset-dir data/datasets --output-dir models/oof_seeded_base
-#   python src/train_oof_seeded.py --dataset-dir data/datasets_annotated --output-dir models/oof_seeded_annotated --subsample-background
+#   python src/train_oof_seeded.py --dataset-dir data/datasets --output-dir models/oof-seeded-base
+#   python src/train_oof_seeded.py --dataset-dir data/datasets_annotated --output-dir models/oof-seeded-annotated --subsample-background
 # ============================================================
 
 import argparse
@@ -59,7 +59,7 @@ EPOCHS = 30
 LEARNING_RATE = 0.001
 N_SPLITS = 5
 
-FOLD_ASSIGNMENTS_PATH = Path("models/oof/fold_assignments.json")
+FOLD_ASSIGNMENTS_PATH = Path("models/oof/fold-assignments.json")
 
 
 def set_all_seeds(seed):
@@ -337,15 +337,15 @@ def main(args):
 
   # ---------- salva metadados de reprodutibilidade ----------
 
-  with open(output_dir / "fold_assignments.json", "w", encoding="utf-8") as f:
+  with open(output_dir / "fold-assignments.json", "w", encoding="utf-8") as f:
     json.dump({
       "n_splits": N_SPLITS,
       "random_state": 42,
       "video_to_fold": fold_assignments,
-      "nota": "reaproveitado de models/oof/fold_assignments.json -- mesmo particionamento por vídeo do baseline, não recalculado",
+      "nota": "reaproveitado de models/oof/fold-assignments.json -- mesmo particionamento por vídeo do baseline, não recalculado",
     }, f, indent=2, ensure_ascii=False)
 
-  with open(output_dir / "fold_composition.json", "w", encoding="utf-8") as f:
+  with open(output_dir / "fold-composition.json", "w", encoding="utf-8") as f:
     json.dump(fold_composition, f, indent=2, ensure_ascii=False)
 
   with open(output_dir / "seeds.json", "w", encoding="utf-8") as f:
@@ -385,10 +385,10 @@ def main(args):
     "weighted_avg": metric_block("weighted avg"),
   }
 
-  with open(output_dir / "cv_metrics_oof.json", "w", encoding="utf-8") as f:
+  with open(output_dir / "cv-metrics-oof.json", "w", encoding="utf-8") as f:
     json.dump(cv_metrics, f, indent=2, ensure_ascii=False)
 
-  with open(output_dir / "classification_report_per_fold.txt", "w", encoding="utf-8") as f:
+  with open(output_dir / "classification-report-per-fold.txt", "w", encoding="utf-8") as f:
     for fold, report_text in enumerate(fold_report_texts, start=1):
       f.write(f"===== Fold {fold}/{N_SPLITS} (accuracy: {fold_accuracies[fold-1]:.2f}%) =====\n")
       f.write(report_text)
@@ -402,7 +402,7 @@ if __name__ == "__main__":
 
   parser = argparse.ArgumentParser()
   parser.add_argument("--dataset-dir", required=True, help="ex.: data/datasets ou data/datasets_annotated")
-  parser.add_argument("--output-dir", required=True, help="ex.: models/oof_seeded_base")
+  parser.add_argument("--output-dir", required=True, help="ex.: models/oof-seeded-base")
   parser.add_argument("--subsample-background", action="store_true", help="subamostra a classe Background no treino de cada fold")
 
   main(parser.parse_args())

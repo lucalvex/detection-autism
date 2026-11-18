@@ -1,11 +1,11 @@
 # ============================================================
 # ARQUIVO: experimentos/frequencia_r4b.py
 #
-# O QUE FAZ: parte B da rodada 4b refeita (adendo em protocolo_rodada4b.md),
+# O QUE FAZ: parte B da rodada 4b refeita (adendo em protocolo-rodada4b.md),
 # sem treino: frequência dominante dos movimentos dentro dos intervalos
 # anotados, com remoção da tendência linear, faixa de 0,5 a 7 Hz e janelas
 # de 8 s e de 4 s. Mesmos sinais e posições da parte B original
-# (rodar_rodada4b.sinal). Grava r4b_B2_frequencia/frequencia.json e .md.
+# (rodar_rodada4b.sinal). Grava r4b-B2-frequencia/frequencia.json e .md.
 #
 # Uso (da raiz do repositório):
 #   .venv/Scripts/python.exe experimentos/frequencia_r4b.py
@@ -23,7 +23,7 @@ import rodar_rodada4b as r4b  # noqa: E402
 
 r, q, rq = r4b.r, r4b.q, r4b.rq
 FS, BANDA, JANELAS = r4b.FS, (0.5, 7.0), (8, 4)
-SAIDA = RAIZ / "experimentos" / "r4b_B2_frequencia"
+SAIDA = RAIZ / "experimentos" / "r4b-B2-frequencia"
 
 
 def dominante(W):
