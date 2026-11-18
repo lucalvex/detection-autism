@@ -19,6 +19,8 @@ models/oof*/*.pt
 *.avi
 *.mov
 *.mkv
+# pasta local dos vídeos e dos XMLs de anotação do SSBD (data/videos/xmls/)
+data/videos/
 
 # Resultados
 results/
